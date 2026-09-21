@@ -1,0 +1,16 @@
+[project]
+name = "kv-cache-practice"
+version = "0.1.0"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "langchain==1.0.2",
+  "langgraph==1.0.9",
+  "langchain-openai==1.0.1",
+  "python-dotenv==1.2.1",
+  "sentence-transformers==5.7.0",
+  "pypdf==6.19.0",
+  "numpy==2.4.6",
+  "httpx==0.28.1",
+  "reportlab>=4.4,<5",
+  "markdown-it-py==4.2.0",
+]
