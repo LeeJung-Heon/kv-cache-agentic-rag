@@ -6,3 +6,7 @@ __pycache__/
 .DS_Store
 .cache/
 outputs/
+artifacts/faiss/*
+!artifacts/faiss/.gitkeep
+data/processed/*
+!data/processed/.gitkeep

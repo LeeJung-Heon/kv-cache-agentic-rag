@@ -45,8 +45,10 @@
 
 ### 변경 파일
 
-- `state.py`: Literal 타입 4개, `Finding`·`DraftFinding` 필드 추가 (추가만, 기존 줄 변경 없음)
-- `service/schema/state.py`: `Finding` 필드 추가 (추가만)
+- `service/schema/state.py`: Literal 타입 4개, `Finding`(NotRequired 선택 필드)·`DraftFinding`(default=None) 필드 추가 (추가만)
+- 2026-09-22 main 병합(#5, #6) 후 루트 `state.py`가 삭제되어 `service/schema/state.py` 하나로 통합했다.
+  기술 조사 노드는 자체 `TechnicalFindingDraft`를 써서 네 필드를 출력하지 않으므로, 공개 `Finding`에서는
+  `trl_assessment`처럼 `NotRequired`로 둔다.
 
 ### 검증 (API 호출 없음)
 

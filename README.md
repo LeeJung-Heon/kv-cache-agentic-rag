@@ -23,6 +23,8 @@ cd kv-cache-agentic-rag
 uv sync --locked
 cp .env.example .env
 # .env의 OPENAI_API_KEY와 TAVILY_API_KEY 입력
+# 전처리 문서를 준비하고 먼저 인덱스 생성 (아래 안내 참조)
+uv run -m ingest.embedding.build_index
 uv run pipeline.py --max-technical-retries 2
 ```
 
@@ -42,6 +44,14 @@ uv run pipeline.py --env-file /path/to/your/.env
 |---|---|
 | `state.py` | Notion 설계의 GraphState, Technology, Evidence, Finding, AgentResult |
 | `pipeline.py` | 기술 선정, 역할별 분석, 재검색·병렬 합류, 보고서, CLI |
+| `ingest/embedding/` | 전처리 문서 로딩, 청킹, BGE-M3 임베딩, FAISS 저장 |
+| `service/retrieval/paper_index.py` | 공유 FAISS 인덱스 로딩, 질의 임베딩, 기술별 cosine 검색 |
+| `artifacts/faiss/` | 공유할 인덱스와 JSON 메타데이터 (Git 제외) |
+| `pipeline.py` | 기술 선정, 역할별 분석, 병렬 합류, 보고서, CLI |
+| `service/agent/node/technical/` | 기술 조사 노드 묶음: `schema.py`(서브그래프 State·초안 스키마), `retrieval.py`(논문 검색 도구·근거 수집), `model.py`(전용 모델 생성·설정·호출), `prompts.py`(역할·TRL 판정표), `core.py`(순수 검증 규칙), `node.py` |
+| `service/agent/graph/technical.py` | 기술 조사 서브그래프 `build_technical_research_graph(index, model=None, max_retries=2, rules=)` |
+| `check_technical.py` | 기술 조사 서브그래프만 Mock 인덱스·모델로 점검 |
+| `tests/` | API·모델 없이 도는 pytest (`uv run pytest -q`) |
 | `rag.py` | PDF 로딩, E5 토큰 청킹, 임베딩 캐시, cosine 검색 |
 | `report.py` | Markdown 저장 및 한국어 PDF 생성 |
 | `check_graph.py` | API 없이 재검색·합류·오류·근거 참조 경로 검사 |
@@ -53,8 +63,7 @@ uv run pipeline.py --env-file /path/to/your/.env
 | 노드 | 주요 읽기 필드 | 갱신 필드 |
 |---|---|---|
 | 기술 선정 | 사람의 선정 문서와 공통 입력 | `technologies` |
-| 기술 조사 | 공통 입력, technologies, 이전 조사·수정 질의 | `technical_result`, `technical_queries`, `technical_missing_items` |
-| 재검색 준비 | 부족 항목, 수정 질의, 횟수 | `technical_retry_count`, `technical_queries` |
+| 기술 조사 (서브그래프) | 공통 입력, technologies | `technical_result`, `technical_retry_count`, `technical_queries`, `technical_missing_items` |
 | 시장 평가 | 공통 입력, technologies, technical_result | `market_result` |
 | 이해관계자 평가 | 공통 입력, technologies, technical_result | `stakeholder_result` |
 | 도메인 평가 | 공통 입력, technologies, technical_result | `domain_result` |
@@ -69,7 +78,9 @@ uv run pipeline.py --env-file /path/to/your/.env
 
 - `complete`: SW/HW 각각의 지정 평가 항목에 근거가 연결됨. 의미적 정확성이 자동 검증됐다는 뜻은 아닙니다.
 - `partial`: 항목 누락 또는 모델이 판단한 근거 부족. 기술 조사의 필수 항목은 각 기술의 원리·성능·한계·TRL입니다.
-- 기술 조사만 `partial`일 때 수정 질의로 재검색합니다. `technical_retry_count`는 **추가 조사 횟수**이며 기본 2회, `--max-technical-retries 0`으로 비활성화할 수 있습니다. 설정 범위는 0~5입니다.
+- 기술 조사만 `partial`일 때 서브그래프 안에서 수정 질의로 재검색합니다. 재검색은 미충족 항목이 있는 기술의 논문만 다시 검색하며 질의는 최대 4개·500자입니다. `technical_retry_count`는 **추가 조사 횟수**이며 기본 2회, `--max-technical-retries 0`으로 비활성화할 수 있습니다. 설정 범위는 0~5입니다.
+- 기술 조사의 근거 ID·기준 검증에 실패하면 실패 사유와 사용 가능한 ID를 피드백으로 넣어 한 번만 다시 생성하고, 두 번째도 실패하면 `error`로 끝냅니다. 논문 검색 자체가 실패하면 확보한 근거를 보존한 `error`를 반환합니다.
+- 기술 조사의 TRL Finding은 선택 필드 `trl_assessment`(`level_or_range` 1~9 또는 범위, `as_of`=2026-09-21, `confidence`, `unverified_conditions`, `basis`="공개 정보 기반 추정")를 가지며, 판단 불가는 `level_or_range=null`과 한계 항목으로 남깁니다. 기술 조사 모델은 `service/agent/node/technical/model.py`의 `TECHNICAL_MODEL` 상수로 정하고 키·엔드포인트는 `config.settings`를 따릅니다.
 - 재검색 후에도 부족하면 `partial`을 유지하고 `technical_missing_items`와 `limitations`에 남겨 병렬 평가로 진행합니다. 기술 조사 결과가 갱신될 때 기존 충족 항목도 포함하도록 요청합니다.
 - 시장·이해관계자·도메인의 `partial`은 그대로 종합합니다. 상위 평가의 부족한 근거와 한계를 종합·보고서에서도 유지합니다.
 - API·구조화 응답·근거 ID 오류는 해당 결과를 `error`로 기록합니다. 기술 조사 오류는 즉시 그래프를 끝냅니다. 병렬 평가 오류는 합류 후 종합을 `error`로 기록하고 보고서를 생성하지 않습니다. 오류에는 자동 재시도를 하지 않습니다.
@@ -77,14 +88,15 @@ uv run pipeline.py --env-file /path/to/your/.env
 
 ## RAG와 출처
 
-- 사용자 선택 모델: `intfloat/multilingual-e5-large-instruct`. 다른 모델보다 우수하다는 비교 결과를 뜻하지 않습니다.
-- [임베딩 모델 선정 설계](EMBEDDING_MODEL_SELECTION.md)는 BGE-M3를 잠정 선정합니다. 현재 실행 코드는 E5이며, 설계의 모델 및 청킹 설정은 아직 코드에 반영하지 않았습니다.
-- 두 PDF 합계 200페이지 제한, 페이지별 400토큰 청크, 60토큰 overlap.
-- 질의에 E5 instruction 적용, 문서는 instruction 없이 임베딩.
-- L2 정규화한 벡터의 내적으로 cosine 검색, 기술별 상위 5개 반환.
+- [입력 형식과 임베딩 실행 안내](docs/EMBEDDING_PIPELINE.md)에 따라 전처리 문서를 등록하고 인덱스를 생성합니다. 실제 전처리 문서가 아직 없으므로 입력 예시는 계약 설명용입니다.
+- [임베딩 모델 선정 설계](EMBEDDING_MODEL_SELECTION.md)에 따른 `BAAI/bge-m3` dense 임베딩입니다. 차원은 모델에서 확인하고 `EMBEDDING_DIMENSION`을 지정하면 일치 여부를 검사합니다.
+- 청킹 초기값은 제목 포함 최대 400토큰, overlap 0입니다. 문서 수령 후 설정을 확정합니다. 페이지와 소절 경계를 보존하고 비교 모델의 토크나이저에서도 한도를 확인합니다.
+- 전처리 문서에 연결된 원본 쪽수 합계 200페이지를 검사합니다. 쪽수와 허용 여부는 전달받은 등록 정보에 근거하므로 원본 대조가 필요합니다.
+- 문서와 질의에 동일한 모델 revision 및 L2 정규화를 적용하며 E5 instruction은 사용하지 않습니다.
+- FAISS `IndexFlatIP`로 cosine 검색합니다. SW 또는 HW 문서와 공통 문서의 후보를 합쳐 최종 상위 5개를 반환합니다. BM25는 포함하지 않습니다.
 - 공유 임베딩 모델의 추론 호출은 잠금으로 직렬화하여 MPS 동시 호출 충돌을 방지합니다. 평가 노드와 웹 검색은 병렬로 실행됩니다.
-- 두 논문 규모에는 별도 벡터 DB 없이 NumPy를 사용합니다.
-- `.cache`에 문서·청크·모델명 기반 캐시를 저장합니다. 원문 변경 시 새 캐시를 만듭니다.
+- 생성 결과는 `artifacts/faiss/`에 저장합니다. `.faiss`, `chunks.json`, `manifest.json`을 함께 공유합니다. 기존 E5의 `.cache/*.npy`는 재사용하지 않습니다.
+- 검색 시 문서를 다시 임베딩하지 않습니다. 모델과 입력 및 청킹 조건이 같은 재생성 요청은 기존 인덱스를 재사용합니다.
 - PDF 근거에는 페이지·청크 ID·논문 URL·원문 발췌, 웹 근거에는 제목·URL·발췌·제공되는 경우 발행일을 보존합니다. 미확인 날짜나 웹 페이지 번호는 null입니다.
 - 보고서 인용 ID로 REFERENCE를 생성합니다. Finding의 기술 ID와 근거 ID는 실제 목록에 있어야 합니다. 알 수 없는 ID는 오류로 처리합니다. 최종 사용 근거는 report_evidence_ids에 기록합니다. 이는 인용 문장의 사실성 검증을 대신하지 않습니다.
 - 웹 검색 스니펫은 원문 전체 검증이 아니므로 확정 사실과 해석을 구별하도록 지시합니다.
@@ -102,10 +114,13 @@ PDF에는 한국어 TTF가 필요합니다. macOS의 Arial Unicode 또는 Linux�
 ## 최소 확인
 
 ```sh
-uv run pipeline.py --index-only  # API 없이 실제 PDF 임베딩 및 검색, 최초 모델 다운로드 가능
+uv run --locked python -m unittest discover -s tests -v  # 모델 다운로드 없이 실제 FAISS 및 입력/청킹 검사
+uv run pipeline.py --index-only  # 저장된 FAISS 검색, 최초 질의 모델 다운로드 가능
 uv run check_graph.py           # 변경한 제어 흐름과 근거 연결만 확인
+uv run check_technical.py       # 기술 조사 서브그래프만 Mock으로 점검
+uv run pytest -q                # 기술 조사 규칙·재검색·오류 처리 (외부 API 없음)
 ```
 
 개별 수정마다 전체 테스트나 모델 비교 평가를 실행할 필요는 없습니다. 생성된 보고서의 수치·인용 의미·공개정보 기반 TRL은 제출 전에 사람이 검토해야 합니다.
 
-기존 실행 결과의 State는 이전 형식 그대로 보존합니다. 새 State로 자동 변환하거나 이전 결과에서 실행을 재개하지 않습니다. 임베딩 모델·청킹 설정은 이번 State 변경에서 수정하지 않았습니다.
+기존 실행 결과의 State는 이전 형식 그대로 보존합니다. 새 State로 자동 변환하거나 이전 결과에서 실행을 재개하지 않습니다. 이번 임베딩 변경은 LangGraph의 노드와 평가 흐름을 변경하지 않습니다.
