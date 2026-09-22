@@ -20,11 +20,23 @@ class Evidence(TypedDict):
     excerpt: str
 
 
+# claim_type은 원문 진술의 성격, is_inference는 에이전트 해석 여부로 서로 독립이다.
+# scope·stage·stance가 None이면 해당 관점에 적용되지 않는 항목이다.
+ClaimType = Literal["fact", "opinion", "forecast"]
+MarketScope = Literal["direct", "adjacent"]
+AdoptionStage = Literal["announced", "pilot", "production"]
+Stance = Literal["positive", "negative", "mixed", "unknown"]
+
+
 class Finding(TypedDict):
     technology_ids: list[str]
     claim: str
     evidence_ids: list[str]
     is_inference: bool
+    claim_type: ClaimType
+    scope: MarketScope | None
+    stage: AdoptionStage | None
+    stance: Stance | None
 
 
 class AgentResult(TypedDict):
@@ -60,6 +72,11 @@ class DraftFinding(BaseModel):
     claim: str
     evidence_ids: list[str]
     is_inference: bool
+    # strict 구조화 출력은 모든 필드를 required로 요구하므로 기본값 없이 nullable로 둔다.
+    claim_type: ClaimType = Field(description="원문 진술의 성격: fact 사실, opinion 의견, forecast 전망")
+    scope: MarketScope | None = Field(description="시장성: direct 직접 시장, adjacent 연관 시장. 다른 역할은 null")
+    stage: AdoptionStage | None = Field(description="상용화·채택 단계: announced 계획 발표, pilot 실증, production 실제 운영. 해당 없으면 null")
+    stance: Stance | None = Field(description="대상 기술에 대한 입장: positive, negative, mixed, unknown. 입장 판단이 아니면 null")
 
 
 class AnalysisDraft(BaseModel):
