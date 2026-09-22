@@ -1,7 +1,7 @@
 from state import GraphState
 
-from .domain_model import evaluate_domain
-from .domain_retrieval import retrieve_domain
+from .model import evaluate_domain
+from .retrieval import retrieve_domain
 
 
 def make_domain_node(index, analyst, *, rules, normalize_result, error_result):
