@@ -24,7 +24,7 @@ KV cache 최적화 기술을 소프트웨어·하드웨어에서 각각 선정�
 
 ## Features
 
-- **논문 RAG**: 허용 문서 6편 126쪽(200쪽 한도)을 manifest로 관리합니다. PDF를 페이지·소절 단위로 추출·정제한 뒤 400토큰 이내로 청킹하고(청크 557개), BGE-M3 임베딩과 FAISS로 검색합니다.
+- **논문 RAG**: 허용 문서 6편 126쪽(200쪽 한도)을 manifest로 관리합니다. PDF를 페이지·소절 단위로 추출·정제한 뒤 400토큰 이내로 청킹하고(청크 467개), 원본 확인이 필요한 16개를 제외한 451개를 BGE-M3 임베딩·FAISS로 색인합니다.
 - **다관점 평가**: 기술 조사 결과를 바탕으로 시장·이해관계자·도메인 평가를 병렬로 수행합니다. 세 노드는 서로 다른 State 필드만 갱신하므로 reducer 없이 병렬 실행됩니다.
 - **재검색·품질 피드백**: 기술 근거가 부족하면 **미충족 기술의 논문만** 수정 질의로 재검색합니다(기본 2회). 평가 종합은 보완할 항목을 `quality_feedback`으로 정리합니다.
 - **출처 추적**: 근거 ID와 원문 발췌는 LLM이 아니라 **검색 결과에서 코드가 생성**합니다. 모든 주장은 실제로 수집한 근거 ID를 참조해야 하며, 알 수 없는 ID를 참조한 주장은 제외하거나 오류로 처리합니다. 미확인 항목은 한계로 남깁니다.
@@ -45,13 +45,13 @@ KV cache 최적화 기술을 소프트웨어·하드웨어에서 각각 선정�
 | Framework | LangGraph, LangChain |
 | LLM / Generator | `gpt-4.1-mini` 기본값 (`OPENAI_MODEL`, 기술 조사는 `TECHNICAL_MODEL`) |
 | LLM / Judge | 평가 종합의 `gpt-4.1-mini` 품질 점검. 별도 원문 대조 Judge는 미적용 |
-| Retrieval | FAISS `IndexFlatIP`, cosine 유사도. 기술별 인덱스와 공통 문서 인덱스를 합쳐 top-5 |
+| Retrieval | FAISS `IndexFlatIP`, cosine 유사도. 기술별(sw·hw) 인덱스와 공통 문서 인덱스를 합쳐 top-5. `needs_review` 청크는 기본 제외 |
 | Retrieval Metrics | 임베딩 선정 실험(설계서 2.7): BGE-M3 dev Recall@5 75.0%·MRR@10 0.651, test Recall@5 83.3%·MRR@10 0.681 |
 | Embedding | `BAAI/bge-m3` (1,024차원 dense, L2 정규화) — Sentence Transformers |
 | Web Search | Tavily |
 | Output | Markdown, PDF |
 
-Retrieval Metrics는 초기 문서 2편·123청크와 한국어 질문 40개(답변 가능 36개를 dev·test 18개씩)로 측정한 값입니다. 현재 6편·557청크 통합 인덱스 기준으로는 다시 측정하지 않았습니다.
+Retrieval Metrics는 초기 문서 2편·123청크와 한국어 질문 40개(답변 가능 36개를 dev·test 18개씩)로 측정한 값입니다. 현재 6편·451청크 통합 인덱스 기준으로는 다시 측정하지 않았습니다.
 
 임베딩 모델은 같은 조건에서 3개 후보를 비교해 선정했습니다.
 
@@ -103,13 +103,12 @@ flowchart TD
 
 ```text
 ├── docs/                         # 원본 논문·모듈 안내·작업 기록
-├── database/                     # 전처리 산출물 (pages·sections·chunks.jsonl, manifest.json)
-├── data/processed/               # 임베딩 입력 문서 목록 documents.json (실제 데이터는 Git 제외)
+├── database/                     # 전처리 산출물 (pages·sections·chunks.jsonl, manifest.json), 임베딩 입력
 ├── config/                       # API·모델·검색 설정
 ├── ingest/
 │   ├── preprocess/              # PDF 추출·정제·소절 파싱·청킹
-│   └── embedding/               # 청킹·BGE-M3 임베딩·FAISS 인덱스 저장
-├── artifacts/faiss/              # FAISS 인덱스·본문·메타데이터 (Git 제외)
+│   └── embedding/               # chunks.jsonl 정규화·BGE-M3 임베딩·FAISS 인덱스 저장
+├── artifacts/faiss/              # FAISS 인덱스·청크 본문·메타데이터 (저장소에서 공유)
 ├── service/
 │   ├── agent/graph/             # 기술 조사 서브그래프
 │   ├── agent/node/              # 기술 조사·시장·이해관계자·도메인 평가 노드
@@ -138,7 +137,7 @@ cp .env.example .env
 
 `.env`에 `OPENAI_API_KEY`와 `TAVILY_API_KEY`를 입력합니다. 기술 조사 모델은 `service/agent/node/technical/model.py`의 `TECHNICAL_MODEL`, 다른 평가 모델은 `OPENAI_MODEL`로 설정합니다.
 
-[입력 형식 안내](docs/EMBEDDING_PIPELINE.md)에 따라 전처리 문서와 `data/processed/documents.json`을 준비한 후 인덱스를 생성합니다. 예시 manifest만 복사해서는 실행할 수 없습니다.
+FAISS 인덱스(`artifacts/faiss/`)는 저장소에 포함되어 있어 별도 색인 없이 검색할 수 있습니다. 전처리 청크(`database/chunks.jsonl`)를 다시 만든 경우에만 인덱스를 재생성합니다. `needs_review=true` 청크는 기본적으로 제외되며, 원본 확인 뒤 `INCLUDE_REVIEW_CHUNKS=true`로 포함할 수 있습니다. 자세한 내용은 [임베딩·검색 안내](docs/EMBEDDING_PIPELINE.md)를 참고하세요.
 
 ```bash
 uv run -m ingest.embedding.build_index
@@ -163,12 +162,21 @@ uv run python scripts/tavily_live_check.py --technology hw_01 --perspective mark
 
 ## 평가 보고서 핵심 포인트
 
-> 전체 그래프 실행으로 보고서를 생성한 뒤 작성합니다.
+2026-09-22 생성 보고서(`report.md`)의 요약입니다. 수치는 각 논문의 실험 조건에서 보고된 값이며, 서로 다른 논문의 배수 수치로 우열을 정하지 않습니다.
 
-- 관점별 핵심 판단 (MLA / CXL-PNM): TRL 추정 범위, 시장성, 이해관계자 반응, 도메인 적용 조건
-- 관점 간 일치하는 평가와 상충하는 평가
-- 적용 조건에 따른 평가 차이 (문맥 길이, 동시 사용자, 기존 모델 전환 여부, 전용 장비 확보 등)
-- 분석의 한계와 추가 확인이 필요한 사항
+| 구분 | DeepSeek MLA (SW) | CXL-PNM (HW) |
+|---|---|---|
+| 핵심 효과 | 기존 모델을 MLA로 전환한 연구(MHA2MLA)에서 Llama2-7B의 KV cache 92.19% 감축, LongBench 성능 저하 약 1%. 전체 데이터의 0.6~1%로 미세조정 | 프로토타입 HW·SW 스택으로 최대 405B 모델·1M 토큰 평가. 특정 조건에서 처리량 최대 21.9배, 토큰당 에너지 최대 60배 절감 보고 |
+| 성숙도 | 실험실 검증 단계. 7B 초과 모델과 텐서 병렬 추론은 미검증 | 프로토타입 단계. 데이터센터 통합·운영 사례 미공개 |
+| 도입 부담 | 모델 구조 변환과 미세조정, 지원 소프트웨어 | 전용 CXL 장치·인프라와 새 소프트웨어 스택 |
+| 추가 확인 | 대형 모델 확장, 텐서 병렬 지원, 장기 운영 사례 | 클라우드 실환경 통합, TCO, 상용 제품 양산 |
+
+- **공통 결론**: 두 기술 모두 논문에서 KV-cache 병목 완화 효과는 확인되지만 **실험실·프로토타입 단계**이며, 대형 모델과 대규모 운영 경험이 부족해 상용 도입 전 추가 검증이 필요합니다.
+- **상충점과 적용 조건**: 도입 부담이 서로 반대편에 있습니다. MLA는 **모델을 바꾸는** 부담(SW), CXL-PNM은 **장비를 들이는** 부담(HW)이 큽니다. "기존 모델을 전환할 수 있는가, 새 인프라를 도입할 수 있는가"에 따라 적합한 기술이 달라집니다.
+- **시장성**: 공개된 가격·공급사·채택 정보가 부족해 판단을 유보했습니다. 시장성 에이전트 실측에서도 대상 기술의 직접 시장 근거는 드물었고, CXL 전체 시장 같은 연관 시장 전망이 주로 확인되었습니다.
+- **결합 가능성**: MLA의 저장량 압축과 CXL-PNM의 근접 연산을 함께 쓰는 방향은 가능성만 확인했으며, 즉시 결합할 수 있다고 가정하지 않습니다.
+
+> 보고서 한계: 이번 보고서의 인용은 논문 청크 중심이며, 시장성·이해관계자 웹 근거의 보고서 반영과 TRL 단계 표기는 그래프 통합 후 보완합니다.
 
 ## Lessons Learned
 
