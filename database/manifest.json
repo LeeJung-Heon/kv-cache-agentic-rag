@@ -5,6 +5,8 @@
     "technology": "MLA",
     "role": "primary",
     "title": "DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model",
+    "url": "https://arxiv.org/abs/2405.04434",
+    "published_at": "2024-05-07",
     "allowed": true,
     "page_count": 52,
     "sha256": "f149f9c09aa8b46ce6a740a255a99b7cc2317ac5b065989339919b7e6c329c9b"
@@ -15,6 +17,8 @@
     "technology": "MLA",
     "role": "adoption",
     "title": "Towards Economical Inference: Enabling DeepSeek’s Multi-Head Latent Attention in Any Transformer-based LLMs",
+    "url": "https://aclanthology.org/2025.acl-long.1597/",
+    "published_at": "2025-07-27",
     "allowed": true,
     "page_count": 16,
     "sha256": "74a76a0dfb54abfeeaae948c297cfa72b251bf6d73e1baf8a94178b9ca1a1730"
@@ -25,6 +29,8 @@
     "technology": "CXL-PNM",
     "role": "primary",
     "title": "Scalable Processing-Near-Memory for 1M-Token LLM Inference: CXL-Enabled KV-Cache Management Beyond GPU Limits",
+    "url": "https://arxiv.org/abs/2511.00321",
+    "published_at": "2025-10-31",
     "allowed": true,
     "page_count": 13,
     "sha256": "794adce50555cc340e9067e927d1822e4c6d3eff0ae39e2c87baa94f787d1061"
@@ -35,6 +41,8 @@
     "technology": "CXL-PNM",
     "role": "domain",
     "title": "Pond: CXL-Based Memory Pooling Systems for Cloud Platforms",
+    "url": "https://doi.org/10.1145/3575693.3578835",
+    "published_at": "2023-03-25",
     "allowed": true,
     "page_count": 14,
     "sha256": "4ff2fbb39ac2dd8e241bd274bf65e29a0a085763aabcfbe016e56d2eecb2b1b6"
@@ -45,6 +53,8 @@
     "technology": "COMMON",
     "role": "serving_baseline",
     "title": "Efficient Memory Management for Large Language Model Serving with PagedAttention",
+    "url": "https://arxiv.org/abs/2309.06180",
+    "published_at": "2023-09-12",
     "allowed": true,
     "page_count": 16,
     "sha256": "55b3b324d779a67c59dac2519445e3b07c14e6ff5c656fadb47a3d7b5997469e"
@@ -55,6 +65,8 @@
     "technology": "COMMON",
     "role": "operation_baseline",
     "title": "Splitwise: Efficient Generative LLM Inference Using Phase Splitting",
+    "url": "https://arxiv.org/abs/2311.18677",
+    "published_at": "2023-11-30",
     "allowed": true,
     "page_count": 15,
     "sha256": "c7baf19039f7b760c5d83fb61324ec4ffdf384e8a047bd46f2c4e2ad85e3531d"

@@ -16,7 +16,9 @@ def make_paper_search_tool(index):
         """Search one of the two KV-cache papers (sw: DeepSeek-V2 MLA, hw: CXL-PNM) and return the top passages
         as Evidence records with page numbers. Use a specific query naming the mechanism, metric, or condition."""
         return [{"id": row["id"], "source_type": "paper", "title": row["title"], "url": row["url"],
-                 "page": row["page"], "published_at": None, "excerpt": row["text"]} for row in index.search(query, side)]
+                 # 문서 manifest의 공개일을 Evidence까지 전달해 최종 보고서 출처에 보존한다.
+                 "page": row["page"], "published_at": row.get("published_at"),
+                 "excerpt": row["text"]} for row in index.search(query, side)]
 
     return paper_search
 
