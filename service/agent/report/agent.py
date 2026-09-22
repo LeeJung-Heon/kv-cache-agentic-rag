@@ -14,7 +14,7 @@ RESULT_FIELDS = (
     "synthesis_result",
 )
 
-
+##리포트 agent
 def report_agent(state: GraphState) -> dict:
     model = get_chat_model()
     results = {field: state.get(field) for field in RESULT_FIELDS}
