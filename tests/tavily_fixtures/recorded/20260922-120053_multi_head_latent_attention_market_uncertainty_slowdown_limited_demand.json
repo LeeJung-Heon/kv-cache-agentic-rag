@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "Multi-head Latent Attention market uncertainty slowdown limited demand",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://arxiv.org/html/2606.20295v2",
+        "title": "Token-Operations-Oriented Inference Optimization Techniques for ...",
+        "score": 0.17964599,
+        "published_date": "Fri, 24 Jul 2026 00:00:00 GMT",
+        "content": "From a technical paradigm perspective, current low-complexity attention mechanisms mainly fall into three categories. The first category consists of full-attention variants with KV compression, where "
+      },
+      {
+        "url": "https://www.mdpi.com/2227-7390/13/10/1551",
+        "title": "Hybrid LSTM–Transformer Architecture with Multi-Scale Feature Fusion for High-Accuracy Gold Futures Price Forecasting",
+        "score": 0.1712139,
+        "published_date": "Thu, 08 May 2025 00:00:00 GMT",
+        "content": "Multi-head attention extends the self-attention mechanism by performing parallel, independent attention computations. This enables the model to learn diverse relational patterns across distinct repres"
+      },
+      {
+        "url": "https://www.bis.org/publications/aer-2024/artificial-intelligence-economy-implications-central-banks",
+        "title": "III. Artificial intelligence and the economy: implications for ...",
+        "score": 0.13947868,
+        "published_date": "Sun, 30 Jun 2024 12:00:00 GMT",
+        "content": "Attention allows each word in a text to be understood in relation to every other word, enhancing the models' capacity to take account of context and relationships within the text. Multi-headed attenti"
+      },
+      {
+        "url": "https://www.facebook.com/groups/3670562573177653/posts/4192500217650550",
+        "title": "Deepseek-v3 model architecture and ai infrastructure",
+        "score": 0.1204287,
+        "published_date": "Tue, 20 May 2025 00:00:00 GMT",
+        "content": "architecture and its AI infrastructure, highlighting key innovations such as Multi-head Latent Attention (MLA) for enhanced memory efficiency, Mixture of Experts (MoE) architectures for optimized comp"
+      },
+      {
+        "url": "https://www.ieee-jas.net/article/doi/10.1109/JAS.2025.125495",
+        "title": "DeepSeek: Paradigm Shifts and Technical Evolution in Large AI ...",
+        "score": 0.10274522,
+        "published_date": "Thu, 01 May 2025 00:00:00 GMT",
+        "content": "DeepSeek, a Chinese artificial intelligence (AI) startup, has released their V3 and R1 series models, which attracted global attention due to their low cost, high performance, and open-source advantag"
+      }
+    ]
+  }
+}

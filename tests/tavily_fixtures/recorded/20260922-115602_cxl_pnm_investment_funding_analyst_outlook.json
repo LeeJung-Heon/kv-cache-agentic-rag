@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "CXL-PNM investment funding analyst outlook",
+    "topic": "news",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.facebook.com/thomas.coughlin.908/posts/the-2026-hot-chips-conference-showed-ways-to-expand-hbm-technology-including-sam/10165776700970407",
+        "title": "2026 Hot Chips Conference highlights HBM technology ... - Facebook",
+        "score": 0.32811,
+        "published_date": "Tue, 25 Aug 2026 00:00:00 GMT",
+        "content": "Tech giants will invest $400B in AI infrastructure this year. Products like HBM-PIM, CXL-PNM, CXL-Memory Expander and Memory Semantic SSDs, solve some of AIs"
+      },
+      {
+        "url": "https://www.facebook.com/windowsforums/posts/samsung-has-confirmed-plans-to-expand-hbm-production-in-south-korea-including-ne/1410705007817537",
+        "title": "Samsung expands HBM production in South Korea for AI memory",
+        "score": 0.19901241,
+        "published_date": "Tue, 15 Sep 2026 02:00:00 GMT",
+        "content": "Products like HBM-PIM, CXL-PNM, CXL-Memory Expander and Memory Semantic SSDs, solve some of AIs most vital problems, while drastically improving performance and"
+      },
+      {
+        "url": "https://www.linkedin.com/posts/the-manila-times_nvidia-faces-high-expectations-as-ai-demand-activity-7498479463383543808-rwZd",
+        "title": "Nvidia faces high expectations for AI-driven earnings - LinkedIn",
+        "score": 0.16289902,
+        "published_date": "Wed, 26 Aug 2026 00:00:00 GMT",
+        "content": "Investor | Allocator | Award winning Investment Advisor | CIO ... 記憶體也是今年明顯的 Scaling 主軸，涵蓋 HBM、Custom HBM、CXL、memory pooling 到 PIM/PNM。"
+      },
+      {
+        "url": "https://www.linkedin.com/posts/azpressurewashcompanyinc_sk-hynix-and-marvell-technology-are-collaborating-activity-7497323512987049984-cU9E",
+        "title": "SK hynix and Marvell Collaborate on AI Memory Solutions - LinkedIn",
+        "score": 0.13675845,
+        "published_date": "Sun, 23 Aug 2026 00:00:00 GMT",
+        "content": "The solution leverages ASIC-based CXL-PNM technology to improve data movement and memory efficiency for demanding AI inference applications."
+      },
+      {
+        "url": "https://www.linkedin.com/posts/tony-c-chen-b8111b4b_caio-agenticai-harnessengineering-activity-7501627932793155584-cRdF",
+        "title": "The Black-Box Employee Paradox: Can Corporations Trust AI?",
+        "score": 0.08085701,
+        "published_date": "Fri, 04 Sep 2026 00:00:00 GMT",
+        "content": "記憶體也是今年明顯的Scaling 主軸，涵蓋HBM、Custom HBM、CXL、memory pooling 到PIM/PNM。業者討論重點進一步聚焦capacity utilization、bandwidth efficiency，以及"
+      }
+    ]
+  }
+}

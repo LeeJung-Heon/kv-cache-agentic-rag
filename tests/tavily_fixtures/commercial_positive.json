@@ -1,0 +1,15 @@
+{
+  "query": "CXL-PNM commercial deployment production adoption",
+  "results": [
+    {"url": "https://example-semi.com/news/cxl-pnm-sample", "title": "CXL-PNM sample shipment announced",
+     "content": "The vendor announced sample shipments of a CXL-based processing-near-memory module for LLM inference.",
+     "score": 0.82, "published_date": "2026-03-10"},
+    {"url": "https://www.example-dc.org/blog/cxl-pilot/", "title": "Cloud pilot of CXL memory",
+     "content": "A cloud operator reported a pilot evaluation of CXL memory expansion for inference servers.",
+     "score": 0.71},
+    {"url": "https://example-news.com/2026/10/cxl-launch", "title": "Future launch article",
+     "content": "Article dated after the evaluation base date.", "score": 0.90, "published_date": "2026-10-01"},
+    {"url": "ftp://example.com/file", "title": "Non-http source", "content": "ignored", "score": 0.99},
+    {"url": "https://example.com/empty", "title": "Empty content", "content": "  ", "score": 0.95}
+  ]
+}

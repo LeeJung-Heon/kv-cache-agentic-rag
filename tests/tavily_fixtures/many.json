@@ -1,0 +1,47 @@
+{
+  "query": "many",
+  "results": [
+    {
+      "url": "https://example-many.com/0",
+      "title": "CXL processing-near-memory report 0",
+      "content": "Report 0 on CXL processing-near-memory adoption.",
+      "score": 0.8,
+      "published_date": "2026-01-01"
+    },
+    {
+      "url": "https://example-many.com/1",
+      "title": "CXL processing-near-memory report 1",
+      "content": "Report 1 on CXL processing-near-memory adoption.",
+      "score": 0.8,
+      "published_date": "2026-01-02"
+    },
+    {
+      "url": "https://example-many.com/2",
+      "title": "CXL processing-near-memory report 2",
+      "content": "Report 2 on CXL processing-near-memory adoption.",
+      "score": 0.8,
+      "published_date": "2026-01-03"
+    },
+    {
+      "url": "https://example-many.com/3",
+      "title": "CXL processing-near-memory report 3",
+      "content": "Report 3 on CXL processing-near-memory adoption.",
+      "score": 0.8,
+      "published_date": "2026-01-04"
+    },
+    {
+      "url": "https://example-many.com/4",
+      "title": "CXL processing-near-memory report 4",
+      "content": "Report 4 on CXL processing-near-memory adoption.",
+      "score": 0.8,
+      "published_date": "2026-01-05"
+    },
+    {
+      "url": "https://example-many.com/5",
+      "title": "CXL processing-near-memory report 5",
+      "content": "Report 5 on CXL processing-near-memory adoption.",
+      "score": 0.8,
+      "published_date": "2026-01-06"
+    }
+  ]
+}

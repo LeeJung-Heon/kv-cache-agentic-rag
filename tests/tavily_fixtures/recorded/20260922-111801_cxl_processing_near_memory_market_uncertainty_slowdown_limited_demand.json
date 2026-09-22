@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "CXL processing-near-memory market uncertainty slowdown limited demand",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://arxiv.org/html/2602.08800v2",
+        "title": "Equilibria: Fair Multi-Tenant CXLMemory Tiering At Scale",
+        "score": 0.34693998,
+        "published_date": "Mon, 20 Apr 2026 00:00:00 GMT",
+        "content": "While CXL memory potentially offers both memory capacity and bandwidth benefits, an analysis of Meta’s production workloads and hardware indicates that additional memory bandwidth from CXL memory has "
+      },
+      {
+        "url": "https://tspasemiconductor.substack.com/p/the-infinite-ai-compute-loop-hbm",
+        "title": "The Infinite AI Compute Loop: HBM Big Three + TSMC × NVIDIA ...",
+        "score": 0.28986442,
+        "published_date": "Mon, 13 Oct 2025 13:27:39 GMT",
+        "content": "CPO’s thermal management and maintainability issues are not yet fully solved.\n\n   CXL’s NUMA software overhead could slow commercialization.\n\n   HBF latency limits its usefulness in training scenarios"
+      },
+      {
+        "url": "https://www.servethehome.com/hyper-scalers-are-using-cxl-to-lower-the-impact-of-ddr5-supply-constraints-marvell-arm",
+        "title": "Hyper-scalers Are Using CXL to Lower the Impact of DDR5 Supply ...",
+        "score": 0.24619834,
+        "published_date": "Tue, 09 Dec 2025 01:01:39 GMT",
+        "content": "#### 10 COMMENTS\n\n1. Without third-party testing of latency, bandwidth and latency while being bandwidth bottlenecked it’s difficult to know whether this is useful or not.\n2. I’m curious how the addit"
+      },
+      {
+        "url": "https://www.marketdataforecast.com/market-reports/europe-high-bandwidth-memory-market",
+        "title": "Europe High Bandwidth Memory Market Size & Growth, 2034",
+        "score": 0.20529656,
+        "published_date": "Wed, 01 Jul 2026 00:00:00 GMT",
+        "content": "### What trends affect the Europe high bandwidth memory market?\n\nHBM4 development, co-packaged optics integration, and CXL memory pooling transform the Europe high bandwidth memory market. Automotive-"
+      },
+      {
+        "url": "https://www.bacloud.com/en/blog/230/when-will-ram-prices-drop-global-memory-market-outlook-20242026.html",
+        "title": "Blog - Bacloud.com",
+        "score": 0.20353372,
+        "published_date": "Wed, 12 Nov 2025 00:00:00 GMT",
+        "content": "pressure, and only slight uncertainty around newer DDR5. This conventional forecast assumed sluggish consumer electronics sales and ongoing capacity expansions would keep the market in oversupply. Of "
+      }
+    ]
+  }
+}

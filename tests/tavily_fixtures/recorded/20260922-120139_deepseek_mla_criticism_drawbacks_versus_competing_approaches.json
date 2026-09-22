@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "DeepSeek MLA criticism drawbacks versus competing approaches",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://planetbanatt.net/articles/mla.html",
+        "title": "Understanding Multi-Head Latent Attention",
+        "score": 0.5697814,
+        "published_date": "Thu, 02 Apr 2026 15:51:22 GMT",
+        "content": "3.   MHA and MLA could perform differently when dealing with actual measured capabilities, rather than simply training data perplexity – it could be that perplexity values do not capture how well the "
+      },
+      {
+        "url": "https://liorsinai.github.io/machine-learning/2025/02/22/mla.html",
+        "title": "DeepSeek's Multi-Head Latent Attention - Lior Sinai",
+        "score": 0.51369345,
+        "published_date": "Mon, 29 Jun 2026 16:16:23 GMT",
+        "content": "The DeepSeek source code meanwhile uses torch.einsum and carries out the multiplications right to left instead of creating a new matrix.3 Here is the relevant code. As far as I know, this has the same"
+      },
+      {
+        "url": "https://www.preprints.org/manuscript/202503.1887",
+        "title": "A Comprehensive Review of DeepSeek: Performance ...",
+        "score": 0.5052006,
+        "published_date": "Wed, 26 Mar 2025 00:00:00 GMT",
+        "content": "DeepSeek has emerged as a strong contender in the landscape of large language models (LLMs), competing with established models like ChatGPT, Claude, and Gemini. This section provides a comparative ana"
+      },
+      {
+        "url": "https://www.turingpost.com/p/deepseek",
+        "title": "Inside DeepSeek Models: MoE, MLA, and Coder-V2 ...",
+        "score": 0.49128565,
+        "published_date": "Wed, 28 Aug 2024 21:00:00 GMT",
+        "content": "> — #(#)\n\nAs we've already noted, DeepSeek LLM was developed to compete with other LLMs available at the time. DeepSeek LLM 67B Chat had already demonstrated significant performance, approaching that "
+      },
+      {
+        "url": "https://newsletter.semianalysis.com/p/deepseek-debates",
+        "title": "DeepSeek Debates: Chinese Leadership On Cost, True Training ...",
+        "score": 0.44565076,
+        "published_date": "Fri, 31 Jan 2025 00:00:00 GMT",
+        "content": "## Multi-head Latent Attention (MLA)\n\nMLA is a key innovation responsible for a significant reduction in the inference price for DeepSeek. The reason is MLA reduces the amount of KV Cache required per"
+      }
+    ]
+  }
+}

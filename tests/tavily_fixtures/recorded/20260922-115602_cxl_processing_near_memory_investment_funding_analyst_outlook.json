@@ -1,0 +1,26 @@
+{
+  "request": {
+    "query": "CXL processing-near-memory investment funding analyst outlook",
+    "topic": "news",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://finance.biggo.com/news/a4b4ee5e-e950-4d13-8110-e473d0a3e4a0",
+        "title": "Ex-SK Hynix Executive's CXL Startup Exina Raises ₩200 Billion in Series B Funding — BigGo Finance",
+        "score": 0.59824234,
+        "published_date": "Sat, 04 Jul 2026 01:45:43 GMT",
+        "content": "Alongside the solid earnings outlook for these major semiconductor companies, the rise of CXL startups like Exina demonstrates that AI infrastructure is evolving beyond simple memory capacity expansio"
+      },
+      {
+        "url": "https://intellectia.ai/blog/7-best-memory-semiconductor-stocks-2026",
+        "title": "7 Best Memory Stocks to Buy Before the 2026 Market Boom",
+        "score": 0.12420263,
+        "published_date": "Tue, 24 Feb 2026 02:00:00 GMT",
+        "content": "Strategic collaborations are the foundations of Marvell's growth strategy. The company acquired XConn Technologies for $540 million to improve its PCIe and CXL switching portfolio. They also bought Ce"
+      }
+    ]
+  }
+}

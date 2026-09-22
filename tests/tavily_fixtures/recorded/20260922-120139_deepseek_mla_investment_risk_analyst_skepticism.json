@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "DeepSeek MLA investment risk analyst skepticism",
+    "topic": "news",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://finance.biggo.com/podcast/ad4cfbbfb3533114",
+        "title": "Brad Gerstner: No AI Bubble, Semis Eat the Nasdaq & AI's Take Off ...",
+        "score": 0.17422788,
+        "published_date": "Thu, 17 Sep 2026 03:00:00 GMT",
+        "content": "multiple previously touched only on “Liberation Day” and after DeepSeek, “both kind of V-bottoms.” The conversation is structured as a pressure test of the bear case. They walk through each July catal"
+      },
+      {
+        "url": "https://www.mordorintelligence.com/industry-reports/digital-english-language-learning-market",
+        "title": "Digital English Language Learning Market Size, Share & 2031 Growth Trends Report",
+        "score": 0.14651443,
+        "published_date": "Fri, 11 Sep 2026 00:00:00 GMT",
+        "content": "February 2025: Sunlands Technology Group has integrated DeepSeek AI into its platform to deliver more personalized and adaptive learning experiences for adult learners in China. This strategic move po"
+      },
+      {
+        "url": "https://www.latent.space/p/ainews-openai-reports-navier-stokes",
+        "title": "[AINews] OpenAI reports Navier-Stokes singularity find in 88 hours using Astra-next, roughly 10,000 agents and 130B tokens (>$40M), a contender for second ever Millennium Prize awarded",
+        "score": 0.122429006,
+        "published_date": "Wed, 09 Sep 2026 00:00:00 GMT",
+        "content": "commenters report roughly `2.24×` speedup and up to `~30%` better token efficiency in benchmarks, though one edit speculates the observed speed gain may be partly due to lower beta concurrency rather "
+      },
+      {
+        "url": "https://m.economictimes.com/tech/artificial-intelligence/trump-dismisses-ai-safety-alarm-says-us-already-has-tools-to-police-industry/articleshow/134251418.cms",
+        "title": "Trump AI safety: Trump dismisses AI safety alarm, says US already has tools to police industry - The Economic Times",
+        "score": 0.040347535,
+        "published_date": "Tue, 15 Sep 2026 03:00:00 GMT",
+        "content": "BenchmarksLIVE\n\nNifty23,446.9548.86\n\nBenchmarksLIVE\n\nSensex74,990.97209.21\n\nFEATURED FUNDS\n\n★★★★★\n\nMotilal Oswal Midcap Fund Direct-Growth\n\n5Y Return\n\n22 %Invest Now\n\nThe Economic Timessection logo\n\n|"
+      },
+      {
+        "url": "https://x.com/theneurondaily/status/2095216879719919931",
+        "title": "The Neuron (@theneurondaily) on X",
+        "score": 0.016748495,
+        "published_date": "Wed, 02 Sep 2026 18:26:46 GMT",
+        "content": "low. The agents are getting cheaper, the guardrails are getting thicker, and the cloud invoices are somehow still getting larger. Let's get into it. [...] low. The agents are getting cheaper, the guar"
+      }
+    ]
+  }
+}

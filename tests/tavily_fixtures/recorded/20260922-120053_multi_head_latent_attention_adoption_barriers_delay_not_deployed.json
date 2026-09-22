@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "Multi-head Latent Attention adoption barriers delay not deployed",
+    "topic": "news",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://arxiv.org/html/2609.19969",
+        "title": "DeepSeek-V4.1-Flash: Pushing the Limits of KV Cache Compression",
+        "score": 0.15149195,
+        "published_date": "Fri, 18 Sep 2026 00:45:06 GMT",
+        "content": "Lee et al. (2026)H. Lee, J. Liu, D. Kim, W. Xia, Z. Zhang, C. S. Xia, and L. Zhang SEC-bench pro: can language models solve long-horizon software security tasks?. arXiv preprint arXiv:2605.26548. Cite"
+      },
+      {
+        "url": "https://www.usenix.org/system/files/osdi26-liu-guangda.pdf",
+        "title": "[PDF] ECHO: Efficient KV Cache Offloading with Lossless Prefetching for ...",
+        "score": 0.14174438,
+        "published_date": "Tue, 15 Sep 2026 02:00:00 GMT",
+        "content": "Fanxu Meng, Pingzhi Tang, Xiaojuan Tang, Zengwei Yao, Xing Sun, and Muhan Zhang. Transmla: Multi-head latent attention is all you need, 2025.\n NVIDIA. Datasheet of nvidia h100 gpu, 2025.\n NVIDIA.\nNvid"
+      },
+      {
+        "url": "https://finance.biggo.com/podcast/7c2800ae2504c952",
+        "title": "Vertical Mobility: Inference from MVP to Trillion-Parameter Workloads — Sitanshu Gupta, CoreWeave｜AI Engineer",
+        "score": 0.10664427,
+        "published_date": "Sun, 20 Sep 2026 03:00:00 GMT",
+        "content": "| High | Moderate | Parallelizes computation, no compression | | Grouped-query attention (GQA) | Near-MHA | Depends on use case | Industry default; Mistral 7B uses 8 KV heads | | Multi-query attention"
+      },
+      {
+        "url": "https://www.mdpi.com/1424-8220/26/18/5725",
+        "title": "Physics-Aware and Intention-Enhanced Trajectory Prediction for Non-Towered Terminal Airspace",
+        "score": 0.094518974,
+        "published_date": "Wed, 09 Sep 2026 00:00:00 GMT",
+        "content": "Different from vanilla multi-head attention, we introduce a flight-physical prior modulation matrix $M_{p h y s}$ to regularize raw attention weights before softmax normalization. $M_{p h y s}$ is con"
+      },
+      {
+        "url": "https://debuglies.com/2026/09/14/pacing-the-frontier-or-ceding-it-why-a-unilateral-western-ai-pause-is-a-strategic-transfer-to-the-prc",
+        "title": "Pacing the Frontier or Ceding It: Why a Unilateral Western AI Pause Is a Strategic Transfer to the PRC",
+        "score": 0.020600608,
+        "published_date": "Mon, 14 Sep 2026 14:12:41 GMT",
+        "content": "### The Next Frontier: Enhancing Astronaut Health with Innovative Lunar Exercise Regimens\n\n     Extract (6-MSITC) in Healthy Older Adults\") Extract (6-MSITC) in Healthy Older Adults\")\n\n    ### Investi"
+      }
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "DeepSeek MLA developer complaints migration problems",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://arxiv.org/pdf/2502.07864",
+        "title": "TransMLA: Multi-Head Latent Attention Is All You Need",
+        "score": 0.39145303,
+        "published_date": "Thu, 12 Jun 2025 00:00:00 GMT",
+        "content": "TransMLA provides a practical path for migrating GQA-based models to the MLA structure, and when combined with DeepSeek’s advanced optimizations—such as FP8 quantization and Multi-Token Prediction—fur"
+      },
+      {
+        "url": "https://docs.vllm.ai/projects/ascend/en/v0.21.0rc/user_guide/release_notes.html",
+        "title": "Release Notes — vllm-ascend",
+        "score": 0.34574616,
+        "published_date": "Wed, 03 Jun 2026 00:00:00 GMT",
+        "content": "The log level for `Failed to import vllm_ascend_C` has been changed to `warning` instead of `error`. #956\n\n`Failed to import vllm_ascend_C`\n`warning`\n`error`\n\nDeepSeek MLA now works with chunked prefi"
+      },
+      {
+        "url": "https://venturebeat.com/infrastructure/how-deepseeks-radical-architecture-is-shattering-silicon-valleys-token-moat",
+        "title": "How DeepSeek's radical architecture is shattering Silicon Valley's ...",
+        "score": 0.21698098,
+        "published_date": "Thu, 28 May 2026 16:57:24 GMT",
+        "content": "Using something called Multi-head Latent Attention (MLA), DeepSeek strips the active memory footprint of its context history down to a fraction of standard models. It achieves this by running a physic"
+      },
+      {
+        "url": "https://introl.com/blog/deepseek-mhc-architecture-breakthrough",
+        "title": "DeepSeek mHC: The Architecture Fix That Could Unlock | Introl Blog",
+        "score": 0.14835568,
+        "published_date": "Sat, 03 Jan 2026 00:00:00 GMT",
+        "content": "DeepSeek tested mHC against baseline architectures and unconstrained Hyper-Connections across three model scales: 3B, 9B, and 27B parameters.52 All models used the DeepSeek-V3 architecture as foundati"
+      },
+      {
+        "url": "https://github.com/MuLabPKU/TransArch",
+        "title": "GitHub - MuLabPKU/TransArch: Design hardware-friendly model ...",
+        "score": 0.13340418,
+        "published_date": "Thu, 09 Jul 2026 00:00:00 GMT",
+        "content": "## ⭐ Star History\n\n## About\n\nDesign hardware-friendly model architectures and migrate existing LLMs with minimal performance loss\n\narxiv.org/abs/2502.07864\n\n### Topics\n\nattentiondeepseekmla\n\n### Resou"
+      }
+    ]
+  }
+}

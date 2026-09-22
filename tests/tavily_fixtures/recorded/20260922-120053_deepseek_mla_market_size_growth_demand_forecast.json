@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "DeepSeek MLA market size growth demand forecast",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://kenhuangus.substack.com/p/deepseek-v4-the-next-frontier-of",
+        "title": "DeepSeek V4: The Next Frontier of Open-Source AI",
+        "score": 0.49187145,
+        "published_date": "Fri, 24 Apr 2026 00:00:00 GMT",
+        "content": "The company’s trajectory has been remarkable. DeepSeek V2, released in May 2024, introduced the Multi-Head Latent Attention (MLA) mechanism and a fine-grained Mixture-of-Experts (MoE) architecture tha"
+      },
+      {
+        "url": "https://www.brookings.edu/articles/why-ai-demand-for-energy-will-continue-to-increase",
+        "title": "Why AI demand for energy will continue to increase | Brookings",
+        "score": 0.38880423,
+        "published_date": "Tue, 12 Aug 2025 00:00:00 GMT",
+        "content": "For the energy world, the expected surge in the amount of new electric power generation required to support the rapid expansion of U.S. data centers over the balance of the decade was back on the tabl"
+      },
+      {
+        "url": "https://medium.com/@joycebirkins/deepseek-4-official-papers-overview-deepseek-moe-mla-mtp-distillation-49a97b3b90a8",
+        "title": "Deepseek MoE, MLA, MTP, Distillation | by Joyce Birkins - Medium",
+        "score": 0.31655988,
+        "published_date": "Thu, 06 Feb 2025 03:31:05 GMT",
+        "content": "In a standard Transformer, the multi-head attention mechanism requires storing the historically generated Key and Value vectors (i.e., KV cache) for each attention head separately. As the sequence len"
+      },
+      {
+        "url": "https://www.preprints.org/manuscript/202503.1887",
+        "title": "A Comprehensive Review of DeepSeek: Performance ...",
+        "score": 0.29579458,
+        "published_date": "Wed, 26 Mar 2025 00:00:00 GMT",
+        "content": "DeepSeek’s emergence has had a profound impact on the global AI market. The release of DeepSeek-R1 triggered a $1 trillion sell-off in tech stocks, including a 17% drop in Nvidia’s share price, result"
+      },
+      {
+        "url": "https://newsletter.semianalysis.com/p/deepseek-debates",
+        "title": "DeepSeek Debates: Chinese Leadership On Cost, True Training ...",
+        "score": 0.29410395,
+        "published_date": "Fri, 31 Jan 2025 00:00:00 GMT",
+        "content": "that at cost. MLA specifically caught the eyes of many leading US labs. MLA was released in DeepSeek V2, released in May 2024. DeepSeek has also enjoyed more efficiencies for inference workloads with "
+      }
+    ]
+  }
+}

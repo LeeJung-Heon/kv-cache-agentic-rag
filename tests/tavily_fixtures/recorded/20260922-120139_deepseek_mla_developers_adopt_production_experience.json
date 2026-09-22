@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "DeepSeek MLA developers adopt production experience",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://arxiv.org/html/2412.19437v1",
+        "title": "DeepSeek-V3 Technical Report - arXiv",
+        "score": 0.4942147,
+        "published_date": "Mon, 24 Aug 2026 18:38:18 GMT",
+        "content": "#### 2.1.1 Multi-Head Latent Attention\n\nFor attention, DeepSeek-V3 adopts the MLA architecture. Let d denote the embedding dimension, n_{h} denote the number of attention heads, d_{h} denote the dimen"
+      },
+      {
+        "url": "https://www.amd.com/en/developer/resources/technical-articles/amd-instinct-gpus-power-deepseek-v3-revolutionizing-ai-development-with-sglang.html",
+        "title": "AMD Instinct™ GPUs Power DeepSeek-V3: Revolutionizing AI Development with SGLang",
+        "score": 0.45784017,
+        "published_date": "Tue, 07 Jan 2025 00:00:00 GMT",
+        "content": "The DeepSeek-V3 model is a strong Mixture-of-Experts (MoE) language model with 671B total parameters with 37B activated for each token. To achieve efficient inference and cost-effective training, Deep"
+      },
+      {
+        "url": "https://fireworks.ai/blog/fireworks-ai-developer-cloud",
+        "title": "Faster, more efficient DeepSeek on the Fireworks Developer Cloud",
+        "score": 0.4547875,
+        "published_date": "Tue, 18 Mar 2025 00:00:00 GMT",
+        "content": "•Fine-tuning DeepSeek R1 and V3 through quantization-aware tuning\n •Controllable reasoning effort: shorter, optimized Chain-of-Thought (CoT) with `reasoning_effort = low`\n •Additional specialized mode"
+      },
+      {
+        "url": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+        "title": "deepseek-ai/DeepSeek-V3 - Hugging Face",
+        "score": 0.39040667,
+        "published_date": "Thu, 27 Nov 2025 10:40:24 GMT",
+        "content": "We present DeepSeek-V3, a strong Mixture-of-Experts (MoE) language model with 671B total parameters with 37B activated for each token.\nTo achieve efficient inference and cost-effective training, DeepS"
+      },
+      {
+        "url": "https://www.bentoml.com/blog/the-complete-guide-to-deepseek-models-from-v3-to-r1-and-beyond",
+        "title": "The Complete Guide to DeepSeek Models: V3, R1, V4 and ...",
+        "score": 0.3887346,
+        "published_date": "Fri, 24 Apr 2026 00:00:00 GMT",
+        "content": "For teams that need better scalability and reliability, BentoML is the recommended solution. It supports multi-GPU, BYOC, and multi-cloud setups for production-grade DeepSeek deployments. Schedule a c"
+      }
+    ]
+  }
+}

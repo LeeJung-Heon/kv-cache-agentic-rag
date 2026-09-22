@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "CXL processing-near-memory advantages compared to alternatives",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.linkedin.com/posts/ravichandran-paramasivam-a12b3438_cxl-cxlpnm-cmmdc-activity-7405479258913050624-ljZJ",
+        "title": "CXL-PNM: When Your Memory Becomes a Mini-Accelerator.",
+        "score": 0.7187726,
+        "published_date": "Sat, 13 Dec 2025 05:30:42 GMT",
+        "content": "such as All Reduce function to In Network Collectives Library (INCL - let us say for now). In simple, the network as the computer will collect all the weights from GPUs/TPUSs and reduce them as requir"
+      },
+      {
+        "url": "https://lenovopress.lenovo.com/lp2146-introduction-to-cxl-20-memory",
+        "title": "Introduction To CXL 2.0 Memory - Lenovo Press",
+        "score": 0.6222074,
+        "published_date": "Mon, 24 Feb 2025 00:00:00 GMT",
+        "content": "Host main memory can be accessed in nanoseconds but is limited in size due to memory slot count and cost. Disk access times are around 1000x longer - a massive performance gap. This gap can be filled "
+      },
+      {
+        "url": "https://www.innodisk.com/en/blog/how-cxl-breaks-memory-bottleneck",
+        "title": "How CXL Breaks the Memory Bottleneck in AI Servers - Innodisk",
+        "score": 0.61972505,
+        "published_date": "Wed, 20 May 2026 00:00:00 GMT",
+        "content": "Beyond simply bypassing the motherboard's DIMM slot count, Innodisk CXL solutions offer several key architectural advantages:\n\n1. Memory Pooling: Addressing the NUMA Challenge\n\nCXL enables multiple ho"
+      },
+      {
+        "url": "https://introl.com/blog/cxl-4-0-infrastructure-planning-guide-memory-pooling-2025",
+        "title": "CXL 4.0 Infrastructure Planning Guide | Introl Blog",
+        "score": 0.59372765,
+        "published_date": "Sun, 29 Mar 2026 00:00:00 GMT",
+        "content": "Two H100 GPUs (80GB each) running OPT-6.7B\n KV cache offloaded to shared CXL memory pool\n 3.8x speedup vs 200G RDMA\n 6.5x speedup vs 100G RDMA\n >5x improvement vs SSD-based KV cache\n\nResearch from aca"
+      },
+      {
+        "url": "https://arxiv.org/html/2508.15980v1",
+        "title": "CXLAimPod: CXL Memory is all you need in AI era",
+        "score": 0.5614318,
+        "published_date": "Thu, 21 Aug 2025 00:00:00 GMT",
+        "content": "The HNSW algorithm exhibits mixed read-write patterns during search operations: reads dominate when traversing the hierarchical graph structure to locate nearest neighbors, while writes occur during d"
+      }
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "Multi-head Latent Attention developers adopt production experience",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://arxiv.org/pdf/2502.07864",
+        "title": "TransMLA: Multi-Head Latent Attention Is All You Need",
+        "score": 0.46935064,
+        "published_date": "Thu, 12 Jun 2025 00:00:00 GMT",
+        "content": "To account for the effects of both the prefilling and decoding stages, we adopt a setting where the input and output lengths are equal. For instance, with a total context length of 1k, we set the inpu"
+      },
+      {
+        "url": "https://arxiv.org/html/2502.14837v1",
+        "title": "Enabling DeepSeek's Multi-Head Latent Attention in Any ...",
+        "score": 0.42577294,
+        "published_date": "Thu, 20 Feb 2025 00:00:00 GMT",
+        "content": "Multi-head Latent Attention (MLA) is an innovative architecture proposed by DeepSeek,\ndesigned to ensure efficient and economical inference by significantly compressing the Key-Value (KV) cache into a"
+      },
+      {
+        "url": "https://magazine.sebastianraschka.com/p/visual-attention-variants",
+        "title": "A Visual Guide to Attention Variants in Modern LLMs - Ahead of AI",
+        "score": 0.33895233,
+        "published_date": "Sun, 22 Mar 2026 00:00:00 GMT",
+        "content": "# 5. DeepSeek Sparse Attention (DSA)\n\nDeepSeek Sparse Attention is one of the architectural changes that appeared in the DeepSeek V3.2 line and later showed up again in GLM-5.\n\nSpecifically, DeepSeek "
+      },
+      {
+        "url": "https://www.bakerbotts.com/thought-leadership/publications/2025/january/what-is-deepseek-and-why-does-it-matter",
+        "title": "What is DeepSeek, and why does it matter? | Thought Leadership",
+        "score": 0.29721537,
+        "published_date": "Wed, 29 Jan 2025 00:00:00 GMT",
+        "content": "Improvements in Data Processing – DeepSeek V3 incorporates a technique called Multi-Head Latent Attention (MLA) which provides a much more efficient way to process large amounts of data during inferen"
+      },
+      {
+        "url": "https://www.louisbouchard.ai/flashmla",
+        "title": "How FlashMLA Cuts KV Cache Memory to 6.7% | What's AI",
+        "score": 0.28216946,
+        "published_date": "Wed, 19 Mar 2025 15:11:01 GMT",
+        "content": "This is where Multi-head Latent Attention (MLA) came in. Instead of storing detailed Keys and Values for every token, MLA compresses attention history into compact “latent” representations. The idea i"
+      }
+    ]
+  }
+}

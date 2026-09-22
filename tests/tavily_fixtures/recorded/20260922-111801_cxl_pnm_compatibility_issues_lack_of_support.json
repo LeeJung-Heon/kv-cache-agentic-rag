@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "CXL-PNM compatibility issues lack of support",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://arxiv.org/pdf/2404.19381",
+        "title": "[PDF] Low-overhead General-purpose Near-Data Processing in CXL ...",
+        "score": 0.61668247,
+        "published_date": "Mon, 23 Sep 2024 00:00:00 GMT",
+        "content": "memory cannot be directly accessed from an NDP kernel using CXL.mem due to the lack of support by the protocol, it is possible to adopt page-fault handling support from GPUs with PCIe and host driver/"
+      },
+      {
+        "url": "https://fast.ece.illinois.edu/publications",
+        "title": "Publications",
+        "score": 0.27774763,
+        "published_date": "Tue, 15 Jul 2025 00:00:00 GMT",
+        "content": "AxDIMM. Lastly, we implement a CXLPNM software stack that supports seamless and transparent use of CXL-PNM for Python-based LLM programs. Our evaluation shows that a CXL-PNM appliance with 8 CXL-PNM d"
+      },
+      {
+        "url": "https://www.linkedin.com/posts/ravichandran-paramasivam-a12b3438_cxl-cxlpnm-cmmdc-activity-7405479258913050624-ljZJ",
+        "title": "CXL-PNM: When Your Memory Becomes a Mini-Accelerator.",
+        "score": 0.27513263,
+        "published_date": "Sat, 13 Dec 2025 05:30:42 GMT",
+        "content": "from ~10% to ~80% of local DRAM Bandwidth saturation with as few as 4 concurrent threads Despite offering 4–8× the capacity of a DDR DIMM, many CXL devices only provide DIMM-level parallelism, not soc"
+      },
+      {
+        "url": "https://www.servethehome.com/hyper-scalers-are-using-cxl-to-lower-the-impact-of-ddr5-supply-constraints-marvell-arm",
+        "title": "Hyper-scalers Are Using CXL to Lower the Impact of DDR5 Supply ...",
+        "score": 0.15247369,
+        "published_date": "Tue, 09 Dec 2025 01:01:39 GMT",
+        "content": "What I find puzzling is the A model. Unless they built it for a particular customer and are testing the waters to see if there are any other takers. It’s a very heavyweight PIM/PNM- in fact it’s a lot"
+      },
+      {
+        "url": "https://www.usenix.org/system/files/atc25-wu-puqing.pdf",
+        "title": "[PDF] Turbocharge ANNS on Real Processing-in-Memory by Enabling ...",
+        "score": 0.14717507,
+        "published_date": "Wed, 09 Jul 2025 00:00:00 GMT",
+        "content": "Sang-Soo Park, KyungSoo Kim, Jinin So, Jin Jung, Jonggeon Lee, Kyoungwan Woo, Nayeon Kim, Younghyun Lee, Hyungyo Kim, Yongsuk Kwon, et al. An lpddr-based cxl-pnm platform for tco-efficient inference o"
+      }
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "DeepSeek MLA adoption barriers delay not deployed",
+    "topic": "news",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.developingtelecoms.com/telecom-technology/enterprise-ecosystems/20826-robi-axiata-and-grameenphone-join-bangladeshs-ai-subscription-race.html",
+        "title": "Robi Axiata and Grameenphone join Bangladesh's AI subscription race - developingtelecoms.com",
+        "score": 0.12912819,
+        "published_date": "Tue, 15 Sep 2026 04:21:58 GMT",
+        "content": "## Robi Axiata and Grameenphone join Bangladesh's AI subscription race. Bangladesh telcos Grameenphone and Robi Axiata have launched separate AI subscription services that aim to make overseas AI mode"
+      },
+      {
+        "url": "https://developingtelecoms.com/telecom-technology/enterprise-ecosystems/20826-robi-axiata-and-grameenphone-join-bangladeshs-ai-subscription-race.html",
+        "title": "Robi Axiata and Grameenphone join Bangladesh's AI subscription race - Developing Telecoms",
+        "score": 0.12873335,
+        "published_date": "Tue, 15 Sep 2026 04:21:58 GMT",
+        "content": "## Robi Axiata and Grameenphone join Bangladesh's AI subscription race. Bangladesh telcos Grameenphone and Robi Axiata have launched separate AI subscription services that aim to make overseas AI mode"
+      },
+      {
+        "url": "https://wccftech.com/deepseek-engineer-stuck-in-self-destructive-loop-says-building-ai-to-replace-him-is-the-only-way-to-stop-openai-anthropic-from-creating-a-cyberpunk-2077-society/",
+        "title": "DeepSeek Engineer Stuck In Self Destructive Loop – Says Building AI To Replace Him Is The Only Way To Stop OpenAI & Anthropic From Creating A “Cyberpunk 2077” Society - Wccftech",
+        "score": 0.063163914,
+        "published_date": "Wed, 16 Sep 2026 13:09:10 GMT",
+        "content": "# DeepSeek Engineer Stuck In Self Destructive Loop – Says Building AI To Replace Him Is The Only Way To Stop OpenAI & Anthropic From Creating A “Cyberpunk 2077” Society. An engineer working for Chines"
+      },
+      {
+        "url": "https://channellife.co.uk/story/insight-backs-scotland-s-ai-scaling-adoption-programme",
+        "title": "Insight backs Scotland's AI scaling adoption programme - ChannelLife UK",
+        "score": 0.02869897,
+        "published_date": "Thu, 17 Sep 2026 07:00:00 GMT",
+        "content": "Insight has been appointed by Scottish Enterprise to support delivery of the AI Scaling Adoption Programme across Scotland, which is funded by the Scottish Government. It will work with Scottish Enter"
+      },
+      {
+        "url": "https://www.fiercehealthcare.com/regulatory/delays-tech-failures-abound-cms-wiser-ai-prior-auth-pilot-documents-show",
+        "title": "Delays, tech failures abound in CMS' WISeR AI prior auth pilot, documents show - Fierce Healthcare",
+        "score": 0.026197992,
+        "published_date": "Tue, 15 Sep 2026 21:00:00 GMT",
+        "content": "# Delays, tech failures abound in CMS' WISeR AI prior auth pilot, documents show. Centers for Medicare & Medicaid Services (CMS) Prior Authorization Innovaccer Medicare. Roughly 1,000 pages of documen"
+      }
+    ]
+  }
+}

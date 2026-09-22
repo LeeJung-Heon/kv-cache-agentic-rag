@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "Multi-head Latent Attention investment risk analyst skepticism",
+    "topic": "news",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://finance.yahoo.com/technology/article/ai-isnt-coming-to-destroy-humanity-but-experts-say-the-real-threats-are-here-165308199.html",
+        "title": "AI isn't coming to destroy humanity, but experts say the real threats are here - Yahoo Finance",
+        "score": 0.06428255,
+        "published_date": "Fri, 18 Sep 2026 05:19:04 GMT",
+        "content": "Earlier this week, Anthropic (ANTH.PVT) CEO Dario Amodei penned a lengthy essay calling for a slowdown in the pace of the development of frontier AI models, after Anthropic researcher Jacob Coxon post"
+      },
+      {
+        "url": "https://www.newsweek.com/confusing-innovation-with-certainty-a-major-ai-investment-mistake-opinion-12454047",
+        "title": "The greatest AI investment mistake is confusing innovation with certainty - Newsweek",
+        "score": 0.034103718,
+        "published_date": "Thu, 17 Sep 2026 16:59:00 GMT",
+        "content": "The greatest financial mistake investors can make during the AI revolution is believing that because AI will transform the world, every investment connected to it is automatically worth any price. Mil"
+      },
+      {
+        "url": "https://www.bloomberg.com/news/features/2026-09-20/ai-boom-is-making-diversifying-investments-tough-for-wall-street",
+        "title": "AI Risk Is Everywhere and It's Making Billion Dollar Funds Nervous - Bloomberg.com",
+        "score": 0.03277815,
+        "published_date": "Sun, 20 Sep 2026 21:00:01 GMT",
+        "content": "# AI Risk Is Everywhere and It's Making Billion Dollar Funds Nervous. Pensions and sovereign wealth funds with many billions to invest are finding the diversification they once relied on is an illusio"
+      },
+      {
+        "url": "https://simplywall.st/stocks/us/diversified-financials/nasdaq-morn/morningstar/news/how-investors-may-respond-to-morningstar-morn-pitchbook-data",
+        "title": "How Investors May Respond To Morningstar (MORN) PitchBook Data Integration - simplywall.st",
+        "score": 0.030795148,
+        "published_date": "Wed, 16 Sep 2026 16:46:56 GMT",
+        "content": "* Morningstar's PitchBook unit has had its private market firmographic data integrated into OpenAI's new ChatGPT for Financial Services platform, creating a new way for analysts to run research and wo"
+      },
+      {
+        "url": "https://pitchbook.com/news/reports/q3-2026-anthropic-what-to-look-for-in-the-s-1",
+        "title": "Q3 2026 Anthropic: What to Look For in the S-1 - PitchBook",
+        "score": 0.026741542,
+        "published_date": "Wed, 16 Sep 2026 20:33:06 GMT",
+        "content": "# Anthropic: What to Look For in the S-1. ### Anthropic’s growth supports a premium valuation, but the current evidence supports roughly $1.4 trillion to $1.6 trillion rather than $2 trillion. Anthrop"
+      }
+    ]
+  }
+}

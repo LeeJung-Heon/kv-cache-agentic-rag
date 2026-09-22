@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "CXL-PNM developer complaints migration problems",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.aspdac.com/aspdac2024/technical_program/ASP-DAC%202024%20Program%20Book.pdf",
+        "title": "[PDF] PROGRAM - ASP-DAC",
+        "score": 0.20606238,
+        "published_date": "Thu, 25 Jan 2024 00:00:00 GMT",
+        "content": "current DIMM-based memory solution and CXL-PNM is the world first CXL-based PNM solution for GPT inference acceleration. By adopting CXL protocol to memory solutions, our memory solutions will expand "
+      },
+      {
+        "url": "https://arxiv.org/pdf/2412.20249",
+        "title": "[PDF] Next-Gen Computing Systems with Compute Express Link - arXiv",
+        "score": 0.1759628,
+        "published_date": "Thu, 20 Feb 2025 00:00:00 GMT",
+        "content": "Nam Sung Kim et al. in collaboration with Samsung, pro-pose CXL-PNM , a near-data computing platform based on LPDDR, aimed at providing high-performance inference acceleration for Transformer-based la"
+      },
+      {
+        "url": "https://introl.com/blog/cxl-4-0-infrastructure-planning-guide-memory-pooling-2025",
+        "title": "CXL 4.0 Infrastructure Planning Guide | Introl Blog",
+        "score": 0.14909752,
+        "published_date": "Sun, 29 Mar 2026 00:00:00 GMT",
+        "content": "For KV cache that tolerates 200-500 ns latency, CXL offers 4-5x cost reduction vs keeping data in GPU VRAM while delivering 200-500x lower latency than SSD offloading.38\n\n### Migration Strategy\n\nPhase"
+      },
+      {
+        "url": "https://www.asplos-conference.org/asplos2026/program/index.html",
+        "title": "Program – ASPLOS 2026",
+        "score": 0.14089116,
+        "published_date": "Wed, 04 Feb 2026 00:00:00 GMT",
+        "content": "PIPM: Partial and Incremental Page Migration for Multi-host CXL Disaggregated Shared Memory\n\nGangqi Huang (University of California, Santa Cruz), Heiner Litz (University of California, Santa Cruz), Yu"
+      },
+      {
+        "url": "https://dl.acm.org/doi/10.1145/3821219",
+        "title": "AdaptiveKV: Accelerating KV Cache Offloading with a Bandwidth ...",
+        "score": 0.116754174,
+        "published_date": "Fri, 07 Aug 2026 00:00:00 GMT",
+        "content": "Google Scholar\n\n   [a [...] ] and near-memory computation](\n   [b [...] real hardware platform. The CXL-PNM study](\n   [c [...] ] and CXL-PNM]( [...] Google Scholar\n\nRui Xie, Asad Ul Haq, Linsen Ma, Y"
+      }
+    ]
+  }
+}
