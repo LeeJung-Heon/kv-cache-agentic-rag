@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "DeepSeek MLA investment funding analyst outlook",
+    "topic": "news",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.mordorintelligence.com/industry-reports/foundation-model-market",
+        "title": "Foundation Model Market Size, Share & 2031 Growth Trends Report",
+        "score": 0.18382828,
+        "published_date": "Thu, 09 Jul 2026 00:00:00 GMT",
+        "content": "+ 6.4.21 DeepSeek (Hangzhou DeepSeek Artificial Intelligence Co., Ltd.) [...] OpenAI LLC\n Microsoft Corporation\n Google LLC\n Amazon Web Services, Inc.\n Meta Platforms, Inc.\n Anthropic PBC\n NVIDIA Corp"
+      },
+      {
+        "url": "https://simplywall.st/stocks/tw/semiconductors/twse-2454/mediatek-shares/future",
+        "title": "MediaTek (TWSE:2454) Stock Forecast & Analyst Predictions - Simply Wall St",
+        "score": 0.14032473,
+        "published_date": "Wed, 02 Sep 2026 21:00:00 GMT",
+        "content": "acceleration for former and convolutional neural network (CNN) models. Additionally, Genio 720 and Genio 510 offer enhanced memory performance with up to 16GB of LPDDR5 memory to support data-intensiv"
+      },
+      {
+        "url": "https://www.facebook.com/wccftech/posts/deepseeks-v41-flash-reportedly-outperforms-openais-gpt-56-sol-and-anthropics-cla/1653885530071699",
+        "title": "Wccftech - DeepSeek’s V4.1 Flash reportedly outperforms...",
+        "score": 0.13738221,
+        "published_date": "Thu, 10 Sep 2026 19:00:00 GMT",
+        "content": "'%3E%3Cpath d='M15.9972 7.9996c0 4.418-3.5815 7.9996-7.9996 7.9996-4.418 0-7.9996-3.5816-7.9996-7.9996S3.5796 0 7.9976 0c4.4181 0 7.9996 3.5815 7.9996 7.9996Z' fill='url(%23paint0_linear_15251_63610)'"
+      },
+      {
+        "url": "https://finance.biggo.com/podcast/fb7b412ac0adf822",
+        "title": "The AI Boom Looks Exactly Like 1999. Here's Who Pays. | Office Hours",
+        "score": 0.042774238,
+        "published_date": "Sun, 20 Sep 2026 19:00:00 GMT",
+        "content": "self-defeating. Whether the US buildout outruns its political friction, whether Chinese algorithmic efficiency (MLA, gated delta net) closes the capability gap faster than export controls widen it, an"
+      },
+      {
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13236793",
+        "title": "The Dual Role of Interleukin-10 in Sepsis: Research Progress and Therapeutic Prospects",
+        "score": 0.02088626,
+        "published_date": "Wed, 22 Apr 2026 00:00:00 GMT",
+        "content": "## On this page\n\n   Abstract\n   Introduction\n   The Biological Basis and Sources of IL-10 Production\n   The Dual Immunoregulatory Role of IL-10 in the Course of Sepsis\n   Regulatory Mechanisms of IL-1"
+      }
+    ]
+  }
+}

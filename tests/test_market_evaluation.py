@@ -266,6 +266,27 @@ class LabelAndCitationRuleTest(unittest.TestCase):
         self.assertTrue(any("scope direct→adjacent" in item and "hw_01 / 시장 규모·성장성" in item
                             for item in result["limitations"]))
 
+    def test_technology_term_matches_with_korean_particle(self):
+        # 실측 재생에서 "MLA는", "PNM은"이 \b 경계 때문에 고유어로 인식되지 않았다.
+        from service.agent.tavily.evaluation import missing_tech_terms
+        cited = [{"title": "", "excerpt": "The CXL-PNM module and DeepSeek MLA design"}]
+        for tid, claim in (("hw_01", "CXL-PNM은 샘플 출하"), ("sw_01", "MLA는 KV 캐시를 압축"),
+                           ("sw_01", "DeepSeek-V2 MLA(다중 헤드 잠재 주의)")):
+            f = AnalysisDraft(status="complete", summary="", limitations=[], next_queries=[],
+                              findings=[finding(tid, "생태계", ["web_1"], claim=claim)]).findings[0]
+            self.assertEqual(missing_tech_terms(f, cited), [], claim)
+        f.claim = "formlab의 mlas 제품"  # 다른 단어의 일부는 고유어가 아니다
+        self.assertEqual(missing_tech_terms(f, cited), ["sw_01"])
+
+    def test_direct_scope_requires_technology_term_in_claim(self):
+        # 실측: 근거 본문이 MLA를 언급해도 claim이 "DeepSeek 앱 다운로드 1위"면 MLA 시장의 직접 근거가 아니다.
+        def make(context):
+            sample = ref_by_url(context, "cxl-pnm-sample")
+            return [finding("hw_01", "생태계", [sample], claim=f"벤더 샘플 출하 [{sample}]", stance="mixed")]
+        result, _ = run(FakeAnalyst(only("hw_01", "생태계", make)))
+        self.assertEqual(result["findings"][0]["scope"], "adjacent")
+        self.assertTrue(any("claim 또는 인용 근거에 hw_01 고유어 없음" in item for item in result["limitations"]))
+
     def test_future_year_or_forecast_term_becomes_forecast(self):
         claims = {"시장 규모·성장성": "2030년 123억 달러", "생태계": "연평균 30% 성장 전망", "상용화·채택": "2025년 샘플 출하"}
 

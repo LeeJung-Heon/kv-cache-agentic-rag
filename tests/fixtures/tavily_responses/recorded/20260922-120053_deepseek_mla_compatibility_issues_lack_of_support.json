@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "DeepSeek MLA compatibility issues lack of support",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.alphaxiv.org/abs/2502.14837",
+        "title": "Towards Economical Inference: Enabling DeepSeek's Multi ...",
+        "score": 0.6816637,
+        "published_date": "Fri, 03 Oct 2025 00:00:00 GMT",
+        "content": "3. For larger models that require tensor parallelism, the current lack of inference GPU kernels for MLA makes it difficult to evaluate MLA’s advantages (DeepSeek released FlashMLA yesterday, and we wi"
+      },
+      {
+        "url": "https://arxiv.org/html/2502.07864v4",
+        "title": "TransMLA: Migrating GQA Models to MLA with Full DeepSeek Compatibility and Speedup",
+        "score": 0.6255073,
+        "published_date": "Wed, 28 May 2025 00:00:00 GMT",
+        "content": "Our team has already identified the following issues. We appreciate your time reviewing and reporting rendering errors we\nmay not have found yet. Your efforts will help us improve the HTML versions fo"
+      },
+      {
+        "url": "https://aclanthology.org/2025.acl-long.1597.pdf",
+        "title": "Enabling DeepSeek's Multi-Head Latent Attention in Any ...",
+        "score": 0.5440511,
+        "published_date": "Thu, 02 Apr 2026 14:07:46 GMT",
+        "content": "The inherent incompatibility between MLA’s inference acceleration mechanism and RoPE ne-cessitates architectural compromises. DeepSeek’s solution preserves PEs in limited dimensions while compressing "
+      },
+      {
+        "url": "https://medium.com/data-science/deepseek-v3-explained-1-multi-head-latent-attention-ed6bee2a67c4",
+        "title": "DeepSeek-V3 Explained 1: Multi-head Latent Attention - Medium",
+        "score": 0.5325473,
+        "published_date": "Mon, 07 Apr 2025 16:09:58 GMT",
+        "content": "This is why we call this rotation matrix as position-dependent: at each position (or each pair), we will apply a different rotation matrix where the rotation angle is determined by position.\n\nRoPE is "
+      },
+      {
+        "url": "https://www.lmsys.org/blog/2024-09-04-sglang-v0-3",
+        "title": "SGLang v0.3 Release: 7x Faster DeepSeek MLA, 1.5x Faster torch ...",
+        "score": 0.52027756,
+        "published_date": "Wed, 04 Sep 2024 00:00:00 GMT",
+        "content": "that lack this feature can only run with a 4K context length. You can launch the model with [...] Google's Gemma-2 model uses interleaved window attention to reduce computational complexity for long c"
+      }
+    ]
+  }
+}

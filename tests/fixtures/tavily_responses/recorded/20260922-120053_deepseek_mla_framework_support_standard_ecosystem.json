@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "DeepSeek MLA framework support standard ecosystem",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://venturebeat.com/infrastructure/how-deepseeks-radical-architecture-is-shattering-silicon-valleys-token-moat",
+        "title": "How DeepSeek’s radical architecture is shattering Silicon Valley's token moat | VentureBeat",
+        "score": 0.60750073,
+        "published_date": "Thu, 28 May 2026 16:57:24 GMT",
+        "content": "Using something called Multi-head Latent Attention (MLA), DeepSeek strips the active memory footprint of its context history down to a fraction of standard models. It achieves this by running a physic"
+      },
+      {
+        "url": "https://github.com/deepseek-ai/deepseek-v3",
+        "title": "GitHub - deepseek-ai/DeepSeek-V3 · GitHub",
+        "score": 0.5122296,
+        "published_date": "Thu, 26 Dec 2024 00:00:00 GMT",
+        "content": "### 6.2 Inference with SGLang (recommended)\n\nSGLang currently supports MLA optimizations, DP Attention, FP8 (W8A8), FP8 KV Cache, and Torch Compile, delivering state-of-the-art latency and throughput "
+      },
+      {
+        "url": "https://www.digitalapplied.com/blog/deepseek-v4-trillion-parameter-open-source-multimodal",
+        "title": "DeepSeek V4: Trillion-Parameter Open-Source AI",
+        "score": 0.50915486,
+        "published_date": "Wed, 04 Mar 2026 00:00:00 GMT",
+        "content": "The open-source ecosystem has already demonstrated remarkable speed in adapting DeepSeek models. Within weeks of V3's release, the community produced quantized versions (GGUF, GPTQ, AWQ, EXL2) runnabl"
+      },
+      {
+        "url": "https://local-ai-zone.github.io/blog/flash-tier-ai-models-comparative-analysis.html",
+        "title": "Flash-Tier AI Models: DeepSeek V4 vs GLM-5.3 vs Qwen3.8",
+        "score": 0.4646835,
+        "published_date": "Thu, 27 Aug 2026 00:00:00 GMT",
+        "content": "This convergence did not happen by accident. The constraint that all three labs are optimizing against is the same: 1M-token context windows require either quadratic attention (computationally intract"
+      },
+      {
+        "url": "https://newsletter.semianalysis.com/p/deepseek-debates",
+        "title": "DeepSeek Debates: Chinese Leadership On Cost, True Training ...",
+        "score": 0.42405477,
+        "published_date": "Fri, 31 Jan 2025 00:00:00 GMT",
+        "content": "## Multi-head Latent Attention (MLA)\n\nMLA is a key innovation responsible for a significant reduction in the inference price for DeepSeek. The reason is MLA reduces the amount of KV Cache required per"
+      }
+    ]
+  }
+}

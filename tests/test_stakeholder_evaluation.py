@@ -70,9 +70,11 @@ class StakeholderEvaluationTest(unittest.TestCase):
     def test_scope_direct_when_technology_term_present(self):
         def make(context):
             ref = next(e["id"] for e in context["web_evidence"] if "cxl-pnm-sample" in e["url"])
-            return [finding("hw_01", "투자 업계", [ref], scope=None, stance="positive")]
+            return [finding("hw_01", "투자 업계", [ref], claim="벤더가 CXL-PNM 모듈 투자", scope=None, stance="positive"),
+                    finding("hw_01", "투자 업계", [ref], claim="벤더의 기업 전체 투자", scope=None, stance="positive")]
         result, _ = run(FakeAnalyst(only("hw_01", "투자 업계", make)))
-        self.assertEqual(result["findings"][0]["scope"], "direct")
+        # 근거에 고유어가 있어도 claim이 대상 기술을 말하지 않으면 연관 반응이다.
+        self.assertEqual([f["scope"] for f in result["findings"]], ["direct", "adjacent"])
 
     def test_academic_only_excluded_for_adopters_and_investors(self):
         def make(context):

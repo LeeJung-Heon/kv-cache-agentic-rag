@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "Multi-head Latent Attention market size growth demand forecast",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.linkedin.com/posts/mlorinczy_lets-get-some-facts-straight-about-the-new-activity-7290013740349988864-HpA3",
+        "title": "Let’s get some facts straight about the new number one: Why is DeepSeek so cheap? > MLA (Multi-Head Latent Attention) > FP8 (8-bit floating points) > MTP (Multi-Token Prediction) > MoE (Mixture… | Márk Lőrinczy",
+        "score": 0.3838728,
+        "published_date": "Tue, 28 Jan 2025 00:00:00 GMT",
+        "content": "B (≈ US $1.3 B) AUM by 2019, and reached ≈ RMB 100 B (≈ US $15 B) by 2022 — a >1000 % compounded growth in under a decade. 🚀 Its edge? Deep learning for market prediction long before it was mainstream"
+      },
+      {
+        "url": "https://newsletter.semianalysis.com/p/deepseek-debates",
+        "title": "DeepSeek Debates: Chinese Leadership On Cost, True Training ...",
+        "score": 0.23792146,
+        "published_date": "Fri, 31 Jan 2025 00:00:00 GMT",
+        "content": "## Multi-head Latent Attention (MLA)\n\nMLA is a key innovation responsible for a significant reduction in the inference price for DeepSeek. The reason is MLA reduces the amount of KV Cache required per"
+      },
+      {
+        "url": "https://epochai.substack.com/p/is-a-compute-crunch-coming",
+        "title": "Is a compute crunch coming? - Epoch AI | Substack",
+        "score": 0.19064902,
+        "published_date": "Fri, 19 Jun 2026 21:00:00 GMT",
+        "content": "One subtle difference in decoding: FLOP\\_per\\_token\\_attn becomes somewhat more compute-intensive compared to prefill, due to Kimi K2.6’s use of Multi-head Latent Attention (MLA). MLA aims to ease HBM"
+      },
+      {
+        "url": "https://epoch.ai/gradient-updates/is-a-compute-crunch-coming",
+        "title": "Is a compute crunch coming?",
+        "score": 0.18585886,
+        "published_date": "Mon, 25 May 2026 00:00:00 GMT",
+        "content": "are computed directly in the latent space. The practical effect is that the effective per-head dimension used in the attention compute is the latent dimension (e.g., 512) rather than the nominal per-h"
+      },
+      {
+        "url": "https://www.sciencedirect.com/science/article/abs/pii/S0925231225008409",
+        "title": "MCI-GRU: Stock prediction model based on multi-head cross ...",
+        "score": 0.17481875,
+        "published_date": "Mon, 14 Jul 2025 00:00:00 GMT",
+        "content": "This paper improves the GRU by replacing the reset gate with an attention mechanism. • We propose a multi-head cross-attention to learn and integrate market"
+      }
+    ]
+  }
+}

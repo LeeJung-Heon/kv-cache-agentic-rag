@@ -113,9 +113,15 @@ def is_academic(evidence: Evidence) -> bool:
 
 
 def missing_tech_terms(finding: DraftFinding, cited: list[Evidence]) -> list[str]:
-    """인용 근거의 제목·발췌에 기술 고유어가 없는 기술 ID. 고유어가 없으면 상위 기술(CXL 전체 등)에 대한 근거다."""
-    text = " ".join(f"{e['title']} {e['excerpt']}" for e in cited).lower()
-    return [tid for tid in finding.technology_ids if not any(re.search(term, text) for term in TECH_TERMS.get(tid, []))]
+    """claim과 인용 근거 양쪽에 기술 고유어가 있지 않은 기술 ID.
+
+    고유어가 없으면 상위 기술(CXL 전체)이나 기업·모델 전체(DeepSeek)에 대한 주장이다. 2026-09-22 실측에서
+    "DeepSeek 앱 다운로드 1위"가 근거 본문의 MLA 언급만으로 MLA 시장의 direct 근거가 되어 claim도 검사한다.
+    """
+    evidence = " ".join(f"{e['title']} {e['excerpt']}" for e in cited).lower()
+    claim = CITATION.sub("", finding.claim).lower()
+    return [tid for tid in finding.technology_ids
+            if not all(any(re.search(term, text) for term in TECH_TERMS.get(tid, [])) for text in (evidence, claim))]
 
 
 def correct_academic_stage(finding: DraftFinding, cited: list[Evidence]) -> list[str]:

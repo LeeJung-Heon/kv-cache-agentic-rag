@@ -1,0 +1,26 @@
+{
+  "request": {
+    "query": "Multi-head Latent Attention commercial deployment production adoption",
+    "topic": "news",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.marktechpost.com/2025/02/21/sglang-an-open-source-inference-engine-transforming-llm-deployment-through-cpu-scheduling-cache-aware-load-balancing-and-rapid-structured-output-generation",
+        "title": "SGLang: An Open-Source Inference Engine Transforming LLM Deployment through CPU Scheduling, Cache-Aware Load Balancing, and Rapid Structured Output Generation - MarkTechPost",
+        "score": 0.34614387,
+        "published_date": "Fri, 21 Feb 2025 23:23:20 GMT",
+        "content": "In addition to these features, SGLang supports data parallelism attention, a strategy particularly tailored for DeepSeek models. While many modern models use tensor parallelism, which can lead to dupl"
+      },
+      {
+        "url": "https://www.techtimes.com/articles/324260/20260813/motif-3-final-release-mit-license-opens-koreas-sovereign-ai-builders.htm",
+        "title": "Motif 3 Final Release: MIT License Opens Korea's ...",
+        "score": 0.3220679,
+        "published_date": "Thu, 13 Aug 2026 13:06:55 GMT",
+        "content": "GDLA combines this differential mechanism with the compressed key-value representation of Multi-head Latent Attention — first used in DeepSeek-V2 — running 80 query heads and 16 key-value heads, as th"
+      }
+    ]
+  }
+}

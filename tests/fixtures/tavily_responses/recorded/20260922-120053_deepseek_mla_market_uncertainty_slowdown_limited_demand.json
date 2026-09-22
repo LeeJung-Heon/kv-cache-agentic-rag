@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "DeepSeek MLA market uncertainty slowdown limited demand",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://research.nus.edu.sg/eai/wp-content/uploads/2025/03/EAIC-86-20250306.pdf",
+        "title": "[PDF] A Game Changer in the Global AI Race? - DeepSeek - NUS Research",
+        "score": 0.4106623,
+        "published_date": "Thu, 06 Mar 2025 00:00:00 GMT",
+        "content": "of US-based companies and highlighted China’s growing technological prowess. • Shift to Inference-Focused AI: DeepSeek’s success signals a broader shift towards inference-focused models in the AI indu"
+      },
+      {
+        "url": "https://merics.org/en/report/chinas-drive-toward-self-reliance-artificial-intelligence-chips-large-language-models",
+        "title": "China's drive toward self-reliance in artificial intelligence",
+        "score": 0.2837223,
+        "published_date": "Tue, 22 Jul 2025 00:00:00 GMT",
+        "content": "Outside the tech community, DeepSeek has garnered attention for its high performance offered at a dramatically lower price, although there are some disputes around the true training and access costs o"
+      },
+      {
+        "url": "https://lexfridman.com/deepseek-dylan-patel-nathan-lambert-transcript",
+        "title": "Transcript for DeepSeek, China, OpenAI, NVIDIA, xAI, TSMC, Stargate, and AI Megaclusters | Lex Fridman Podcast #459 - Lex Fridman",
+        "score": 0.24069467,
+        "published_date": "Mon, 03 Feb 2025 20:02:40 GMT",
+        "content": "Nathan Lambert (01:35:45)  I think you could say it simply, which is the cost per fab goes up, and if you are a small player that makes a few types of chips, you’re not going to have the demand to pay"
+      },
+      {
+        "url": "https://www.ai-supremacy.com/p/china-deepseek-ai-founder-background",
+        "title": "🌊 China’s DeepSeek AI Shakes Up the Game",
+        "score": 0.19715096,
+        "published_date": "Tue, 28 Jan 2025 00:00:00 GMT",
+        "content": "Even if the demand for Nvidia’s GPUs decline, Nvidia accounts for less than 15% of TSMC's revenue and less than 10% of global semiconductor revenue. “As far as Nvidia's major customers such as Open AI"
+      },
+      {
+        "url": "https://www.ieee-jas.net/article/doi/10.1109/JAS.2025.125495",
+        "title": "DeepSeek: Paradigm Shifts and Technical Evolution in Large AI Models",
+        "score": 0.18146652,
+        "published_date": "Thu, 01 May 2025 00:00:00 GMT",
+        "content": "DeepSeek, a Chinese artificial intelligence (AI) startup, has released their V3 and R1 series models, which attracted global attention due to their low cost, high performance, and open-source advantag"
+      }
+    ]
+  }
+}

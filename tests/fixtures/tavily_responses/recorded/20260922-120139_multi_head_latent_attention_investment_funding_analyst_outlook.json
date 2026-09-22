@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "Multi-head Latent Attention investment funding analyst outlook",
+    "topic": "news",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://finance.biggo.com/podcast/43eb9cc76c7dda63",
+        "title": "Two Bugs That Hid in Plain Sight: A vLLM Debugging Detective Story — Asaf Gardin & Yuval Belfer｜AI Engineer — BigGo Finance",
+        "score": 0.12117549,
+        "published_date": "Sat, 19 Sep 2026 21:00:00 GMT",
+        "content": "trace the evolution from multi-head attention (MHA) through multi-query attention (MQA) to grouped-query attention (GQA), which Mistral 7B uses. The intuition: MHA splits the key-value matrix into 32 "
+      },
+      {
+        "url": "https://www.mdpi.com/2072-4292/18/18/3203",
+        "title": "A Multi-Modal Deep Learning Framework for High-Resolution Alpine ...",
+        "score": 0.08050932,
+        "published_date": "Thu, 17 Sep 2026 00:00:00 GMT",
+        "content": "Each pathway consists of two cascaded Cross-Attention blocks implementing scaled dot-product attention . To ensure representational diversity, multi-head attention is utilized with 8 independent heads"
+      },
+      {
+        "url": "https://arxiv.org/pdf/2608.22852",
+        "title": "[PDF] Controlling Investment Bias in LLMs with a Single Neuron - arXiv",
+        "score": 0.072328284,
+        "published_date": "Mon, 24 Aug 2026 00:00:00 GMT",
+        "content": "the positive factors, leading to a sell decision.\" } Llama-4-Scout. For JPMorgan Chase (JPM), the unmodified run selects buy, placing greater weight on efficiency gains and the risk-management partner"
+      },
+      {
+        "url": "https://www.krest.reit/wp-content/uploads/2026/09/krest-prospectus-202609.pdf",
+        "title": "[PDF] Filed pursuant to Rule 424(b)(3) - KREST | KKR",
+        "score": 0.038658164,
+        "published_date": "Tue, 01 Sep 2026 00:00:00 GMT",
+        "content": "in high-quality, stabilized assets and portfolios with defensive, in-place cash flows that require limited near-term capital expenditures. Location. The Fund intends to invest in major markets, primar"
+      },
+      {
+        "url": "https://www.mckinsey.com/mgi/our-research/the-ai-economy-interconnected-forces-feedback-loops-and-speeds-of-change",
+        "title": "The AI economy: Interconnected forces and feedback loops | McKinsey",
+        "score": 0.022527957,
+        "published_date": "Thu, 10 Sep 2026 00:01:00 GMT",
+        "content": "The scale of spending is enormous. McKinsey estimates that global investment in data centers will reach $7 trillion cumulatively between 2025 and 2030, much of it AI-driven.1“The cost of compute: A $7"
+      }
+    ]
+  }
+}

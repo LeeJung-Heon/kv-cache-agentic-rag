@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "DeepSeek MLA commercial deployment production adoption",
+    "topic": "news",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.developingtelecoms.com/telecom-technology/enterprise-ecosystems/20826-robi-axiata-and-grameenphone-join-bangladeshs-ai-subscription-race.html",
+        "title": "Robi Axiata and Grameenphone join Bangladesh's AI subscription race - developingtelecoms.com",
+        "score": 0.1023677,
+        "published_date": "Tue, 15 Sep 2026 04:21:58 GMT",
+        "content": "## Robi Axiata and Grameenphone join Bangladesh's AI subscription race. Bangladesh telcos Grameenphone and Robi Axiata have launched separate AI subscription services that aim to make overseas AI mode"
+      },
+      {
+        "url": "https://developingtelecoms.com/telecom-technology/enterprise-ecosystems/20826-robi-axiata-and-grameenphone-join-bangladeshs-ai-subscription-race.html",
+        "title": "Robi Axiata and Grameenphone join Bangladesh's AI subscription race - Developing Telecoms",
+        "score": 0.1009763,
+        "published_date": "Tue, 15 Sep 2026 04:21:58 GMT",
+        "content": "## Robi Axiata and Grameenphone join Bangladesh's AI subscription race. Bangladesh telcos Grameenphone and Robi Axiata have launched separate AI subscription services that aim to make overseas AI mode"
+      },
+      {
+        "url": "https://wccftech.com/deepseek-engineer-stuck-in-self-destructive-loop-says-building-ai-to-replace-him-is-the-only-way-to-stop-openai-anthropic-from-creating-a-cyberpunk-2077-society/",
+        "title": "DeepSeek Engineer Stuck In Self Destructive Loop – Says Building AI To Replace Him Is The Only Way To Stop OpenAI & Anthropic From Creating A “Cyberpunk 2077” Society - Wccftech",
+        "score": 0.05880369,
+        "published_date": "Wed, 16 Sep 2026 13:09:10 GMT",
+        "content": "# DeepSeek Engineer Stuck In Self Destructive Loop – Says Building AI To Replace Him Is The Only Way To Stop OpenAI & Anthropic From Creating A “Cyberpunk 2077” Society. An engineer working for Chines"
+      },
+      {
+        "url": "https://www.analyticsinsight.net/ampstories/robotics/china-scales-humanoid-robots-but-can-lower-costs-unlock-mass-adoption",
+        "title": "China Scales Humanoid Robots, But Can Lower Costs Unlock Mass Adoption? - Analytics Insight",
+        "score": 0.04646909,
+        "published_date": "Sat, 19 Sep 2026 08:31:25 GMT",
+        "content": "# China Scales Humanoid Robots, But Can Lower Costs Unlock Mass Adoption? #### Mass Production Push: China is shifting humanoid robots from prototypes to automated production lines, aiming to increase"
+      },
+      {
+        "url": "https://www.ans.org/news/2026-09-17/article-8399/step-fusion-program-announces-manufacturing-and-project-partnerships/",
+        "title": "STEP Fusion program announces manufacturing and project partnerships - American Nuclear Society",
+        "score": 0.034963243,
+        "published_date": "Thu, 17 Sep 2026 20:18:49 GMT",
+        "content": "On Tuesday, U.K. Fusion Energy announced a strategic partnership with an advanced manufacturing company to support the STEP (Spherical Tokamak for Energy Production) Fusion program. On the same day, K"
+      }
+    ]
+  }
+}

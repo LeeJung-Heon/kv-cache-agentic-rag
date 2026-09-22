@@ -63,9 +63,10 @@ TECH_ALIASES: dict[str, list[str]] = {
 
 # scope=direct로 인정하려면 인용 근거의 제목·발췌에 있어야 하는 기술 고유어(대소문자 무시 정규식).
 # "CXL"만 있는 근거는 CXL 전체 시장이므로 연관 시장(adjacent)이다.
+# \b는 한글도 단어 문자로 보므로 "MLA는", "PNM은"처럼 조사가 붙으면 매칭되지 않는다. 영숫자만 경계로 본다.
 TECH_TERMS: dict[str, list[str]] = {
-    "sw_01": [r"\bmla\b", r"multi-head latent attention", r"latent attention"],
-    "hw_01": [r"\bpnm\b", r"processing[- ]near[- ]memory"],
+    "sw_01": [r"(?<![a-z0-9])mla(?![a-z0-9])", r"multi-head latent attention", r"latent attention"],
+    "hw_01": [r"(?<![a-z0-9])pnm(?![a-z0-9])", r"processing[- ]near[- ]memory"],
 }
 
 # claim_type=fact인데 이 표현이 있으면 forecast로 교정한다. 기준일 이후 연도는 evaluation에서 따로 검사한다.

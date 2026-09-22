@@ -40,7 +40,7 @@ def correct_market_finding(finding: DraftFinding, cited: list[Evidence]) -> list
     missing = missing_tech_terms(finding, cited)
     if missing:
         finding.scope = "adjacent"
-        return [f"scope direct→adjacent (인용 근거에 {', '.join(missing)} 고유어 없음)"]
+        return [f"scope direct→adjacent (claim 또는 인용 근거에 {', '.join(missing)} 고유어 없음)"]
     return []
 
 
