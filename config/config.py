@@ -1,7 +1,8 @@
-from urllib.parse import quote_plus
+from pathlib import Path
 
-from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class Settings(BaseSettings):
@@ -18,22 +19,9 @@ class Settings(BaseSettings):
     embedding_device: str | None = None
     pdf_font: str | None = None
 
-    db_host: str = "localhost"
-    db_port: int = 5432
-    db_name: str = "kv_cache"
-    db_user: str = "postgres"
-    db_password: str = "postgres"
-    pgvector_dimension: int = 1024
-
-    @computed_field
-    @property
-    def database_url(self) -> str:
-        user = quote_plus(self.db_user)
-        password = quote_plus(self.db_password)
-        return (
-            f"postgresql+psycopg://{user}:{password}"
-            f"@{self.db_host}:{self.db_port}/{self.db_name}"
-        )
+    # 서버 연결 정보 대신 로컬 FAISS 인덱스와 메타데이터를 저장할 경로를 관리한다.
+    faiss_index_dir: Path = ROOT / ".cache" / "faiss"
+    embedding_dimension: int = 1024
 
 
 settings = Settings()
