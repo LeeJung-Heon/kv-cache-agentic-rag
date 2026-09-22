@@ -19,7 +19,7 @@ class Evidence(TypedDict):
 
 
 # claim_type은 원문 진술의 성격, is_inference는 에이전트 해석 여부로 서로 독립이다.
-# scope·stage·stance가 None이면 해당 관점에 적용되지 않는 항목이다.
+# None이면 해당 관점에 적용되지 않는 항목이다.
 ClaimType = Literal["fact", "opinion", "forecast"]
 MarketScope = Literal["direct", "adjacent"]
 AdoptionStage = Literal["announced", "pilot", "production"]
@@ -31,7 +31,7 @@ class Finding(TypedDict):
     claim: str
     evidence_ids: list[str]
     is_inference: bool
-    claim_type: ClaimType
+    claim_type: ClaimType | None
     scope: MarketScope | None
     stage: AdoptionStage | None
     stance: Stance | None

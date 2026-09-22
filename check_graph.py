@@ -42,8 +42,7 @@ class ModelFixture:
                     continue
                 findings.append({"technology_ids": [technology["id"]], "criterion": criterion,
                                  "claim": f"{criterion} 근거 확인", "evidence_ids": [technology["id"][:2] + "_p1_c1"],
-                                 "is_inference": criterion == "TRL", "claim_type": "fact",
-                                 "scope": None, "stage": None, "stance": None})
+                                 "is_inference": criterion == "TRL"})
         return AnalysisDraft(status="partial" if partial else "complete", summary="평가 요약",
                              findings=findings, limitations=["HW TRL 근거 부족"] if partial else [],
                              next_queries=["CXL-PNM prototype maturity TRL validation"] if partial else [])
@@ -92,8 +91,7 @@ def main():
     state.update(select_technologies(state))
     malformed = AnalysisDraft(status="complete", summary="invalid", findings=[{
         "technology_ids": ["sw_01"], "criterion": "원리", "claim": "invalid evidence",
-        "evidence_ids": ["missing"], "is_inference": False, "claim_type": "fact",
-        "scope": None, "stage": None, "stance": None}], limitations=[], next_queries=[])
+        "evidence_ids": ["missing"], "is_inference": False}], limitations=[], next_queries=[])
     try:
         normalize_result(malformed, {}, state, CRITERIA["technical"])
     except EvidenceError:

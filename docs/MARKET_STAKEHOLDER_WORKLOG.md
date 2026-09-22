@@ -27,7 +27,7 @@
 
 | 필드 | 값 | 적용 | 설계서 근거 |
 |---|---|---|---|
-| `claim_type` | `fact` / `opinion` / `forecast` | 모든 에이전트 필수 | 3.2 "사실·전망·간접 지표 분리", 5.2 |
+| `claim_type` | `fact` / `opinion` / `forecast` / `None` | 모든 에이전트 (시장성·이해관계자는 필수로 검증) | 3.2 "사실·전망·간접 지표 분리", 5.2 |
 | `scope` | `direct` / `adjacent` / `None` | 시장성 | 3.4 "직접 시장과 연관 시장 분리" |
 | `stage` | `announced` / `pilot` / `production` / `None` | 상용화·채택 | 3.4 "계획 발표, 실증, 실제 운영 구분" |
 | `stance` | `positive` / `negative` / `mixed` / `unknown` / `None` | 입장 판단 | 3.2 "긍정·부정·혼합·확인 불가" |
@@ -35,8 +35,9 @@
 - `None`은 해당 관점에 적용되지 않는 항목이라는 뜻이다.
 - `claim_type`은 원문 진술의 성격이고, `is_inference`는 에이전트가 해석했는지 여부다. 두 필드는 서로 독립이다.
   예: "Gartner가 X를 전망" → `claim_type=forecast`, `is_inference=false`.
-- `DraftFinding`에서는 기본값 없이 nullable required 필드로 정의했다. OpenAI strict json_schema가 모든 필드를
-  required로 요구하기 때문이다.
+- `DraftFinding`의 네 필드는 `default=None`인 nullable 필드다. OpenAI SDK의 strict 변환이 `default=None`을
+  제거하고 모든 필드를 required로 보내므로 LLM은 네 필드를 항상 출력한다. 기본값 덕분에 다른 팀원의 코드와
+  fixture(`check_graph.py`, `check_domain.py`)는 수정 없이 그대로 동작한다. 충돌을 줄이기 위한 선택이다.
 - `stance`는 Finding에만 둔다. 어느 질의(긍정/부정)로 수집했는지는 Evidence에 넣지 않고 에이전트 내부에서만
   관리한다. 같은 Evidence ID에 에이전트마다 다른 값이 들어가면 `collect_sources`가 EvidenceError를 낸다.
 - 루트 `state.py`(현재 `pipeline.py`가 사용)와 `service/schema/state.py`(신규 구조)를 동기화했다.
@@ -44,22 +45,21 @@
 
 ### 변경 파일
 
-- `state.py`: Literal 타입 4개, `Finding`·`DraftFinding` 필드 추가
-- `service/schema/state.py`: `Finding` 필드 추가
-- `check_graph.py`: fixture에 새 필드 반영
+- `state.py`: Literal 타입 4개, `Finding`·`DraftFinding` 필드 추가 (추가만, 기존 줄 변경 없음)
+- `service/schema/state.py`: `Finding` 필드 추가 (추가만)
 
 ### 검증 (API 호출 없음)
 
-- `uv run check_graph.py` PASS
-- OpenAI strict 스키마 변환 결과 4개 필드 모두 required, scope·stage·stance는 null 허용
-- 잘못된 enum 값과 필드 누락은 pydantic 검증에서 거부
+- `uv run check_graph.py`, `uv run check_domain.py` PASS (fixture 수정 없음)
+- OpenAI strict 스키마 변환 결과 4개 필드 모두 required·null 허용, 기본값 제거됨
+- 잘못된 enum 값은 pydantic 검증에서 거부
 - `normalize_result` 결과의 공개 Finding에 4개 필드 포함
 
 ### 팀 공유 필요
 
-1. `AnalysisDraft`를 모든 에이전트가 공유하므로, 기술 조사·도메인·종합 에이전트도 4개 필드를 출력해야 한다.
-   해당 없는 필드는 `null`이다.
-2. `feat/domain-rag` 머지 시 `check_domain.py` 31·36행 fixture에 새 필드를 추가해야 한다.
+1. `AnalysisDraft`를 모든 에이전트가 공유하므로, 기술 조사·도메인·종합 에이전트의 LLM 출력에도 4개 필드가
+   생긴다(해당 없으면 `null`). 코드 수정은 필요 없다.
+2. 공용 `Finding` 결과에 4개 키가 항상 포함된다. 결과를 파싱하는 종합·보고서 쪽에서 알아야 한다.
 3. 루트 `state.py`와 `service/schema/state.py` 중 어느 쪽을 기준으로 삼을지 결정이 필요하다.
 4. 오류 정책 차이: 레포는 부분 실패를 `error`로 처리하고 중단하지만, 이 에이전트는 설계서 기준으로
    한쪽 질의 실패를 `limitations`에 기록하고 계속 진행한다.
