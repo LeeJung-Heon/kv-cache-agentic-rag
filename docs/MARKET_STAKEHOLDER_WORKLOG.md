@@ -18,8 +18,8 @@
 |---|---|---|---|
 | 1 | Finding 확장 필드 추가 | `feat/finding-extension` | 완료 (팀 공유 필요) |
 | 2 | `evidence_schema.py`, `query_templates.py` | `feat/tavily-agent` | 완료 |
-| 3 | `tavily_client.py` + 로직 테스트 | `feat/tavily-agent` | 다음 작업 |
-| 4 | 시장성 에이전트 | 미정 | 대기 (technical_result 실제 스키마 확인 필요) |
+| 3 | `tavily_client.py` + 로직 테스트 | `feat/tavily-agent` | 완료 |
+| 4 | 시장성 에이전트 | `feat/tavily-agent` | 다음 작업 (technical_result 실제 스키마 확인 필요) |
 | 5 | 이해관계자 에이전트 | 미정 | 대기 |
 | 6 | 실제 Tavily API 통합 테스트 (1~2회) | 미정 | 대기 (API 키 필요) |
 | 7 | 팀 그래프에 노드 연결 | 미정 | 대기 (기술 조사·평가 종합 노드 완성 후) |
@@ -99,6 +99,40 @@
 
 - `uv run python -m unittest discover -s tests -t .` 10건 통과. pytest를 의존성에 추가하지 않도록 unittest를 사용했다.
 - `uv run check_graph.py` PASS
+
+## 3단계: Tavily 검색 래퍼 (`service/agent/tavily/client.py`)
+
+### 동작
+
+| 상황 | 처리 |
+|---|---|
+| 한쪽 질의 실패 (HTTP 오류, 타임아웃, 잘못된 응답) | 성공한 쪽만 사용, limitations에 `부정 근거 수집 실패 (HTTP 429)`와 `한쪽 수집 실패로 한쪽 방향 근거만 사용` 기록 |
+| 양쪽 질의 실패 | limitations에 `긍정·부정 질의 모두 실패` 기록 |
+| 보강 검색까지 마친 뒤 근거 0건 | limitations에 `{기술} / {기준}: 웹 근거 없음, 판단 유보` 기록 |
+| 중복 URL | scheme·`www.`·끝 슬래시·fragment를 정규화해 dedup, 먼저 실행한 긍정 질의 방향 유지 |
+| 발행일 없음 | `published_at=None`, 인용에 `발행일 미확인` |
+| 기준일 이후 자료 | Tavily `end_date`로 1차 차단, 후처리 필터로 한 번 더 제외하고 건수만 기록 |
+| API 키 누락 | 판단 유보로 숨기지 않고 RuntimeError로 올림 |
+
+- 판단 유보는 질의 실패 여부가 아니라 **보강 검색까지 마친 뒤 근거가 없을 때** 기록한다. 1차 질의가 모두 실패해도
+  별칭 검색으로 근거를 찾으면 판단 유보가 아니다. 반대로 질의는 성공했지만 결과가 0건이어도 판단 유보다.
+- 오류 기록에는 예외 메시지 대신 HTTP 상태 코드나 예외 타입명만 남긴다. 요청 본문·인증값이 섞이지 않게 하기 위함이다.
+- 빈약함 기준: 결과 0건 또는 score 상위 3개 평균 < 0.5. 이때만 별칭으로 보강 검색한다. 기본 `max_fallbacks=1`이므로
+  검색 상한은 기준별 4회, 전체 48회(1차 24회 + 보강 24회)다. 임계값 0.5는 임시값이며 6단계에서 실제 score 분포를 보고 조정한다.
+
+### Tavily API 확인 (공식 문서, 2026-09-22 확인)
+
+- `end_date`는 `YYYY-MM-DD` 형식으로 지원된다.
+- `published_date`는 `topic="news"`일 때만 자동으로 포함된다. `general`에서는 `include_published_date: true`가
+  필요하므로 항상 보낸다. 이 값은 Tavily가 추정한 발행일 또는 최종 수정일이며 null일 수 있다.
+
+### 테스트
+
+- `tests/fixtures/tavily_responses/`: Tavily 응답 형식을 본떠 **직접 작성한 합성 fixture**다. 실제 녹화 응답이 아니며
+  6단계에서 녹화 응답으로 교체·추가한다.
+- `tests/test_tavily_client.py` 18건: 파싱·필터, 한쪽/양쪽 실패, 타임아웃, 중복 URL, 오류 메시지 비노출,
+  빈약 판정, 보강 검색 여부와 상한, 실패 후 별칭 복구, API 키 누락, 요청 payload, 비JSON 응답
+- 전체 unittest 28건, `check_graph.py`, `check_domain.py` PASS
 
 ## 설계서 외 자체 안전장치 (구현 후 README에 "확증편향 방지 조치"로 기록)
 

@@ -1,0 +1,10 @@
+{
+  "query": "CXL-PNM adoption barriers delay not deployed",
+  "results": [
+    {"url": "https://example-dc.org/blog/cxl-pilot", "title": "Cloud pilot of CXL memory (duplicate)",
+     "content": "Same page captured by the negative query.", "score": 0.66},
+    {"url": "https://example-analyst.com/cxl-risks", "title": "CXL adoption risks",
+     "content": "Analysts note limited software support and integration cost as adoption barriers.",
+     "score": 0.64, "published_date": "Fri, 15 May 2026 09:00:00 GMT"}
+  ]
+}

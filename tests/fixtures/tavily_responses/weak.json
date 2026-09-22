@@ -1,0 +1,9 @@
+{
+  "query": "weak query",
+  "results": [
+    {"url": "https://example-forum.net/thread/1", "title": "Loosely related thread",
+     "content": "A forum post that only mentions CXL in passing.", "score": 0.21},
+    {"url": "https://example-forum.net/thread/2", "title": "Another loosely related thread",
+     "content": "Unrelated memory discussion.", "score": 0.12}
+  ]
+}
