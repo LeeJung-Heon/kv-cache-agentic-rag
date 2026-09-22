@@ -18,7 +18,7 @@ class DenseEncoder:
             self.revision = revision
         if not self.revision:
             raise ValueError("모델 revision을 확인하지 못했습니다. EMBEDDING_REVISION에 commit SHA를 지정하세요.")
-        self.dimension = self.model.get_sentence_embedding_dimension()
+        self.dimension = self.model.get_embedding_dimension()
         self.tokenizer = self.model.tokenizer
         self.max_tokens = self.model.max_seq_length
 
