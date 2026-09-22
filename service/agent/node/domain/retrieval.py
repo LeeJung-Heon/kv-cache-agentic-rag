@@ -1,4 +1,4 @@
-from rag import get_paper_index
+from service.retrieval.paper_index import get_paper_index
 from state import GraphState
 
 

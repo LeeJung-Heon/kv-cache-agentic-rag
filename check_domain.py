@@ -2,9 +2,9 @@ import json
 from copy import deepcopy
 from unittest.mock import Mock, patch
 
-from pipeline import initial_state, select_technologies
+from langgraph.graph import START, END, StateGraph
 from service.agent.node.domain import domain_node
-from state import AnalysisDraft
+from state import AnalysisDraft, GraphState
 
 
 EVIDENCE_IDS = {"sw": "chunk-alpha", "hw": "chunk-beta"}
@@ -43,13 +43,22 @@ def check_case(state, mode="normal"):
     with patch("service.agent.node.domain.retrieval.get_paper_index", return_value=index), \
          patch("service.agent.node.domain.model.get_analyst", return_value=analyst):
         update = domain_node(state)
+        if mode == "normal":
+            graph = StateGraph(GraphState)
+            graph.add_node("domain_evaluation", domain_node)
+            graph.add_edge(START, "domain_evaluation")
+            graph.add_edge("domain_evaluation", END)
+            output = graph.compile().invoke(state)
+            assert output["domain_result"] == update["domain_result"]
+            assert output["request"] == state["request"]
+
     assert state == original, "노드가 입력 State를 직접 변경함"
     assert set(update) == {"domain_result"}, "다른 노드의 결과 필드를 변경함"
     result = update["domain_result"]
 
     expected = [(technology, criterion) for technology in state["technologies"]
                 for criterion in state["evaluation_criteria"]["domain"]]
-    assert index.search.call_count == len(expected)
+    assert index.search.call_count == len(expected) * (2 if mode == "normal" else 1)
     for call, (technology, criterion) in zip(index.search.call_args_list, expected):
         query, side = call.args
         assert side == technology["approach"].lower()
@@ -67,8 +76,16 @@ def check_case(state, mode="normal"):
 
 
 def main():
-    state = initial_state()
-    state.update(select_technologies(state))
+    state: GraphState = {
+        "request": "두 기술의 도메인 적용성을 평가해 주세요.",
+        "target_domain": "데이터센터·클라우드 LLM 서빙",
+        "evaluation_criteria": {"domain": ["성능", "비용", "정확도", "전력", "확장성"]},
+        "technical_retry_count": 0,
+        "technologies": [
+            dict(id="sw", name="DeepSeek-V2 MLA", approach="SW", selection_reason="KV 캐시 압축"),
+            dict(id="hw", name="CXL-PNM", approach="HW", selection_reason="메모리 확장"),
+        ],
+    }
     check_case(state)
     state["technologies"] = [
         dict(id="compression-A", name="대체 압축 기술", approach="SW", selection_reason="정밀도를 변경한다"),
@@ -78,7 +95,7 @@ def main():
     state["evaluation_criteria"]["domain"] = ["운영 복잡도", "이식성"]
     for mode in ("normal", "one_sided", "null_summary", "failure"):
         check_case(state, mode)
-    print("PASS: 기술·기준 변경, 검색 분리, 근거 중복 제거, Pydantic null 거부·error, State 보존 (외부 API 없음)")
+    print("PASS: 기술·기준 변경, 검색 분리, 근거 중복 제거, Pydantic null 거부·error, State 보존·독립 LangGraph 실행 (외부 API 없음)")
 
 
 if __name__ == "__main__":
