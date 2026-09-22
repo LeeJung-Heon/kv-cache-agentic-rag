@@ -1,3 +1,4 @@
+from functools import cache
 import hashlib
 import json
 import os
@@ -69,3 +70,8 @@ class PaperIndex:
         indices = [i for i, c in enumerate(self.chunks) if c["side"] == side]
         scores = self.vectors[indices] @ vector
         return [dict(self.chunks[indices[i]], score=float(scores[i])) for i in np.argsort(-scores)[:k]]
+
+
+@cache
+def get_paper_index():
+    return PaperIndex()
