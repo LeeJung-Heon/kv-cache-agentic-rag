@@ -12,11 +12,12 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, StateGraph
 
-from rag import ROOT, PAPERS, PaperIndex, get_paper_index
+from config.config import ROOT
 from report import write_report
 from service.agent.graph.technical import build_technical_research_graph
 from service.agent.node.domain import make_domain_node
 from service.agent.node.domain import domain_node
+from service.retrieval.paper_index import SEARCH_SIDES, PaperIndex, get_paper_index
 from state import AgentResult, AnalysisDraft, Evidence, GraphState
 
 DEFAULT_DOMAIN = "데이터센터·클라우드 LLM 서빙"
@@ -115,7 +116,7 @@ def select_technologies(state: GraphState):
 
 
 def citation_ids(text: str) -> set[str]:
-    return set(re.findall(r"\[((?:sw|hw)_p\d+_c\d+|web_[a-f0-9]+)\]", text))
+    return set(re.findall(r"\[((?:sw|hw|common)(?:_[a-z0-9_]+)?_p\d+_c\d+|web_[a-f0-9]+)\]", text))
 
 
 def collect_sources(state: GraphState) -> dict[str, Evidence]:
@@ -145,7 +146,7 @@ def normalize_result(draft: AnalysisDraft, sources: dict[str, Evidence], state: 
         # 한 기술의 논문만으로 양쪽 기술을 조사 완료한 것으로 계산하지 않는다.
         for technology_id in finding.technology_ids:
             if criteria == state["evaluation_criteria"]["technical"]:
-                prefix = technology_id.split("_")[0] + "_p"
+                prefix = technology_id.split("_")[0] + "_"
                 if not any(key.startswith(prefix) for key in finding.evidence_ids):
                     continue
             covered.add((technology_id, finding.criterion))
@@ -271,6 +272,18 @@ def make_nodes(index: PaperIndex, model: ChatOpenAI, max_technical_retries: int 
                 sources = {e["id"]: e for e in (previous or {}).get("evidence", [])}
                 # 기술 조사와 도메인 평가는 전용 노드로 옮겨졌으므로 여기서는 시장·이해관계자의 웹 검색만 수행한다.
                 for technology in state["technologies"]:
+                    side = technology["approach"].lower()
+                    if field == "technical_result":
+                        focus = " ".join(queries) if queries else " ".join(criteria)
+                        query = f"{technology['name']} {state['target_domain']} {focus} experimental conditions limitations"
+                        for row in index.search(query, side):
+                            sources[row["id"]] = {"id": row["id"], "source_type": "paper", "title": row["title"],
+                                                  "url": row["url"], "page": row["page"], "published_at": row.get("published_at"),
+                                                  "excerpt": row["text"]}
+                    else:
+                        focus = "adoption deployment ecosystem costs limitations" if field == "market_result" else "developer operator reactions criticism barriers"
+                        for evidence in search_web(f"{technology['name']} {focus}"):
+                            sources[evidence["id"]] = evidence
                     focus = "adoption deployment ecosystem costs limitations" if field == "market_result" else "developer operator reactions criticism barriers"
                     for evidence in search_web(f"{technology['name']} {focus}"):
                         sources[evidence["id"]] = evidence
@@ -340,7 +353,7 @@ def main():
     index = get_paper_index()
     print(f"인덱스: {len(index.chunks)} chunks", flush=True)
     if args.index_only:
-        for side in PAPERS:
+        for side in SEARCH_SIDES:
             print(side, [c["id"] for c in index.search("KV cache mechanism limitations experimental results", side)])
         return
     model = ChatOpenAI(model=os.getenv("OPENAI_MODEL", "gpt-4.1-mini"), temperature=0, timeout=120,
