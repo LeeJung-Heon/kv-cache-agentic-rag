@@ -6,7 +6,6 @@ __pycache__/
 .DS_Store
 .cache/
 outputs/
-artifacts/faiss/*
-!artifacts/faiss/.gitkeep
+# FAISS 인덱스와 메타데이터를 공유해 별도 색인 없이 검색할 수 있도록 저장소에서 관리합니다.
 data/processed/*
 !data/processed/.gitkeep

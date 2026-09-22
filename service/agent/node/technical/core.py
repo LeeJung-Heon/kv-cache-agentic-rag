@@ -5,8 +5,8 @@ from service.agent.node.technical.prompts import ASSESSMENT_DATE, TRL_BASIS
 from service.agent.node.technical.schema import TechnicalDraft
 from service.schema.state import AgentResult, Evidence, Technology
 
-# pipeline.py의 인용 규칙과 같은 형식을 유지한다. 청크 ID 형식이 바뀌면 두 곳을 함께 고친다.
-CITATION = re.compile(r"\[((?:sw|hw)_p\d+_c\d+|web_[a-f0-9]+)\]")
+# 전처리 JSONL의 ID(sw_deepseek_v2_chunk_0001)와 기존 fixture ID(sw_p1_c1)를 모두 수용한다.
+CITATION = re.compile(r"\[((?:sw|hw|common)(?:_[a-z0-9]+)+|web_[a-f0-9]+)\]")
 TRL_LEVEL = re.compile(r"TRL ([1-9])(?:~([1-9]))?")
 
 
@@ -19,7 +19,8 @@ def citation_ids(text: str) -> set[str]:
 
 
 def paper_prefix(technology_id: str) -> str:
-    return technology_id.split("_")[0] + "_p"
+    # 새 ID는 sw_deepseek_v2_chunk_0001처럼 기술 그룹 뒤에 문서 ID가 붙는다.
+    return technology_id.split("_")[0] + "_"
 
 
 def default_queries(technologies: list[Technology], target_domain: str, criteria: list[str]) -> dict[str, str]:
