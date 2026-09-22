@@ -11,3 +11,4 @@
 | `empty.json` | 결과 0건 |
 | `malformed.json` | `results` 목록이 없는 응답 |
 | `many.json` | 근거 개수 상한(5개) 검증용 6건 |
+| `academic.json` | 학술 도메인(usenix.org, arxiv.org) 근거와 기업 발표 근거 |

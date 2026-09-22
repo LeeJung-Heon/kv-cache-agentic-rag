@@ -1,0 +1,12 @@
+{
+  "query": "academic",
+  "results": [
+    {"url": "https://www.usenix.org/system/files/osdi26-example.pdf", "title": "An unrelated systems paper",
+     "content": "A CXL processing-near-memory prototype is evaluated in simulation.", "score": 0.8, "published_date": "2026-07-01"},
+    {"url": "https://arxiv.org/abs/2601.00001", "title": "CXL PNM preprint",
+     "content": "We propose a processing-near-memory design for LLM inference.", "score": 0.75, "published_date": "2026-01-10"},
+    {"url": "https://example-semi.com/news/cxl-pnm-sample", "title": "CXL-PNM sample shipment announced",
+     "content": "The vendor announced sample shipments of a CXL-based processing-near-memory module for LLM inference.",
+     "score": 0.82, "published_date": "2026-03-10"}
+  ]
+}

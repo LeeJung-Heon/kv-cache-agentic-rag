@@ -8,7 +8,7 @@
 | 문진영 | 임베딩 | 없음 |
 | 이중헌 | 기술 agent | `technical_result.evidence` 재인용 (스키마 확인 필요) |
 | 왕채은 | 도메인 agent | LLM 출력에 확장 필드 추가됨 (코드 수정 불필요) |
-| 강용현 | 종합 agent | 확장 필드명·값, 오류 정책 차이, 종합도 확장 필드 출력 |
+| 강용현 | 종합 agent | 확장 필드명·값, 오류 정책 차이, 종합도 확장 필드 출력, **summary에 인용 없는 수치가 들어올 수 있음** |
 
 설계 기준: RAG 기반 SW·HW 기술 평가 에이전트 설계서 (평가 기준일 2026-09-21)
 
@@ -21,7 +21,7 @@
 | 3 | `tavily_client.py` + 로직 테스트 | `feat/tavily-agent` | 완료 |
 | 4 | 시장성 에이전트 | `feat/tavily-agent` | 완료 (technical_result는 state.AgentResult 계약 기준, 실제 출력과 대조 필요) |
 | 5 | 이해관계자 에이전트 | `feat/tavily-agent` | 완료 |
-| 6 | 실제 Tavily API 통합 테스트 | `feat/tavily-agent` | 진행 중 (LLM 출력 품질 문제로 방향 결정 필요) |
+| 6 | 실제 Tavily API 통합 테스트 | `feat/tavily-agent` | 진행 중 (hw_01 시장성 6회 실측 완료, 이해관계자·sw_01 남음) |
 | 7 | 팀 그래프에 노드 연결 | 미정 | 대기 (기술 조사·평가 종합 노드 완성 후) |
 
 ## 전제
@@ -192,7 +192,9 @@
 | 1 | 12회 | partial, finding 2 | "CXL-PNM" 1차 검색 score 낮음(최고 0.30), CXL 전체 시장 전망을 `scope=direct`·`claim_type=fact`로 표시, finding당 근거 19·13개 통째 연결 | 1차 검색명을 "CXL processing-near-memory"로 교체, scope·claim_type 라벨 교정 규칙, 근거 5개 상한, 본문 인용 필수 |
 | 2 | 8회 | partial, finding 0 | LLM이 claim 본문에 인용을 넣지 않아 전부 제외 | 본문 인용 필수 규칙 철회. `pipeline.result_markdown`이 evidence_ids로 인용을 붙이므로 팀 컨벤션과도 맞음 |
 | 3 | 8회 | partial, finding 1 | scope 교정은 동작. LLM이 16자리 해시 ID를 잘못 옮겨 적어(`web_793fbf3c...`→`web_793fbf3d...`) finding 2개 제외 | LLM 입력에서 근거 ID를 `E1`, `E2` 참조키로 바꾸고 응답 후 실제 ID로 복원 |
-| 4 | 8회 | partial, finding 0 | 참조키가 짧아지자 기준당 finding 1개에 근거 10~13개를 통째 연결해 상한에 걸림. 요약에 인용 없는 수치 | **방향 결정 필요** |
+| 4 | 8회 | partial, finding 0 | 참조키가 짧아지자 기준당 finding 1개에 근거 10~13개를 통째 연결해 상한에 걸림. 요약에 인용 없는 수치 | **칸 단위 LLM 호출**로 전환(기술×기준마다 1회, 그 칸 근거만 전달). 요약은 그대로 두고 보고서 담당에 공유 |
+| 5 | 8회, LLM 3회 | complete, finding 16 | 근거 개수는 해결. 그러나 상용화·채택에 "논문에서 21.9배 처리량" finding이 `stage=production`·`direct`로 들어감. 인용 근거는 무관한 USENIX 논문이었고 수치는 `request`(선정 문서)에서 가져옴 | 칸 호출 입력에서 `request` 제거, 학술 도메인 근거만으로 된 상용화·채택 finding 제외, 학술 근거의 stage 비움, "근거 title·excerpt에 있는 내용만" 지시 |
+| 6 | 8회, LLM 3회 | complete, finding 12 | 모든 finding이 실제 웹 출처 기반. 논문 기반 상용화 finding 제외됨. CXL 전체 시장 수치는 모두 adjacent·forecast로 교정. MLA 관련 잡음 한계 사라짐 | 남은 과제는 아래 |
 
 확인된 사실
 - `include_published_date: true` 이후 모든 결과에 발행일이 온다.
@@ -200,7 +202,17 @@
 - 1차 검색명 교체로 같은 조건의 Tavily 호출이 12회에서 8회로 줄었다(`tests/test_recorded_replay.py`로 재현).
 - 단일 기술로 실행하면 request 문서에 두 기술이 모두 있어서 LLM이 평가하지 않은 기술(MLA)에 대한 한계를 쓴다. 두 기술을 함께 실행하면 생기지 않는 테스트 범위의 부작용이다.
 
-추가한 규칙 (모두 unittest로 고정, 전체 59건 통과)
+남은 과제 (6회차 기준)
+- 요약(summary)에 인용 없는 수치가 들어간다(예: "2028년까지 약 160억 달러"). 결정: 이 에이전트에서는 손대지 않고 보고서 담당(강용현)에 공유.
+- 출처 신뢰도 편차: 시장조사 기관·IR 외에 facebook.com, linkedin.com, 개인 블로그·substack이 근거로 쓰인다. 출처 등급 규칙은 아직 없다.
+- 시장 규모·성장성은 부정 방향 근거를 찾지 못해 "일방적 근거"로 기록된다.
+- 이해관계자 관점과 sw_01(MLA)은 아직 실측하지 않았다.
+
+추가한 규칙 (모두 unittest로 고정, 전체 66건 통과)
+- 칸 단위 LLM 호출: 기술×기준마다 1회, 그 칸의 재인용·웹 근거만 전달. 요청한 칸과 다른 기술·기준의 finding은 제외.
+  칸 하나의 LLM 실패는 그 칸만 판단 유보, 모든 칸 실패는 error. 근거 없는 칸은 LLM을 호출하지 않음
+- 칸 호출 입력에서 `request`(선정 문서 전문) 제외
+- 학술 도메인(`ACADEMIC_DOMAINS`, `.edu`, 논문 재인용)만 인용한 상용화·채택 finding 제외, 학술 근거의 stage는 null로 교정
 - finding당 근거 최대 5개, 초과 시 제외. 본문 인용이 있으면 evidence_ids를 인용한 근거로 좁힘
 - `scope=direct`인데 인용 근거에 기술 고유어(`TECH_TERMS`)가 없으면 adjacent로 교정하고 기록
 - `claim_type=fact`인데 기준일 이후 연도나 전망 표현(`FORECAST_TERMS`)이 있으면 forecast로 교정하고 기록

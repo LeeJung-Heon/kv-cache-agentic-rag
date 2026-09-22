@@ -1,12 +1,11 @@
 import re
 
 from service.agent.tavily.client import SearchFn, tavily_search
-from service.agent.tavily.evaluation import PerspectiveSpec, make_evaluation_node
+from service.agent.tavily.evaluation import PerspectiveSpec, is_academic, make_evaluation_node
 from service.agent.tavily.query_templates import TECH_TERMS
 from state import DraftFinding, Evidence
 
-MARKET_PROMPT = """시장성 평가: 입력 technologies 각각의 시장 규모·성장성, 상용화·채택, 생태계를 평가한다.
-evaluation_criteria의 각 기준을 기술마다 따로 판단하고, 각 finding의 criterion은 그중 하나다.
+MARKET_PROMPT = """시장성 평가: 기준은 시장 규모·성장성, 상용화·채택, 생태계이며 호출마다 그중 하나(target_criterion)를 평가한다.
 근거는 두 종류다. reused_evidence는 기술 조사 에이전트가 수집한 논문 근거를 재인용한 것이고,
 web_evidence는 이번에 Tavily로 수집한 웹 근거다. claim에 어느 종류의 근거인지 드러나게 쓴다.
 재인용 논문 근거는 운영 데이터·비용 조건으로만 사용하며, 논문 성능을 시장 수요나 채택의 증거로 확대하지 않는다.
@@ -25,7 +24,9 @@ revision_feedback이 있으면 그 보완 항목을 우선 다룬다. next_queri
 """
 
 
-def check_market_finding(finding: DraftFinding) -> str | None:
+def check_market_finding(finding: DraftFinding, cited: list[Evidence]) -> str | None:
+    if finding.criterion == "상용화·채택" and cited and all(is_academic(e) for e in cited):
+        return "학술 자료만으로 상용화·채택 판단 불가"
     if finding.scope is None:
         return "시장성 finding의 scope 누락"
     if finding.criterion == "상용화·채택" and finding.stage is None:

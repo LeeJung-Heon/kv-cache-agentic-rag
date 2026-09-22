@@ -109,3 +109,8 @@ REUSE_KEYWORDS: dict[Perspective, list[str]] = {
     "stakeholder": ["vendor", "operator", "cloud provider", "developer", "open-source", "open source",
                     "framework", "vllm", "sglang", "hugging face", "adoption", "industry", "azure"],
 }
+
+# 학술 자료 도메인. 논문은 상용화·채택의 근거가 아니다(설계서 3.4 "계획 발표, 실증, 실제 운영 구분").
+# 2026-09-22 실측에서 LLM이 USENIX 논문 PDF를 근거로 stage=production을 붙였다.
+ACADEMIC_DOMAINS = ["arxiv.org", "usenix.org", "acm.org", "ieee.org", "openreview.net", "semanticscholar.org",
+                    "researchgate.net", "springer.com", "sciencedirect.com", "nature.com", "mlsys.org", "neurips.cc"]

@@ -2,8 +2,8 @@ from service.agent.tavily.client import SearchFn, tavily_search
 from service.agent.tavily.evaluation import PerspectiveSpec, make_evaluation_node
 from state import DraftFinding
 
-STAKEHOLDER_PROMPT = """이해관계자 평가: 입력 technologies 각각에 대한 경쟁 기술 진영, 도입사·개발자, 투자 업계의 반응을 평가한다.
-evaluation_criteria의 각 기준이 이해관계자 집단이다. 각 finding의 criterion은 그중 하나이며, 기술마다 따로 판단한다.
+STAKEHOLDER_PROMPT = """이해관계자 평가: 기준은 이해관계자 집단(경쟁 기술 진영, 도입사·개발자, 투자 업계)이며
+호출마다 그중 하나(target_criterion)의 반응을 평가한다.
 근거는 두 종류다. reused_evidence는 기술 조사 에이전트가 수집한 논문 근거를 재인용한 것이고,
 web_evidence는 이번에 Tavily로 수집한 웹 근거다. claim에 어느 종류의 근거인지 드러나게 쓴다.
 claim에는 발언·행동 주체(기업명, 조직, 개인의 역할)와 그 형식(공식 발표, 제품 문서, 기사, 개인 블로그·포럼)을 명시한다.
@@ -21,7 +21,7 @@ revision_feedback이 있으면 그 보완 항목을 우선 다룬다. next_queri
 """
 
 
-def check_stakeholder_finding(finding: DraftFinding) -> str | None:
+def check_stakeholder_finding(finding: DraftFinding, cited) -> str | None:
     if finding.stance is None:
         return "stance 누락"
     return None
