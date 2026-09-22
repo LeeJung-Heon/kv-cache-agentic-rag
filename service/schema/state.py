@@ -20,11 +20,21 @@ class Evidence(TypedDict):
     excerpt: str
 
 
+class TrlAssessment(TypedDict):
+    level_or_range: str | None
+    as_of: str
+    confidence: Literal["높음", "중간", "낮음"]
+    unverified_conditions: list[str]
+    basis: str
+
+
 class Finding(TypedDict):
     technology_ids: list[str]
     claim: str
     evidence_ids: list[str]
     is_inference: bool
+    # 기술 조사 노드의 TRL 항목만 채우는 선택 필드 (설계서 4.1.3)
+    trl_assessment: NotRequired[TrlAssessment]
 
 
 class AgentResult(TypedDict):
