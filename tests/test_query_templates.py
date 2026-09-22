@@ -21,8 +21,8 @@ class QueryTemplateTest(unittest.TestCase):
 
     def test_build_query_pair_substitutes_primary_name(self):
         pair = build_query_pair("market", "상용화·채택", "hw_01")
-        self.assertEqual(pair.positive, "CXL-PNM commercial deployment production adoption")
-        self.assertEqual(pair.negative, "CXL-PNM adoption barriers delay not deployed")
+        self.assertEqual(pair.positive, "CXL processing-near-memory commercial deployment production adoption")
+        self.assertEqual(pair.negative, "CXL processing-near-memory adoption barriers delay not deployed")
         self.assertEqual(pair.topic, "news")
 
     def test_alias_query(self):

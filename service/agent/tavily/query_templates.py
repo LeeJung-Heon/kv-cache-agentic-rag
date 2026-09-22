@@ -55,10 +55,21 @@ CRITERIA: dict[Perspective, list[str]] = {
 }
 
 # 첫 항목은 1차 검색명, 나머지는 결과가 빈약할 때만 쓰는 보강 검색 별칭이다.
+# hw_01은 2026-09-22 실측에서 "CXL-PNM"보다 "CXL processing-near-memory"의 score가 높아 순서를 바꿨다.
 TECH_ALIASES: dict[str, list[str]] = {
     "sw_01": ["DeepSeek MLA", "Multi-head Latent Attention", "MLA KV cache compression"],
-    "hw_01": ["CXL-PNM", "CXL processing-near-memory", "CXL PNM LLM inference"],
+    "hw_01": ["CXL processing-near-memory", "CXL-PNM", "CXL PNM LLM inference"],
 }
+
+# scope=direct로 인정하려면 인용 근거의 제목·발췌에 있어야 하는 기술 고유어(대소문자 무시 정규식).
+# "CXL"만 있는 근거는 CXL 전체 시장이므로 연관 시장(adjacent)이다.
+TECH_TERMS: dict[str, list[str]] = {
+    "sw_01": [r"\bmla\b", r"multi-head latent attention", r"latent attention"],
+    "hw_01": [r"\bpnm\b", r"processing[- ]near[- ]memory"],
+}
+
+# claim_type=fact인데 이 표현이 있으면 forecast로 교정한다. 기준일 이후 연도는 evaluation에서 따로 검사한다.
+FORECAST_TERMS = ["전망", "예상", "예측", "cagr", "연평균", "forecast", "projected", "expected to"]
 
 
 class QueryPair(NamedTuple):

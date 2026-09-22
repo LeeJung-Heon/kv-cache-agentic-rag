@@ -31,7 +31,7 @@ class StakeholderEvaluationTest(unittest.TestCase):
         analyst = FakeAnalyst()
         run(analyst, state=state)
         # 비용·클라우드 청크는 시장성 후보이고, 이해관계자에서는 프레임워크·개발자 청크만 재인용한다.
-        self.assertEqual([e["id"] for e in analyst.contexts[0]["reused_evidence"]], ["sw_p9_c2"])
+        self.assertEqual([e["url"] for e in analyst.contexts[0]["reused_evidence"]], [FRAMEWORK["url"]])
 
     def test_stance_required_and_scope_cleared(self):
         def make(context):

@@ -24,13 +24,17 @@ revision_feedback이 있으면 그 보완 항목을 우선 다룬다. next_queri
 def check_stakeholder_finding(finding: DraftFinding) -> str | None:
     if finding.stance is None:
         return "stance 누락"
-    # scope는 시장성 전용이다. 값이 와도 주장은 유지하고 필드만 비운다.
-    finding.scope = None
     return None
 
 
+def clear_scope(finding: DraftFinding, cited) -> list[str]:
+    # scope는 시장성 전용이다. 값이 와도 주장은 유지하고 필드만 비운다.
+    finding.scope = None
+    return []
+
+
 STAKEHOLDER_SPEC = PerspectiveSpec(perspective="stakeholder", field="stakeholder_result", prompt=STAKEHOLDER_PROMPT,
-                                   check_finding=check_stakeholder_finding)
+                                   check_finding=check_stakeholder_finding, correct_finding=clear_scope)
 
 
 def make_stakeholder_node(analyst, *, rules: str, normalize_result, error_result, search: SearchFn = tavily_search):

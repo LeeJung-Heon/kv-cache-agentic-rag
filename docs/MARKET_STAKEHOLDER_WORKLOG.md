@@ -21,7 +21,7 @@
 | 3 | `tavily_client.py` + 로직 테스트 | `feat/tavily-agent` | 완료 |
 | 4 | 시장성 에이전트 | `feat/tavily-agent` | 완료 (technical_result는 state.AgentResult 계약 기준, 실제 출력과 대조 필요) |
 | 5 | 이해관계자 에이전트 | `feat/tavily-agent` | 완료 |
-| 6 | 실제 Tavily API 통합 테스트 (1~2회) | `feat/tavily-agent` | 다음 작업 (API 키 필요) |
+| 6 | 실제 Tavily API 통합 테스트 | `feat/tavily-agent` | 진행 중 (LLM 출력 품질 문제로 방향 결정 필요) |
 | 7 | 팀 그래프에 노드 연결 | 미정 | 대기 (기술 조사·평가 종합 노드 완성 후) |
 
 ## 전제
@@ -181,6 +181,31 @@
 - 재인용 키워드는 이해관계자용(`vendor`, `developer`, `open-source`, `vllm` 등)을 따로 쓴다.
 - Finding에 발언 주체 필드는 없다. 설계서 4.1의 "발언 주체"는 claim 본문으로 표현한다. 필드가 필요하면 공용 스키마 변경이라 팀 논의가 필요하다.
 - 테스트 `tests/test_stakeholder_evaluation.py` 5건. 전체 unittest 46건, `check_graph.py`, `check_domain.py` PASS
+
+## 6단계: 실제 API 실측 (2026-09-22, CXL-PNM 시장성, gpt-4.1-mini)
+
+실행: `uv run python scripts/tavily_live_check.py --technology hw_01 --perspective market`
+(Tavily 응답 축약본은 `tests/fixtures/tavily_responses/recorded/`, 원본·LLM 출력은 `outputs/tavily_live/`)
+
+| 회차 | Tavily | 결과 | 발견한 문제 | 조치 |
+|---|---|---|---|---|
+| 1 | 12회 | partial, finding 2 | "CXL-PNM" 1차 검색 score 낮음(최고 0.30), CXL 전체 시장 전망을 `scope=direct`·`claim_type=fact`로 표시, finding당 근거 19·13개 통째 연결 | 1차 검색명을 "CXL processing-near-memory"로 교체, scope·claim_type 라벨 교정 규칙, 근거 5개 상한, 본문 인용 필수 |
+| 2 | 8회 | partial, finding 0 | LLM이 claim 본문에 인용을 넣지 않아 전부 제외 | 본문 인용 필수 규칙 철회. `pipeline.result_markdown`이 evidence_ids로 인용을 붙이므로 팀 컨벤션과도 맞음 |
+| 3 | 8회 | partial, finding 1 | scope 교정은 동작. LLM이 16자리 해시 ID를 잘못 옮겨 적어(`web_793fbf3c...`→`web_793fbf3d...`) finding 2개 제외 | LLM 입력에서 근거 ID를 `E1`, `E2` 참조키로 바꾸고 응답 후 실제 ID로 복원 |
+| 4 | 8회 | partial, finding 0 | 참조키가 짧아지자 기준당 finding 1개에 근거 10~13개를 통째 연결해 상한에 걸림. 요약에 인용 없는 수치 | **방향 결정 필요** |
+
+확인된 사실
+- `include_published_date: true` 이후 모든 결과에 발행일이 온다.
+- news 토픽 score는 general보다 낮다(최고 0.36). 임계값 0.5에서는 news 기준이 항상 보강 검색된다.
+- 1차 검색명 교체로 같은 조건의 Tavily 호출이 12회에서 8회로 줄었다(`tests/test_recorded_replay.py`로 재현).
+- 단일 기술로 실행하면 request 문서에 두 기술이 모두 있어서 LLM이 평가하지 않은 기술(MLA)에 대한 한계를 쓴다. 두 기술을 함께 실행하면 생기지 않는 테스트 범위의 부작용이다.
+
+추가한 규칙 (모두 unittest로 고정, 전체 59건 통과)
+- finding당 근거 최대 5개, 초과 시 제외. 본문 인용이 있으면 evidence_ids를 인용한 근거로 좁힘
+- `scope=direct`인데 인용 근거에 기술 고유어(`TECH_TERMS`)가 없으면 adjacent로 교정하고 기록
+- `claim_type=fact`인데 기준일 이후 연도나 전망 표현(`FORECAST_TERMS`)이 있으면 forecast로 교정하고 기록
+- 수집하지 않은 근거 ID로 제외될 때 해당 ID를 limitations에 명시
+- LLM 입력 근거 ID는 참조키(`E1`…)로 전달하고 응답 후 복원
 
 ## 설계서 외 자체 안전장치 (구현 후 README에 "확증편향 방지 조치"로 기록)
 

@@ -72,8 +72,24 @@ class MarketEvaluationTest(unittest.TestCase):
         analyst = FakeAnalyst()
         run(analyst)
         context = analyst.contexts[0]
-        self.assertEqual([e["id"] for e in context["reused_evidence"]], ["sw_p3_c1"])
-        self.assertTrue(all(e["id"].startswith("web_") for e in context["web_evidence"]))
+        self.assertEqual([e["url"] for e in context["reused_evidence"]], [REUSED["url"]])
+        self.assertTrue(context["web_evidence"])
+
+    def test_llm_sees_short_refs_and_result_has_real_ids(self):
+        analyst = FakeAnalyst()
+        result, _ = run(analyst)
+        context = analyst.contexts[0]
+        refs = [e["id"] for e in context["reused_evidence"] + context["web_evidence"]]
+        self.assertEqual(refs, [f"E{i}" for i in range(1, len(refs) + 1)])
+        self.assertTrue(all(key.startswith("web_") for f in result["findings"] for key in f["evidence_ids"]))
+        self.assertTrue(all("[E" not in f["claim"] and "[web_" in f["claim"] for f in result["findings"]))
+
+    def test_unknown_ref_is_dropped(self):
+        def make(context):
+            return [finding("hw_01", "생태계", ["E999"], stance="mixed")]
+        result, _ = run(FakeAnalyst(make))
+        self.assertEqual(result["findings"], [])
+        self.assertTrue(any("수집하지 않은 근거 ID E999" in item for item in result["limitations"]))
 
     def test_reused_evidence_can_support_matching_technology_only(self):
         def make(context):
@@ -123,7 +139,7 @@ class MarketEvaluationTest(unittest.TestCase):
         self.assertEqual(len(withheld), 6)
 
     def test_one_side_failure_stays_partial_or_complete(self):
-        search = FakeSearch({"CXL-PNM adoption barriers delay not deployed": http_error(429)},
+        search = FakeSearch({"CXL processing-near-memory adoption barriers delay not deployed": http_error(429)},
                             default="commercial_positive")
         result, _ = run(FakeAnalyst(), search=search)
         self.assertNotEqual(result["status"], "error")
@@ -157,3 +173,82 @@ class MarketEvaluationTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def web_ids(context, index=0):
+    return context["search_results"][index]["evidence_ids"]
+
+
+def evidence_by_url(context, fragment):
+    return next(e["id"] for e in context["web_evidence"] if fragment in e["url"])
+
+
+class LabelAndCitationRuleTest(unittest.TestCase):
+    """2026-09-22 실제 실행에서 발견한 문제(근거 통째 첨부, 연관 시장을 direct로, 전망을 fact로)에 대한 규칙."""
+
+    def test_claim_without_inline_citation_keeps_evidence_ids(self):
+        # 실측에서 LLM은 본문 인용을 넣지 않았다. evidence_ids가 상한 이내면 유지한다.
+        def make(context):
+            return [finding("hw_01", "생태계", web_ids(context)[:2], claim="인용 없는 주장", stance="mixed")]
+        result, _ = run(FakeAnalyst(make))
+        self.assertEqual(len(result["findings"][0]["evidence_ids"]), 2)
+
+    def test_more_than_five_citations_is_dropped(self):
+        def make(context):
+            ids = web_ids(context)
+            return [finding("hw_01", "생태계", ids, claim="근거를 통째로 붙인 주장", stance="mixed")]
+        result, _ = run(FakeAnalyst(make), search=FakeSearch({}, default="many"))
+        self.assertEqual(result["findings"], [])
+        self.assertTrue(any("상한 5개 초과" in item for item in result["limitations"]))
+
+    def test_evidence_ids_are_narrowed_to_inline_citations(self):
+        def make(context):
+            ids = web_ids(context)
+            return [finding("hw_01", "생태계", ids, claim=f"주장 [{ids[0]}]", stance="mixed")]
+        result, _ = run(FakeAnalyst(make))
+        self.assertEqual(len(result["findings"][0]["evidence_ids"]), 1)
+        self.assertEqual(len(result["evidence"]), 1)
+
+    def test_unknown_evidence_id_is_named(self):
+        def make(context):
+            return [finding("hw_01", "생태계", ["web_00000000deadbeef"], stance="mixed")]
+        result, _ = run(FakeAnalyst(make))
+        self.assertTrue(any("수집하지 않은 근거 ID web_00000000deadbeef" in item for item in result["limitations"]))
+
+    def test_direct_scope_without_technology_term_becomes_adjacent(self):
+        def make(context):
+            pilot = evidence_by_url(context, "cxl-pilot")  # "CXL memory"만 있고 PNM 고유어 없음
+            sample = evidence_by_url(context, "cxl-pnm-sample")  # processing-near-memory 포함
+            return [finding("hw_01", "시장 규모·성장성", [pilot], claim=f"CXL 메모리 시장 [{pilot}]", stance="mixed"),
+                    finding("hw_01", "생태계", [sample], claim=f"PNM 모듈 [{sample}]", stance="mixed")]
+        result, _ = run(FakeAnalyst(make))
+        self.assertEqual([f["scope"] for f in result["findings"]], ["adjacent", "direct"])
+        self.assertTrue(any("scope direct→adjacent" in item and "hw_01 / 시장 규모·성장성" in item
+                            for item in result["limitations"]))
+
+    def test_future_year_or_forecast_term_becomes_forecast(self):
+        def make(context):
+            ids = web_ids(context)
+            return [finding("hw_01", "시장 규모·성장성", ids[:1], claim=f"2030년 123억 달러 [{ids[0]}]", stance="mixed"),
+                    finding("hw_01", "생태계", ids[:1], claim=f"연평균 30% 성장 전망 [{ids[0]}]", stance="mixed"),
+                    finding("hw_01", "상용화·채택", ids[:1], claim=f"2025년 샘플 출하 [{ids[0]}]", stance="mixed")]
+        result, _ = run(FakeAnalyst(make))
+        self.assertEqual([f["claim_type"] for f in result["findings"]], ["forecast", "forecast", "fact"])
+        self.assertEqual(sum("claim_type fact→forecast" in item for item in result["limitations"]), 2)
+
+    def test_year_like_digits_in_citation_id_are_ignored(self):
+        from service.agent.tavily.evaluation import correct_forecast
+        f = AnalysisDraft(status="complete", summary="", limitations=[], next_queries=[], findings=[
+            finding("hw_01", "생태계", ["web_20270000aaaa1111"], claim="샘플 출하 [web_20270000aaaa1111]")]).findings[0]
+        self.assertEqual(correct_forecast(f, "2026-09-21"), [])
+        self.assertEqual(f.claim_type, "fact")
+
+    def test_common_prompt_is_sent(self):
+        captured = {}
+
+        class Capture(FakeAnalyst):
+            def invoke(self, messages):
+                captured["system"] = messages[0][1]
+                return super().invoke(messages)
+        run(Capture())
+        self.assertIn("관련 근거를 모두 붙이지 않는다", captured["system"])

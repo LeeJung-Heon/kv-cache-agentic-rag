@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "CXL-PNM market size growth demand forecast",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.marvell.com/blogs/five-ways-cxl-will-transform-computing.html",
+        "title": "Five Ways CXL Will Transform Computing",
+        "score": 0.2987475,
+        "published_date": "Thu, 17 Apr 2025 00:00:00 GMT",
+        "content": "are difficult to predict, including those described in the “Risk Factors” section of our Annual Reports on Form 10-K, Quarterly Reports on Form 10-Q and other documents filed by us from time to time w"
+      },
+      {
+        "url": "https://derrickquinn.github.io/LongSight.pdf",
+        "title": "[PDF] LongSight: Compute-Enabled Memory to Accelerate Large-Context ...",
+        "score": 0.26574215,
+        "published_date": "Thu, 19 Mar 2026 09:17:48 GMT",
+        "content": "2024), 1227–1240. doi:10.14778/3648160.3648166  Sang-Soo Park, KyungSoo Kim, Jinin So, Jin Jung, Jonggeon Lee, Kyoungwan Woo, Nayeon Kim, Younghyun Lee, Hyungyo Kim, Yongsuk Kwon, Jinhyun Kim, Jieun L"
+      },
+      {
+        "url": "https://arxiv.org/html/2606.19746v1",
+        "title": "SAC: Disaggregated KV Cache System for Sparse ...",
+        "score": 0.2081793,
+        "published_date": "Thu, 18 Jun 2026 00:00:00 GMT",
+        "content": "of sparse memory access with certain LLM configurations. Additionally, hardware-software co-designs like CXL-PNM  explore processing-near-memory within CXL Type-3 devices to accelerate LLM inference b"
+      },
+      {
+        "url": "https://arxiv.org/html/2502.07578v3",
+        "title": "PIM Is All You Need: A CXL-Enabled GPU-Free System for Large ...",
+        "score": 0.06797248,
+        "published_date": "Sat, 03 May 2025 00:00:00 GMT",
+        "content": "We propose CENT, a CXL-ENabled GPU-Free sysTem for LLM inference, which harnesses CXL memory expansion capabilities to accommodate substantial LLM sizes, and"
+      },
+      {
+        "url": "https://www.research-collection.ethz.ch/bitstreams/c77fd017-be3e-4b7b-aa34-7f2b1c1e9066/download",
+        "title": "[PDF] Enabled GPU-Free System for Large Language Model Inference",
+        "score": 0.040211637,
+        "published_date": "Thu, 03 Apr 2025 00:00:00 GMT",
+        "content": "We propose CENT, a GPU-free system that uses CXL memory expansion to accommodate the considerable memory capacity requirements of LLMs. We design a hierarchical"
+      }
+    ]
+  }
+}

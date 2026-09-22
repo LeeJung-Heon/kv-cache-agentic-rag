@@ -1,6 +1,9 @@
+import re
+
 from service.agent.tavily.client import SearchFn, tavily_search
 from service.agent.tavily.evaluation import PerspectiveSpec, make_evaluation_node
-from state import DraftFinding
+from service.agent.tavily.query_templates import TECH_TERMS
+from state import DraftFinding, Evidence
 
 MARKET_PROMPT = """시장성 평가: 입력 technologies 각각의 시장 규모·성장성, 상용화·채택, 생태계를 평가한다.
 evaluation_criteria의 각 기준을 기술마다 따로 판단하고, 각 finding의 criterion은 그중 하나다.
@@ -32,8 +35,21 @@ def check_market_finding(finding: DraftFinding) -> str | None:
     return None
 
 
+def correct_market_finding(finding: DraftFinding, cited: list[Evidence]) -> list[str]:
+    # 설계서 3.4: 직접 시장과 연관 시장을 분리한다. 기술 고유어가 없는 근거로는 직접 시장을 주장할 수 없다.
+    if finding.scope != "direct":
+        return []
+    text = " ".join(f"{e['title']} {e['excerpt']}" for e in cited).lower()
+    missing = [tid for tid in finding.technology_ids
+               if not any(re.search(term, text) for term in TECH_TERMS.get(tid, []))]
+    if missing:
+        finding.scope = "adjacent"
+        return [f"scope direct→adjacent (인용 근거에 {', '.join(missing)} 고유어 없음)"]
+    return []
+
+
 MARKET_SPEC = PerspectiveSpec(perspective="market", field="market_result", prompt=MARKET_PROMPT,
-                              check_finding=check_market_finding)
+                              check_finding=check_market_finding, correct_finding=correct_market_finding)
 
 
 def make_market_node(analyst, *, rules: str, normalize_result, error_result, search: SearchFn = tavily_search):

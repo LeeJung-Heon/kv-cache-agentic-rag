@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "CXL processing-near-memory framework support standard ecosystem",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.viavisolutions.com/en-us/what-compute-express-link-cxl",
+        "title": "Compute Express Link (CXL) | What is it?",
+        "score": 0.69968605,
+        "published_date": "Mon, 11 Jul 2022 00:00:00 GMT",
+        "content": "Established in 2019, the CXL Consortium is an open industry standard group formed to develop technical specifications that facilitate breakthrough performance for emerging usage models while supportin"
+      },
+      {
+        "url": "https://investor.marvell.com/news-events/press-releases/detail/990/marvell-extends-cxl-ecosystem-leadership-with-structera-interoperability-across-all-major-memory-and-cpu-platforms",
+        "title": "Marvell Extends CXL Ecosystem Leadership with Structera ...",
+        "score": 0.6150191,
+        "published_date": "Tue, 02 Sep 2025 00:00:00 GMT",
+        "content": "SANTA CLARA, Calif., Sept. 2, 2025 /PRNewswire/ -- Marvell Technology, Inc. (NASDAQ: MRVL), a leader in data infrastructure semiconductor solutions, today announced the Marvell® Structera™ Compute Exp"
+      },
+      {
+        "url": "https://introl.com/blog/cxl-4-0-infrastructure-planning-guide-memory-pooling-2025",
+        "title": "CXL 4.0 Infrastructure Planning Guide | Introl Blog",
+        "score": 0.58664185,
+        "published_date": "Sun, 29 Mar 2026 00:00:00 GMT",
+        "content": "### Intel GPU Systems\n\nIntel Data Center GPU Max (Ponte Vecchio) supports CXL for memory expansion on systems with Sapphire Rapids or later CPUs.41\n\n## Risks and Considerations\n\n### Standards Fragment"
+      },
+      {
+        "url": "https://globalsemiresearch.substack.com/p/cxl-in-the-ai-era-revolution-or-hype",
+        "title": "CXL in the AI Era: Revolution or Hype? How Tech Giants Are ...",
+        "score": 0.5521781,
+        "published_date": "Sun, 12 Apr 2026 14:00:00 GMT",
+        "content": "AMD’s strategy is more flexible. On the one hand, AMD joined the CXL Alliance, and its Genoa processors support CXL 1.1; on the other hand, AMD has not abandoned its proprietary Infinity Fabric techno"
+      },
+      {
+        "url": "https://www.wing.vc/content/what-is-cxl",
+        "title": "What is Compute Express Link (CXL)? - Wing Venture Capital",
+        "score": 0.52583206,
+        "published_date": "Mon, 29 Jun 2026 00:00:00 GMT",
+        "content": "that historically discourages capex on new interconnect silicon, which is why every major CPU — Intel Xeon, AMD EPYC, and the Arm server ecosystem — now ships CXL root-port support natively, and why A"
+      }
+    ]
+  }
+}

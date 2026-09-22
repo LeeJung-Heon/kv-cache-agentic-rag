@@ -10,3 +10,4 @@
 | `weak.json` | score가 낮아 별칭 보강 검색이 필요한 결과 |
 | `empty.json` | 결과 0건 |
 | `malformed.json` | `results` 목록이 없는 응답 |
+| `many.json` | 근거 개수 상한(5개) 검증용 6건 |

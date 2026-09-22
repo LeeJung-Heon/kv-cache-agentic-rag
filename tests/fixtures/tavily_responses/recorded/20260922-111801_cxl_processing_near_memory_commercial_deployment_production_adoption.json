@@ -1,0 +1,19 @@
+{
+  "request": {
+    "query": "CXL processing-near-memory commercial deployment production adoption",
+    "topic": "news",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://tspasemiconductor.substack.com/p/the-infinite-ai-compute-loop-hbm",
+        "title": "The Infinite AI Compute Loop: HBM Big Three + TSMC × NVIDIA ...",
+        "score": 0.35770264,
+        "published_date": "Mon, 13 Oct 2025 13:27:39 GMT",
+        "content": "The CXL (Compute Express Link) architecture is enabling resource pooling and near-memory compute. CXL 2.0/3.x combines Switching, Pooling, and P2P topologies, using OS-level hot page migration and rem"
+      }
+    ]
+  }
+}

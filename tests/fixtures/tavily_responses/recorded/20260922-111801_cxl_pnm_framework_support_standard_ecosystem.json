@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "CXL-PNM framework support standard ecosystem",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.marvell.com/blogs/5x-more-queries-per-second-cxl-compute-accelerators-for-ai.html",
+        "title": "5 Times More Queries per Second: What CXL Compute Accelerators Can Do for AI",
+        "score": 0.4547875,
+        "published_date": "Tue, 02 Dec 2025 00:00:00 GMT",
+        "content": "This picture is now changing with CXL compute accelerators, which leverage open standards, familiar technologies and a broad ecosystem. And, in a demonstration at OCP 2025, Samsung Electronics, softwa"
+      },
+      {
+        "url": "https://introl.com/blog/cxl-4-0-infrastructure-planning-guide-memory-pooling-2025",
+        "title": "CXL 4.0 Infrastructure Planning Guide | Introl Blog",
+        "score": 0.4069804,
+        "published_date": "Sun, 29 Mar 2026 00:00:00 GMT",
+        "content": "For strategic planning: - CXL complements NVLink/UALink; they serve different purposes - No single interconnect standard will \"win\"—plan for coexistence - Equipment decisions in 2025-2026 affect inter"
+      },
+      {
+        "url": "https://www.linkedin.com/posts/ravichandran-paramasivam-a12b3438_cxl-cxlpnm-cmmdc-activity-7405479258913050624-ljZJ",
+        "title": "CXL-PNM: When Your Memory Becomes a Mini-Accelerator.",
+        "score": 0.3934089,
+        "published_date": "Sat, 13 Dec 2025 05:30:42 GMT",
+        "content": "storage, and security tasks from the CPU, freeing compute for AI workloads. PCIe Gen 5 & Gen 6 The latest high-speed interconnect standards. Gen 5 runs at 32GT/s; Gen 6 doubles that to 64GT/s — ensuri"
+      },
+      {
+        "url": "https://arxiv.org/pdf/2404.19381",
+        "title": "[PDF] Low-overhead General-purpose Near-Data Processing in CXL ...",
+        "score": 0.3929196,
+        "published_date": "Mon, 23 Sep 2024 00:00:00 GMT",
+        "content": "To extend CXL.mem to support custom packet types, the host processor HW should be modified to support the special usage of the reserved bits. Thus, commodity processors that only support the standard "
+      },
+      {
+        "url": "https://aspdac.com/aspdac2024/tutorial/index.html",
+        "title": "29th Asia and South Pacific Design Automation Conference (ASP-DAC 2024)",
+        "score": 0.38609254,
+        "published_date": "Mon, 22 Jan 2024 00:00:00 GMT",
+        "content": "By adopting CXL protocol to memory solutions, our memory solutions will expand the CXL memory ecosystem while strengthening its presence in the next-generation memory solutions market. [...] bandwidth"
+      }
+    ]
+  }
+}
