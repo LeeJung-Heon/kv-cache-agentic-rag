@@ -20,8 +20,8 @@
 | 2 | `evidence_schema.py`, `query_templates.py` | `feat/tavily-agent` | 완료 |
 | 3 | `tavily_client.py` + 로직 테스트 | `feat/tavily-agent` | 완료 |
 | 4 | 시장성 에이전트 | `feat/tavily-agent` | 완료 (technical_result는 state.AgentResult 계약 기준, 실제 출력과 대조 필요) |
-| 5 | 이해관계자 에이전트 | `feat/tavily-agent` | 다음 작업 |
-| 6 | 실제 Tavily API 통합 테스트 (1~2회) | 미정 | 대기 (API 키 필요) |
+| 5 | 이해관계자 에이전트 | `feat/tavily-agent` | 완료 |
+| 6 | 실제 Tavily API 통합 테스트 (1~2회) | `feat/tavily-agent` | 다음 작업 (API 키 필요) |
 | 7 | 팀 그래프에 노드 연결 | 미정 | 대기 (기술 조사·평가 종합 노드 완성 후) |
 
 ## 전제
@@ -169,6 +169,18 @@
   결과 0건 partial·판단 유보 6칸, 한쪽 실패 흡수, 전체 실패 error(LLM 미호출·메시지 비노출), LLM 실패 error,
   피드백 필터, 결과 evidence가 인용한 근거만 포함
 - 전체 unittest 41건, `check_graph.py`, `check_domain.py` PASS
+
+## 5단계: 이해관계자 에이전트
+
+- `service/agent/node/stakeholder.py`: 4단계 공통 흐름을 그대로 쓰고 프롬프트와 검증 규칙만 다르다.
+- 프롬프트(설계서 3.4): 발언·행동 주체와 형식(공식 발표, 제품 문서, 기사, 개인 블로그·포럼)을 claim에 명시,
+  경쟁 진영은 직접 발표와 평가자 해석 분리, 도입사·개발자는 공식 사례와 개인 의견 구분·소수 의견 일반화 금지,
+  투자 업계는 기업 전체 투자와 특정 기술 투자 구분·전망을 실증 근거로 쓰지 않음, 관측 반응과 예상 이해관계 구별
+- 검증: `claim_type`·`stance` 필수. `scope`는 시장성 전용이라 값이 와도 주장은 유지하고 필드만 비운다.
+  시장성 전용 규칙(scope·stage 필수)은 적용하지 않는다.
+- 재인용 키워드는 이해관계자용(`vendor`, `developer`, `open-source`, `vllm` 등)을 따로 쓴다.
+- Finding에 발언 주체 필드는 없다. 설계서 4.1의 "발언 주체"는 claim 본문으로 표현한다. 필드가 필요하면 공용 스키마 변경이라 팀 논의가 필요하다.
+- 테스트 `tests/test_stakeholder_evaluation.py` 5건. 전체 unittest 46건, `check_graph.py`, `check_domain.py` PASS
 
 ## 설계서 외 자체 안전장치 (구현 후 README에 "확증편향 방지 조치"로 기록)
 
