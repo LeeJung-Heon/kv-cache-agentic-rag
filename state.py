@@ -1,6 +1,6 @@
 from typing import Literal, NotRequired, TypedDict
 
-from pydantic import BaseModel, ConfigDict, Field
+from service.schema.state import AnalysisDraft, DraftFinding
 
 
 class Technology(TypedDict):
@@ -50,22 +50,3 @@ class GraphState(TypedDict):
     synthesis_result: NotRequired[AgentResult]
     report_markdown: NotRequired[str]
     report_evidence_ids: NotRequired[list[str]]
-
-
-# criterion과 next_queries는 LLM 응답 경계에서만 사용하고 공개 AgentResult에는 넣지 않는다.
-class DraftFinding(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    technology_ids: list[str]
-    criterion: str = Field(description="입력 evaluation_criteria에 있는 항목 하나")
-    claim: str
-    evidence_ids: list[str]
-    is_inference: bool
-
-
-class AnalysisDraft(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    status: Literal["complete", "partial", "error"]
-    summary: str
-    findings: list[DraftFinding]
-    limitations: list[str]
-    next_queries: list[str] = Field(description="기술 조사에서 부족한 근거를 찾을 수정 검색어, 최대 4개. 다른 역할은 빈 목록")

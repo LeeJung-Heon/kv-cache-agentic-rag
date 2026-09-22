@@ -12,9 +12,9 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, StateGraph
 
-from rag import ROOT, PAPERS, PaperIndex
+from rag import ROOT, PAPERS, PaperIndex, get_paper_index
 from report import write_report
-from service.agent.node.domain import make_domain_node
+from service.agent.node.domain import domain_node
 from state import AgentResult, AnalysisDraft, Evidence, GraphState
 
 DEFAULT_DOMAIN = "데이터센터·클라우드 LLM 서빙"
@@ -335,8 +335,7 @@ def make_nodes(index: PaperIndex, model: ChatOpenAI, max_technical_retries: int 
 
     return {"technology_selection": select_technologies, "technical_research": analysis_node("technical_result"),
             "market_evaluation": analysis_node("market_result"), "stakeholder_evaluation": analysis_node("stakeholder_result"),
-            "domain_evaluation": make_domain_node(index, analyst, rules=RULES,
-                                                  normalize_result=normalize_result, error_result=error_result),
+            "domain_evaluation": domain_node,
             "synthesis": synthesis, "report": report}
 
 
@@ -358,7 +357,7 @@ def main():
         if missing:
             parser.error("필수 환경변수가 없습니다: " + ", ".join(missing))
     print("논문 인덱스 준비", flush=True)
-    index = PaperIndex()
+    index = get_paper_index()
     print(f"인덱스: {len(index.chunks)} chunks", flush=True)
     if args.index_only:
         for side in PAPERS:

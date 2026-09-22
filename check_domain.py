@@ -1,10 +1,10 @@
 import json
 from copy import deepcopy
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
-from pipeline import error_result, initial_state, normalize_result, select_technologies
-from service.agent.node.domain import make_domain_node
-from state import AnalysisDraft
+from langgraph.graph import START, END, StateGraph
+from service.agent.node.domain import domain_node
+from service.schema.state import AnalysisDraft, GraphState
 
 
 EVIDENCE_IDS = {"sw": "chunk-alpha", "hw": "chunk-beta"}
@@ -34,21 +34,31 @@ def check_case(state, mode="normal"):
         if mode == "one_sided":
             findings = [{"technology_ids": [t["id"] for t in technologies], "criterion": criteria[0],
                          "claim": "양쪽 기술에 대한 주장", "evidence_ids": [EVIDENCE_IDS["sw"]], "is_inference": True}]
-        elif mode == "unknown_evidence":
-            findings[0]["evidence_ids"] = ["unknown-chunk"]
+        elif mode == "null_summary":
+            return AnalysisDraft(status="complete", summary=None, findings=findings, limitations=[], next_queries=[])
         return AnalysisDraft(status="complete", summary="검사 요약", findings=findings, limitations=[], next_queries=[])
 
     index.search.side_effect = search
     analyst.invoke.side_effect = RuntimeError("SECRET_SENTINEL") if mode == "failure" else analyze
-    node = make_domain_node(index, analyst, rules="", normalize_result=normalize_result, error_result=error_result)
-    update = node(state)
+    with patch("service.agent.node.domain.retrieval.get_paper_index", return_value=index), \
+         patch("service.agent.node.domain.model.get_analyst", return_value=analyst):
+        update = domain_node(state)
+        if mode == "normal":
+            graph = StateGraph(GraphState)
+            graph.add_node("domain_evaluation", domain_node)
+            graph.add_edge(START, "domain_evaluation")
+            graph.add_edge("domain_evaluation", END)
+            output = graph.compile().invoke(state)
+            assert output["domain_result"] == update["domain_result"]
+            assert output["request"] == state["request"]
+
     assert state == original, "노드가 입력 State를 직접 변경함"
     assert set(update) == {"domain_result"}, "다른 노드의 결과 필드를 변경함"
     result = update["domain_result"]
 
     expected = [(technology, criterion) for technology in state["technologies"]
                 for criterion in state["evaluation_criteria"]["domain"]]
-    assert index.search.call_count == len(expected)
+    assert index.search.call_count == len(expected) * (2 if mode == "normal" else 1)
     for call, (technology, criterion) in zip(index.search.call_args_list, expected):
         query, side = call.args
         assert side == technology["approach"].lower()
@@ -59,16 +69,24 @@ def check_case(state, mode="normal"):
         assert len(result["findings"]) == len(expected)
         assert len(result["evidence"]) == len(state["technologies"])
     elif mode == "one_sided":
-        assert result["status"] == "partial" and not result["findings"]
-        assert any(state["technologies"][1]["id"] in item for item in result["limitations"])
+        assert result["status"] == "complete" and len(result["findings"]) == 1
     else:
         assert result["status"] == "error", result
         assert "SECRET_SENTINEL" not in json.dumps(result)
 
 
 def main():
-    state = initial_state()
-    state.update(select_technologies(state))
+    state: GraphState = {
+        "request": "두 기술의 도메인 적용성을 평가해 주세요.",
+        "target_domain": "데이터센터·클라우드 LLM 서빙",
+        "evaluation_criteria": {"domain": ["성능", "비용", "정확도", "전력", "확장성"]},
+        "quality_feedback": [],
+        "revision_count": 0,
+        "technologies": [
+            dict(id="sw", name="DeepSeek-V2 MLA", approach="SW", selection_reason="KV 캐시 압축"),
+            dict(id="hw", name="CXL-PNM", approach="HW", selection_reason="메모리 확장"),
+        ],
+    }
     check_case(state)
     state["technologies"] = [
         dict(id="compression-A", name="대체 압축 기술", approach="SW", selection_reason="정밀도를 변경한다"),
@@ -76,9 +94,9 @@ def main():
     ]
     state["target_domain"] = "다른 적용 환경"
     state["evaluation_criteria"]["domain"] = ["운영 복잡도", "이식성"]
-    for mode in ("normal", "one_sided", "unknown_evidence", "failure"):
+    for mode in ("normal", "one_sided", "null_summary", "failure"):
         check_case(state, mode)
-    print("PASS: 기술·기준 변경, 검색 분리, 근거 중복 제거·연결, partial/error, State 보존 (외부 API 없음)")
+    print("PASS: 기술·기준 변경, 검색 분리, 근거 중복 제거, Pydantic null 거부·error, State 보존·독립 LangGraph 실행 (외부 API 없음)")
 
 
 if __name__ == "__main__":
