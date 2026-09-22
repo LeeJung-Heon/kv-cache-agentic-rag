@@ -272,6 +272,13 @@ main에서 루트 `state.py`, `rag.py`, `report.py`가 삭제되고 각 노드�
 main의 기존 실패 2건(`tests/test_technical_model.py`, `test_technical_graph::test_parent_graph_stops_after_subgraph_search_failure`)은
 `pipeline.py`가 삭제된 `report` 모듈을 import해서 생기는 문제로 이 변경과 무관하다.
 
+## 머지 전 코드 리뷰 (2026-09-22)
+
+| 지적 | 수정 |
+|---|---|
+| 근거 5개 상한을 본문 인용으로 좁히기 전에 검사해, 인용 2개·근거 7개인 finding이 제외됨 | 본문 인용으로 먼저 좁힌 뒤 상한 검사 |
+| 웹 근거 0건이면 무조건 "판단 유보"를 기록해, 재인용 근거로 채운 칸에도 판단 유보가 남음 | 검색 래퍼는 "웹 근거 없음"만 기록. 판단 유보는 웹·재인용 근거가 모두 없는 칸에서만 평가 노드가 기록 |
+
 ## 설계서 외 자체 안전장치 (구현 후 README에 "확증편향 방지 조치"로 기록)
 
 - 기준별 stance 분포 확인: positive/negative 중 한쪽만 있으면 limitations에 "일방적 근거"로 기록 (4단계 구현, `one_sided_cells`)

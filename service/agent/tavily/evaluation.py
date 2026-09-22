@@ -297,7 +297,9 @@ def make_evaluation_node(spec: PerspectiveSpec, analyst, *, rules: str = BASE_RU
                 for criterion in criteria:
                     web = cell_web[(technology["id"], criterion)]
                     if not web and not cell_reused:
-                        continue  # 근거가 없는 칸은 search_criterion이 이미 판단 유보로 기록했다.
+                        # 판단 유보는 웹·재인용 근거가 모두 없을 때만 기록한다. 웹만 없으면 재인용 근거로 분석한다.
+                        search_limitations.append(f"{technology['id']} / {criterion}: 웹·재인용 근거 없음, 판단 유보")
+                        continue
                     context, refs = cell_context(state, technology, criterion, cell_reused, web, end_date, feedback)
                     called += 1
                     try:
@@ -366,12 +368,13 @@ def finding_problem(finding: DraftFinding, spec: PerspectiveSpec, sources, crite
         return problem
     # 본문 인용은 필수가 아니다. pipeline.result_markdown이 evidence_ids로 인용을 붙인다.
     # 실측에서 본문 인용 필수 규칙은 LLM이 따르지 않아 모든 finding이 제외됐다.
-    if len(finding.evidence_ids) > MAX_EVIDENCE_PER_FINDING:
-        return f"근거 {len(finding.evidence_ids)}개로 상한 {MAX_EVIDENCE_PER_FINDING}개 초과"
-    # 본문에 인용이 있으면 인용한 근거로 좁힌다. 인용하지 않은 근거를 함께 붙이는 것을 막는다.
+    # 본문에 인용이 있으면 인용한 근거로 먼저 좁힌다. 인용하지 않은 근거를 함께 붙이는 것을 막고,
+    # 좁힌 뒤에도 상한을 넘을 때만 제외한다.
     inline = list(dict.fromkeys(CITATION.findall(finding.claim)))
     if inline:
         finding.evidence_ids = inline
+    if len(finding.evidence_ids) > MAX_EVIDENCE_PER_FINDING:
+        return f"근거 {len(finding.evidence_ids)}개로 상한 {MAX_EVIDENCE_PER_FINDING}개 초과"
     unsupported = [tid for tid in finding.technology_ids if not set(finding.evidence_ids) & evidence_by_technology[tid]]
     if unsupported:
         return f"{', '.join(unsupported)}의 근거가 연결되지 않음"

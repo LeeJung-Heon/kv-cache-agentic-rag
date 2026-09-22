@@ -135,13 +135,13 @@ class WeakAndFallbackTest(unittest.TestCase):
         self.assertEqual(len(search.calls), 4)
         self.assertEqual([q for q, _ in search.calls][2:], [alias_pos, alias_neg])
         self.assertTrue(any(r["via_alias"] for r in result.records))
-        self.assertFalse(any("판단 유보" in item for item in result.limitations))
+        self.assertFalse(any("웹 근거 없음" in item for item in result.limitations))
 
     def test_fallback_is_capped(self):
         search = FakeSearch({}, default="empty")
         result = search_criterion("market", "상용화·채택", "hw_01", search=search, max_fallbacks=1)
         self.assertEqual(len(search.calls), 4)
-        self.assertEqual(result.limitations, ["hw_01 / 상용화·채택: 웹 근거 없음, 판단 유보"])
+        self.assertEqual(result.limitations, ["hw_01 / 상용화·채택: 웹 근거 없음"])
 
     def test_alias_recovers_after_primary_failure(self):
         pos, neg = self.queries()
@@ -151,7 +151,7 @@ class WeakAndFallbackTest(unittest.TestCase):
         result = search_criterion("market", "상용화·채택", "hw_01", search=search)
         self.assertTrue(result.evidence)
         self.assertTrue(any("모두 실패" in item for item in result.limitations))
-        self.assertFalse(any("판단 유보" in item for item in result.limitations))
+        self.assertFalse(any("웹 근거 없음" in item for item in result.limitations))
 
 
 class DirectionFallbackTest(unittest.TestCase):

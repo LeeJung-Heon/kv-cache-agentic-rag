@@ -1,7 +1,7 @@
 """시장성·이해관계자 에이전트가 공유하는 Tavily 검색 래퍼.
 
 설계서 기준 오류 정책: 질의 실패는 error로 중단하지 않고 limitations에 기록한다.
-보강 검색까지 마친 뒤 근거가 없으면 해당 기술·기준을 판단 유보로 기록한다.
+보강 검색까지 마친 뒤 웹 근거가 없으면 기록한다. 판단 유보 여부는 재인용 근거까지 본 평가 노드가 정한다.
 API 키 누락 같은 설정 오류는 판단 유보로 숨기지 않고 그대로 올린다.
 """
 
@@ -198,7 +198,7 @@ def search_criterion(perspective: Perspective, criterion: str, technology_id: st
                 query = pair.positive if direction == "positive" else pair.negative
                 result.merge(run_queries([(direction, query)], topic=pair.topic, via_alias=True, **common))
                 break
-    # 판단 유보는 질의 실패 여부가 아니라 보강 검색까지 마친 뒤 근거가 없을 때 기록한다.
+    # 질의 실패 여부가 아니라 보강 검색까지 마친 뒤 근거가 없을 때 기록한다. 재인용 근거가 있으면 판단 유보가 아니다.
     if not result.evidence:
-        result.limitations.append(f"{technology_id} / {criterion}: 웹 근거 없음, 판단 유보")
+        result.limitations.append(f"{technology_id} / {criterion}: 웹 근거 없음")
     return result

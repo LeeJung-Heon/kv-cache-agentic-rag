@@ -165,6 +165,18 @@ class MarketEvaluationTest(unittest.TestCase):
         self.assertEqual(result["findings"], [])
         self.assertEqual(len([item for item in result["limitations"] if item.endswith("판단 유보")]), 6)
 
+    def test_reused_evidence_without_web_is_not_withheld(self):
+        # 리뷰 지적: 웹 근거가 0건이어도 재인용 근거로 칸을 채웠다면 판단 유보로 기록하지 않는다.
+        def make(context):
+            if cell(context) == ("sw_01", "생태계"):
+                return [finding("sw_01", "생태계", ["E1"], stance="mixed")]
+            return []
+        result, _ = run(FakeAnalyst(make), search=FakeSearch({}, default="empty"))
+        self.assertEqual(len(result["findings"]), 1)
+        self.assertIn("sw_01 / 생태계: 웹 근거 없음", result["limitations"])
+        self.assertFalse(any(item.startswith("sw_01 / 생태계") and "판단 유보" in item for item in result["limitations"]))
+        self.assertIn("hw_01 / 생태계: 웹·재인용 근거 없음, 판단 유보", result["limitations"])
+
     def test_one_side_failure_is_absorbed(self):
         search = FakeSearch({"CXL processing-near-memory adoption barriers delay not deployed": http_error(429)},
                             default="commercial_positive")
@@ -237,6 +249,15 @@ class LabelAndCitationRuleTest(unittest.TestCase):
             search=FakeSearch({}, default="many"))
         self.assertEqual(result["findings"], [])
         self.assertTrue(any("근거 6개로 상한 5개 초과" in item for item in result["limitations"]))
+
+    def test_padded_evidence_is_narrowed_before_cap(self):
+        # 리뷰 지적: evidence_ids 6개에 본문 인용이 2개면 제외하지 않고 인용한 2개로 좁힌다.
+        def make(context):
+            refs = web_refs(context)
+            return [finding("hw_01", "생태계", refs, claim=f"주장 [{refs[0]}] [{refs[1]}]", stance="mixed")]
+        result, _ = run(FakeAnalyst(only("hw_01", "생태계", make)), search=FakeSearch({}, default="many"))
+        self.assertEqual(len(result["findings"]), 1)
+        self.assertEqual(len(result["findings"][0]["evidence_ids"]), 2)
 
     def test_evidence_ids_are_narrowed_to_inline_citations(self):
         def make(context):
