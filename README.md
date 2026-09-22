@@ -51,6 +51,9 @@ uv run pipeline.py --env-file /path/to/your/.env
 | `service/agent/node/technical/` | 기술 조사 노드 묶음: `schema.py`(서브그래프 State·초안 스키마), `retrieval.py`(논문 검색 도구·근거 수집), `model.py`(전용 모델 생성·설정·호출), `prompts.py`(역할·TRL 판정표), `core.py`(순수 검증 규칙), `node.py` |
 | `service/agent/graph/technical.py` | 기술 조사 서브그래프 `build_technical_research_graph(index, model=None, max_retries=2, rules=)` |
 | `check_technical.py` | 기술 조사 서브그래프만 Mock 인덱스·모델로 점검 |
+| `service/agent/node/market.py`, `stakeholder.py` | 시장성·이해관계자 노드 `market_node(state)`, `stakeholder_node(state)` ([설명](docs/MARKET_STAKEHOLDER_AGENT.md)) |
+| `service/agent/tavily/` | 두 노드가 공유하는 Tavily 검색·질의 템플릿·근거 검증 |
+| `scripts/tavily_live_check.py` | 시장성·이해관계자 노드 실측 실행 (실제 API) |
 | `tests/` | API·모델 없이 도는 pytest (`uv run pytest -q`) |
 | `rag.py` | PDF 로딩, E5 토큰 청킹, 임베딩 캐시, cosine 검색 |
 | `report.py` | Markdown 저장 및 한국어 PDF 생성 |
@@ -83,6 +86,7 @@ uv run pipeline.py --env-file /path/to/your/.env
 - 기술 조사의 TRL Finding은 선택 필드 `trl_assessment`(`level_or_range` 1~9 또는 범위, `as_of`=2026-09-21, `confidence`, `unverified_conditions`, `basis`="공개 정보 기반 추정")를 가지며, 판단 불가는 `level_or_range=null`과 한계 항목으로 남깁니다. 기술 조사 모델은 `service/agent/node/technical/model.py`의 `TECHNICAL_MODEL` 상수로 정하고 키·엔드포인트는 `config.settings`를 따릅니다.
 - 재검색 후에도 부족하면 `partial`을 유지하고 `technical_missing_items`와 `limitations`에 남겨 병렬 평가로 진행합니다. 기술 조사 결과가 갱신될 때 기존 충족 항목도 포함하도록 요청합니다.
 - 시장·이해관계자·도메인의 `partial`은 그대로 종합합니다. 상위 평가의 부족한 근거와 한계를 종합·보고서에서도 유지합니다.
+- 시장성·이해관계자는 Tavily 질의 한쪽 실패나 칸 하나의 LLM 실패를 `error`로 처리하지 않고 limitations에 기록한 뒤 `partial`로 진행합니다. 모든 질의나 모든 칸이 실패할 때만 `error`입니다. 확증편향 방지 조치와 근거 규칙은 [시장성·이해관계자 에이전트](docs/MARKET_STAKEHOLDER_AGENT.md)에 있습니다.
 - API·구조화 응답·근거 ID 오류는 해당 결과를 `error`로 기록합니다. 기술 조사 오류는 즉시 그래프를 끝냅니다. 병렬 평가 오류는 합류 후 종합을 `error`로 기록하고 보고서를 생성하지 않습니다. 오류에는 자동 재시도를 하지 않습니다.
 - 보고서 형식·인용 오류 또는 PDF 생성 실패는 실행을 중단하고 `FAILED.txt`를 남깁니다. 부분 State는 보존하며 오류 메시지에 API 요청 원문이나 인증값을 저장하지 않습니다.
 
@@ -118,7 +122,7 @@ uv run --locked python -m unittest discover -s tests -v  # 모델 다운로드 �
 uv run pipeline.py --index-only  # 저장된 FAISS 검색, 최초 질의 모델 다운로드 가능
 uv run check_graph.py           # 변경한 제어 흐름과 근거 연결만 확인
 uv run check_technical.py       # 기술 조사 서브그래프만 Mock으로 점검
-uv run pytest -q                # 기술 조사 규칙·재검색·오류 처리 (외부 API 없음)
+uv run pytest -q                # 기술 조사 규칙·재검색·오류 처리, 시장성·이해관계자 규칙 (외부 API 없음)
 ```
 
 개별 수정마다 전체 테스트나 모델 비교 평가를 실행할 필요는 없습니다. 생성된 보고서의 수치·인용 의미·공개정보 기반 TRL은 제출 전에 사람이 검토해야 합니다.
