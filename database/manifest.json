@@ -1,0 +1,62 @@
+[
+  {
+    "doc_id": "sw_deepseek_v2",
+    "file_name": "sw_deepseek_v2.pdf",
+    "technology": "MLA",
+    "role": "primary",
+    "title": "DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model",
+    "allowed": true,
+    "page_count": 52,
+    "sha256": "f149f9c09aa8b46ce6a740a255a99b7cc2317ac5b065989339919b7e6c329c9b"
+  },
+  {
+    "doc_id": "sw_mha2mla",
+    "file_name": "2025.acl-long.1597.pdf",
+    "technology": "MLA",
+    "role": "adoption",
+    "title": "Towards Economical Inference: Enabling DeepSeek’s Multi-Head Latent Attention in Any Transformer-based LLMs",
+    "allowed": true,
+    "page_count": 16,
+    "sha256": "74a76a0dfb54abfeeaae948c297cfa72b251bf6d73e1baf8a94178b9ca1a1730"
+  },
+  {
+    "doc_id": "hw_pim_cxl",
+    "file_name": "hw_pim_cxl.pdf",
+    "technology": "CXL-PNM",
+    "role": "primary",
+    "title": "Scalable Processing-Near-Memory for 1M-Token LLM Inference: CXL-Enabled KV-Cache Management Beyond GPU Limits",
+    "allowed": true,
+    "page_count": 13,
+    "sha256": "794adce50555cc340e9067e927d1822e4c6d3eff0ae39e2c87baa94f787d1061"
+  },
+  {
+    "doc_id": "hw_pond",
+    "file_name": "2023_Pond_asplos23_official_asplos_version.pdf",
+    "technology": "CXL-PNM",
+    "role": "domain",
+    "title": "Pond: CXL-Based Memory Pooling Systems for Cloud Platforms",
+    "allowed": true,
+    "page_count": 14,
+    "sha256": "4ff2fbb39ac2dd8e241bd274bf65e29a0a085763aabcfbe016e56d2eecb2b1b6"
+  },
+  {
+    "doc_id": "common_pagedattention",
+    "file_name": "2309.06180v1.pdf",
+    "technology": "COMMON",
+    "role": "serving_baseline",
+    "title": "Efficient Memory Management for Large Language Model Serving with PagedAttention",
+    "allowed": true,
+    "page_count": 16,
+    "sha256": "55b3b324d779a67c59dac2519445e3b07c14e6ff5c656fadb47a3d7b5997469e"
+  },
+  {
+    "doc_id": "common_splitwise",
+    "file_name": "2311.18677v2.pdf",
+    "technology": "COMMON",
+    "role": "operation_baseline",
+    "title": "Splitwise: Efficient Generative LLM Inference Using Phase Splitting",
+    "allowed": true,
+    "page_count": 15,
+    "sha256": "c7baf19039f7b760c5d83fb61324ec4ffdf384e8a047bd46f2c4e2ad85e3531d"
+  }
+]
