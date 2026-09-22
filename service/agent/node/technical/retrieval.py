@@ -9,12 +9,13 @@ from service.schema.state import Evidence
 
 
 def make_paper_search_tool(index):
-    """`index.search(query, side)`가 id·title·url·page·text를 가진 행을 돌려주면 어떤 인덱스든 쓸 수 있다."""
+    """공용 벡터 검색 결과를 기술 에이전트의 Evidence 형식으로 변환한다."""
 
     @tool("paper_search")
     def paper_search(query: str, side: Literal["sw", "hw"]) -> list[Evidence]:
-        """Search one of the two KV-cache papers (sw: DeepSeek-V2 MLA, hw: CXL-PNM) and return the top passages
-        as Evidence records with page numbers. Use a specific query naming the mechanism, metric, or condition."""
+        """Search indexed KV-cache papers for one technology side and return the top passages as Evidence records.
+        Use a specific query naming the mechanism, metric, or condition."""
+        # 실제 임베딩과 FAISS 검색은 주입받은 PaperIndex가 담당한다.
         return [{"id": row["id"], "source_type": "paper", "title": row["title"], "url": row["url"],
                  # 문서 manifest의 공개일을 Evidence까지 전달해 최종 보고서 출처에 보존한다.
                  "page": row["page"], "published_at": row.get("published_at"),
@@ -31,9 +32,11 @@ def retrieve_evidence(paper_search, state: TechnicalResearchState, evidence: dic
     missing_ids = {item.split(":")[0] for item in state.get("technical_missing_items", [])} & all_ids
     defaults = default_queries(state["technologies"], state["target_domain"], criteria)
     for technology in state["technologies"]:
+        # 재검색에서는 부족하다고 판정된 기술만 대상으로 삼아 불필요한 검색을 줄인다.
         if queries and missing_ids and technology["id"] not in missing_ids:
             continue
         for query in queries or [defaults[technology["id"]]]:
             for row in paper_search.invoke({"query": query, "side": technology["approach"].lower()}):
+                # 같은 청크가 여러 질의에서 검색되어도 Evidence ID 기준으로 한 번만 보관한다.
                 evidence[row["id"]] = row
     return evidence

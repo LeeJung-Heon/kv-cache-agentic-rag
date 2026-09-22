@@ -17,6 +17,7 @@ def file_hash(path: Path) -> str:
 
 
 def save_bundle(output: Path, manifest: dict, chunks: list[dict], indexes: dict) -> None:
+    """인덱스 묶음을 임시 폴더에서 완성한 뒤 원자적으로 교체한다."""
     output.mkdir(parents=True, exist_ok=True)
     with TemporaryDirectory(prefix=".build-", dir=output.parent) as temporary:
         stage = Path(temporary)
@@ -34,6 +35,7 @@ def save_bundle(output: Path, manifest: dict, chunks: list[dict], indexes: dict)
 
 
 def load_bundle(directory: Path) -> tuple[dict, list[dict], dict]:
+    """공유받은 인덱스 묶음의 해시와 행 매핑을 검증해 로드한다."""
     path = directory / "manifest.json"
     if not path.is_file():
         raise FileNotFoundError(f"FAISS 인덱스가 없습니다: {directory}. 먼저 uv run -m ingest.embedding.build_index를 실행하거나 공유 폴더를 복사하세요.")
@@ -60,6 +62,7 @@ def load_bundle(directory: Path) -> tuple[dict, list[dict], dict]:
             embedding["normalize_embeddings"] is not True or embedding["query_prefix"] != "" or
             manifest["index_type"] != "IndexFlatIP"):
         raise ValueError("지원하지 않는 임베딩 및 검색 설정입니다.")
+    # manifest의 청크 순서는 FAISS 행 번호를 Evidence ID로 되돌리는 계약이다.
     indexed_chunks = [chunk for chunk in chunks if chunk["id"] not in set(excluded)]
     if set(manifest["indexes"]) != {chunk["index_group"] for chunk in indexed_chunks}:
         raise ValueError("청크 그룹과 인덱스 목록이 다릅니다.")
@@ -72,6 +75,7 @@ def load_bundle(directory: Path) -> tuple[dict, list[dict], dict]:
         if record["chunk_ids"] != expected:
             raise ValueError(f"{group}: FAISS 행과 청크 ID 연결이 다릅니다.")
         index = faiss.read_index(str(directory / filename))
+        # 파일 해시 외에도 검색 방식, 벡터 차원, 행 수를 확인한다.
         if (not isinstance(index, faiss.IndexFlatIP) or index.d != embedding["dimension"] or
                 index.ntotal != len(expected) or index.metric_type != faiss.METRIC_INNER_PRODUCT):
             raise ValueError(f"{group}: FAISS 차원, 행 수 또는 검색 방식이 다릅니다.")

@@ -1,3 +1,5 @@
+"""에이전트가 공유하는 State와 구조화된 LLM 출력 스키마."""
+
 from typing import Literal, NotRequired, TypedDict
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -59,17 +61,21 @@ class AgentResult(TypedDict):
 
 
 class GraphState(TypedDict):
+    # 실행 중 바뀌지 않는 공통 입력
     request: str
     target_domain: str
     evaluation_criteria: dict[str, list[str]]
     technologies: list[Technology]
+    # 각 에이전트는 자신이 담당하는 결과 필드만 갱신한다.
     technical_result: NotRequired[AgentResult]
     market_result: NotRequired[AgentResult]
     stakeholder_result: NotRequired[AgentResult]
     domain_result: NotRequired[AgentResult]
     synthesis_result: NotRequired[AgentResult]
+    # 종합 평가가 남긴 피드백과 전체 재작업 횟수
     quality_feedback: list[str]
     revision_count: int
+    # 보고서 생성 노드의 최종 출력
     report_markdown: NotRequired[str]
     report_evidence_ids: NotRequired[list[str]]
 

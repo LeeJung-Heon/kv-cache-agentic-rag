@@ -12,11 +12,13 @@ from service.agent.node.technical.schema import TechnicalDraft, TechnicalResearc
 
 
 def make_technical_nodes(index, model, max_retries: int, *, rules: str = "") -> dict:
+    """기술 조사 서브그래프에서 사용할 검색, 분석, 재질의 노드를 만든다."""
     paper_search = make_paper_search_tool(index)
     analyst = model.with_structured_output(TechnicalDraft, method="json_schema", strict=True)
     system = build_system_prompt(rules)
 
     def retrieve(state: TechnicalResearchState):
+        # 기존 근거를 복사한 뒤 새 검색 결과를 누적해 재검색 전 결과를 보존한다.
         evidence = dict(state.get("technical_evidence", {}))
         retry_count = state.get("technical_retry_count", 0)
         try:
@@ -63,10 +65,12 @@ def make_technical_nodes(index, model, max_retries: int, *, rules: str = "") -> 
             return {"technical_result": error_result(exc), "technical_missing_items": [], "technical_queries": []}
 
     def rewrite_queries(state: TechnicalResearchState):
+        # 모델이 제안한 질의가 없으면 누락된 평가 항목에서 규칙 기반 질의를 만든다.
         queries = normalize_queries(state.get("technical_queries") or []) or retry_queries(state.get("technical_missing_items", []))
         return {"technical_retry_count": state.get("technical_retry_count", 0) + 1, "technical_queries": queries}
 
     def route_after_analysis(state: TechnicalResearchState) -> Literal["rewrite_queries", "__end__"]:
+        # partial 결과만 제한적으로 재검색하며 complete와 error는 현재 결과로 종료한다.
         if state["technical_result"]["status"] == "partial" and state.get("technical_retry_count", 0) < max_retries:
             return "rewrite_queries"
         return END

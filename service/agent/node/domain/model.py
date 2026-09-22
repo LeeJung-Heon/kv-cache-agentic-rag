@@ -1,3 +1,5 @@
+"""검색된 논문 근거를 도메인 적용성 평가로 변환한다."""
+
 import json
 from functools import cache
 
@@ -38,6 +40,8 @@ def get_analyst():
 
 
 def evaluate_domain(state: GraphState, sources, search_results):
+    """구조화 출력으로 도메인 평가를 생성한다."""
+    # 검색 질의와 근거 ID 연결을 함께 전달해 평가 기준별 근거를 추적할 수 있게 한다.
     context = {
         "request": state["request"], "target_domain": state["target_domain"],
         "technologies": state["technologies"], "evaluation_criteria": state["evaluation_criteria"]["domain"],

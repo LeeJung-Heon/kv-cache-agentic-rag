@@ -34,6 +34,7 @@ class PaperIndex:
         k = self.settings.retrieval_top_k if k is None else k
         if side not in SEARCH_SIDES or not isinstance(query, str) or not query.strip() or type(k) is not int or k < 1:
             raise ValueError("검색에는 비어 있지 않은 query, sw/hw, 양의 정수 k가 필요합니다.")
+        # 선택한 기술 인덱스와 공통 운영 문서를 같은 후보군으로 검색한다.
         groups = [group for group in (side, "common") if group in self.indices]
         if not groups:
             return []
@@ -50,6 +51,7 @@ class PaperIndex:
         # 각 인덱스의 행 번호를 manifest의 청크 ID로 변환하고 전체 후보를 다시 정렬한다.
         candidates = {}
         for group in groups:
+            # 그룹별 top-k를 모은 뒤 전체 점수 기준으로 다시 top-k를 선택한다.
             index = self.indices[group]
             scores, positions = index.search(vector, min(k, index.ntotal))
             mapping = self.manifest["indexes"][group]["chunk_ids"]

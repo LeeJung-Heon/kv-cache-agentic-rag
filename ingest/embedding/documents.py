@@ -60,6 +60,7 @@ def load_preprocessed_chunks(chunks_path: Path, manifest_path: Path) -> tuple[li
         raise ValueError(f"문서 manifest JSON 형식이 올바르지 않습니다: {exc.msg}") from exc
     if not isinstance(raw_documents, list) or not raw_documents:
         raise ValueError("문서 manifest는 비어 있지 않은 JSON 배열이어야 합니다.")
+    # Pydantic 검증으로 출처 정보가 누락되거나 예상하지 않은 필드가 섞이는 것을 막는다.
     documents = [SourceDocument.model_validate(record) for record in raw_documents]
     if len({document.doc_id for document in documents}) != len(documents):
         raise ValueError("문서 manifest의 doc_id가 중복됩니다.")
@@ -81,6 +82,7 @@ def load_preprocessed_chunks(chunks_path: Path, manifest_path: Path) -> tuple[li
             if chunk.chunk_id in seen_ids:
                 raise ValueError(f"{chunks_path.name}:{line_number}: chunk_id가 중복됩니다: {chunk.chunk_id}")
             seen_ids.add(chunk.chunk_id)
+            # 청크 메타데이터를 manifest와 대조해 서로 다른 전처리 버전의 혼용을 차단한다.
             document = documents_by_id.get(chunk.doc_id)
             if document is None:
                 raise ValueError(f"{chunks_path.name}:{line_number}: manifest에 없는 doc_id입니다: {chunk.doc_id}")
@@ -96,6 +98,7 @@ def load_preprocessed_chunks(chunks_path: Path, manifest_path: Path) -> tuple[li
                 raise ValueError(f"{chunks_path.name}:{line_number}: 검토 대상이 아닌 청크에는 review_reason이 없어야 합니다.")
 
             # text는 전처리 단계에서 제목과 소절, overlap까지 확정된 임베딩 입력이다.
+            # 여기서는 필드명과 검색 그룹만 정규화하고 본문을 다시 자르지 않는다.
             chunks.append({
                 "id": chunk.chunk_id,
                 "doc_id": chunk.doc_id,
@@ -106,6 +109,7 @@ def load_preprocessed_chunks(chunks_path: Path, manifest_path: Path) -> tuple[li
                 "section": chunk.section,
                 "section_level": chunk.section_level,
                 "section_path": chunk.section_path,
+                # 공통 Evidence.page는 대표 첫 페이지를 쓰고 전체 범위는 pdf_pages에 보존한다.
                 "page": chunk.pdf_pages[0],
                 "pdf_pages": chunk.pdf_pages,
                 "url": str(document.url),

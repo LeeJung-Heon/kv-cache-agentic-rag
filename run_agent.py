@@ -24,6 +24,7 @@ Processing-Near-Memory(PNM)를 데이터센터·클라우드 장문맥 LLM 서�
 
 
 def initial_state(domain: str) -> GraphState:
+    """사용자 입력과 고정 평가 기준으로 최초 GraphState를 만든다."""
     return {
         "request": DEFAULT_REQUEST,
         "target_domain": domain,
@@ -68,6 +69,7 @@ def main() -> None:
     parser.add_argument("--state-output", type=Path, default=Path("result/state.json"))
     args = parser.parse_args()
 
+    # 외부 호출 전에 필수 키를 확인해 그래프 중간에서 실패하는 것을 막는다.
     missing = [
         name
         for name, value in {
@@ -84,8 +86,10 @@ def main() -> None:
     graph = build_agent_graph(index, max_technical_retries=args.max_technical_retries)
 
     print("평가 그래프를 실행합니다.", flush=True)
+    # recursion_limit은 기술 재검색과 전체 품질 재작업이 잘못 반복될 때의 최종 안전장치다.
     result = graph.invoke(initial_state(args.domain), config={"recursion_limit": 30})
 
+    # 최종 State를 함께 저장해 각 에이전트의 근거와 한계를 추적할 수 있게 한다.
     args.state_output.parent.mkdir(parents=True, exist_ok=True)
     args.state_output.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"State: {args.state_output}", flush=True)

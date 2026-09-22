@@ -22,6 +22,7 @@ def build_index(settings: Settings, *, encoder=None) -> tuple[dict, bool]:
         raise ValueError("임베딩 모델명 또는 revision이 올바르지 않습니다.")
     if settings.embedding_dimension is not None and settings.embedding_dimension != encoder.dimension:
         raise ValueError("EMBEDDING_DIMENSION이 모델의 실제 출력 차원과 다릅니다.")
+    # 원본 확인이 필요한 청크는 메타데이터에는 남기되 기본 검색 인덱스에서는 제외한다.
     indexable_chunks = [chunk for chunk in chunks if settings.include_review_chunks or not chunk["needs_review"]]
     if not indexable_chunks:
         raise ValueError("색인 가능한 청크가 없습니다. 검토 대상 포함 설정 또는 전처리 결과를 확인하세요.")
@@ -38,6 +39,7 @@ def build_index(settings: Settings, *, encoder=None) -> tuple[dict, bool]:
         "indexed_chunk_count": len(indexable_chunks),
         "excluded_review_chunk_ids": [chunk["id"] for chunk in chunks if chunk not in indexable_chunks],
     }
+    # 입력 청크와 색인 설정이 모두 같을 때만 기존 산출물을 재사용한다.
     signature = hashlib.sha256(json.dumps([specification, chunks], sort_keys=True, ensure_ascii=False).encode()).hexdigest()
     output = settings.faiss_index_dir
     if (output / "manifest.json").is_file():
@@ -50,9 +52,11 @@ def build_index(settings: Settings, *, encoder=None) -> tuple[dict, bool]:
                                                batch_size=settings.embedding_batch_size), len(indexable_chunks), encoder.dimension)
     indexes, mapping = {}, {}
     for group in GROUPS:
+        # SW, HW, 공통 문서를 분리해 기술별 검색 범위를 명확히 유지한다.
         rows = [i for i, chunk in enumerate(indexable_chunks) if chunk["index_group"] == group]
         if not rows:
             continue
+        # L2 정규화 벡터의 내적은 cosine 유사도와 같으므로 IndexFlatIP를 사용한다.
         index = faiss.IndexFlatIP(encoder.dimension)
         index.add(vectors[rows])
         indexes[group] = index
@@ -60,6 +64,7 @@ def build_index(settings: Settings, *, encoder=None) -> tuple[dict, bool]:
     manifest = dict(specification, signature=signature, indexes=mapping,
                     created_at=datetime.now(timezone.utc).isoformat())
     save_bundle(output, manifest, chunks, indexes)
+    # 저장 직후 다시 읽어 해시, 차원, 행 매핑까지 검증한다.
     load_bundle(output)
     return manifest, False
 

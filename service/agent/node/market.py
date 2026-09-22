@@ -1,3 +1,5 @@
+"""Tavily 근거로 시장성 기준을 평가하는 LangGraph 노드."""
+
 from service.agent.tavily.client import SearchFn, tavily_search
 from service.agent.tavily.evaluation import (PerspectiveSpec, get_analyst, is_academic, make_evaluation_node,
                                              missing_tech_terms)
@@ -23,6 +25,7 @@ revision_feedback이 있으면 그 보완 항목을 우선 다룬다. next_queri
 
 
 def check_market_finding(finding: DraftFinding, cited: list[Evidence]) -> str | None:
+    """시장성 주장에 필요한 출처 종류와 필수 라벨을 검증한다."""
     if finding.criterion == "상용화·채택" and cited and all(is_academic(e) for e in cited):
         return "학술 자료만으로 상용화·채택 판단 불가"
     if finding.scope is None:

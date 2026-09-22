@@ -1,3 +1,5 @@
+"""RAG 허용 문서 목록과 원본 파일 무결성 정보를 생성한다."""
+
 import hashlib
 import json
 from pathlib import Path
@@ -107,6 +109,7 @@ def get_page_count(file_path: Path) -> int:
 
 
 def build_manifest():
+    """각 PDF의 페이지 수와 SHA256을 문서 메타데이터에 추가한다."""
     manifest = []
 
     for document in DOCUMENTS:
@@ -119,6 +122,7 @@ def build_manifest():
 
         item = document.copy()
 
+        # 페이지 수는 허용 범위 검증에, 해시는 원본 변경 탐지에 사용한다.
         item["page_count"] = get_page_count(file_path)
         item["sha256"] = calculate_sha256(file_path)
 

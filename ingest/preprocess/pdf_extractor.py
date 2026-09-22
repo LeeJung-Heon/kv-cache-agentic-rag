@@ -1,3 +1,5 @@
+"""등록된 PDF를 페이지 단위 Markdown과 검토 메타데이터로 추출한다."""
+
 import json
 import re
 from pathlib import Path
@@ -39,6 +41,7 @@ def remove_picture_text(markdown_text: str) -> str:
 
 
 def extract_pdf(file_path: Path, doc_id: str):
+    """PDF 한 편을 페이지별 원문 레코드로 변환한다."""
     pages = []
 
     # raster image 개수 확인용
@@ -48,7 +51,7 @@ def extract_pdf(file_path: Path, doc_id: str):
             for page in pdf
         ]
 
-    # layout-aware Markdown 추출
+    # 레이아웃을 보존한 Markdown을 페이지 단위로 받아 후속 소절 파싱에 사용한다.
     md_pages = pymupdf4llm.to_markdown(
         str(file_path),
         page_chunks=True,
@@ -82,6 +85,7 @@ def extract_pdf(file_path: Path, doc_id: str):
 
 
 def extract_all_documents():
+    """manifest에 등록된 모든 문서를 순서대로 추출한다."""
     all_pages = []
 
     for document in DOCUMENTS:

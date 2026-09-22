@@ -1,3 +1,5 @@
+"""Tavily 근거로 이해관계자 반응을 평가하는 LangGraph 노드."""
+
 from service.agent.tavily.client import SearchFn, tavily_search
 from service.agent.tavily.evaluation import (PerspectiveSpec, get_analyst, is_academic, is_low_trust, make_evaluation_node,
                                              missing_tech_terms)
@@ -30,6 +32,7 @@ ACADEMIC_EXCLUDED = ("도입사·개발자", "투자 업계")
 
 
 def check_stakeholder_finding(finding: DraftFinding, cited) -> str | None:
+    """이해관계자 주장에 필요한 출처 종류와 입장 라벨을 검증한다."""
     if finding.criterion in ACADEMIC_EXCLUDED and cited and all(is_academic(e) for e in cited):
         return f"학술 자료만으로 {finding.criterion} 반응 판단 불가"
     if finding.stance is None:

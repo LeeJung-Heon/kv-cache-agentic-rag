@@ -1,3 +1,5 @@
+"""Markdown 보고서를 파일과 한국어 PDF로 저장한다."""
+
 import os
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -23,6 +25,7 @@ def write_report(markdown: str, output: Path) -> None:
         "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",
         "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",
     ]
+    # 실행 환경마다 폰트 위치가 달라 환경변수를 우선하고 알려진 기본 경로를 차례로 확인한다.
     font = next((path for path in candidates if path and Path(path).is_file()), None)
     if not font:
         raise FileNotFoundError("PDF_FONT에 한국어 TTF 파일을 지정하세요. Markdown은 저장되었습니다.")
@@ -42,6 +45,7 @@ def write_report(markdown: str, output: Path) -> None:
     }
     reference = ParagraphStyle("Reference", parent=normal, fontSize=8, leading=11, spaceAfter=5)
     story, style, body_style, bullet = [], normal, normal, False
+    # Markdown 토큰을 ReportLab 문단으로 바꿔 제목, 목록, 본문 스타일을 유지한다.
     for token in MarkdownIt().parse(markdown):
         if token.type == "heading_open":
             style = headings[int(token.tag[1])]
@@ -68,6 +72,7 @@ def write_report(markdown: str, output: Path) -> None:
         canvas.drawString(42, 25, "KV cache | 공개정보 기반 다관점 평가")
         canvas.drawRightString(A4[0] - 42, 25, str(document.page))
 
+    # 임시 파일을 완성한 뒤 교체해 실패 시 기존 PDF가 손상되지 않게 한다.
     temporary = output / "report.tmp.pdf"
     SimpleDocTemplate(
         str(temporary), pagesize=A4, rightMargin=42, leftMargin=42,
@@ -80,6 +85,7 @@ def save_report_pdf(
     report_markdown: str,
     report_evidence_ids: list[str],
 ) -> Path:
+    """인용 ID가 본문에 있는지 확인한 뒤 보고서 파일을 저장한다."""
     missing_ids = [
         evidence_id
         for evidence_id in report_evidence_ids

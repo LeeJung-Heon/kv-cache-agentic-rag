@@ -1,17 +1,22 @@
+"""도메인 평가 기준별로 공용 FAISS 인덱스를 검색한다."""
+
 from service.retrieval.paper_index import get_paper_index
 from service.schema.state import GraphState
 
 
 def retrieve_domain(state: GraphState):
+    """기술 조사 근거에 도메인별 검색 결과를 추가한다."""
     index = get_paper_index()
     technologies = state["technologies"]
     criteria = state["evaluation_criteria"]["domain"]
     previous = state.get("technical_result")
+    # 기술 조사에서 이미 확보한 근거도 도메인 평가가 재사용할 수 있게 합친다.
     sources = {e["id"]: e for e in (previous or {}).get("evidence", [])}
     search_results = []
     for technology in technologies:
         side = technology["approach"].lower()
         for criterion in criteria:
+            # 기술과 평가 기준을 분리해 검색해 어떤 기준의 근거인지 추적 가능하게 남긴다.
             query = (
                 f"{technology['name']} | {criterion} | {state['target_domain']} | "
                 f"{technology['selection_reason'][:300]} | "
@@ -27,6 +32,7 @@ def retrieve_domain(state: GraphState):
                     "excerpt": row["text"],
                 }
                 evidence_ids.append(row["id"])
+            # LLM에는 근거 본문과 함께 질의별 Evidence ID 연결 정보를 전달한다.
             search_results.append({"technology_id": technology["id"], "criterion": criterion,
                                    "query": query, "evidence_ids": evidence_ids})
     return sources, search_results

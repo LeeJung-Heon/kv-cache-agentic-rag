@@ -1,3 +1,5 @@
+"""페이지별 추출문에서 검색에 불필요한 표시와 공백을 정리한다."""
+
 import json
 import re
 from pathlib import Path
@@ -8,6 +10,7 @@ PAGES_PATH = ROOT_DIR / "database" / "pages.jsonl"
 
 
 def clean_text(text: str) -> str:
+    """수식 표기는 보존하면서 HTML, 주석, 페이지 번호를 제거한다."""
     # 1. Markdown/HTML 줄바꿈
     text = re.sub(r"<br\s*/?>", "\n", text, flags=re.IGNORECASE)
 
@@ -59,6 +62,7 @@ def clean_text(text: str) -> str:
 
 
 def clean_pages():
+    """pages.jsonl의 raw_text를 정제해 clean_text 필드에 저장한다."""
     pages = []
 
     with open(PAGES_PATH, "r", encoding="utf-8") as f:

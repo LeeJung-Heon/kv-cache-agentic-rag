@@ -19,6 +19,7 @@ def route_after_synthesis(
     """품질 피드백이 있으면 전체 평가를 재실행하되 두 번째 종합에서 종료한다."""
     if not state.get("quality_feedback"):
         return "report_agent"
+    # 종합 평가가 두 번 끝난 뒤에도 피드백이 남으면 무한 반복을 막고 종료한다.
     if state.get("revision_count", 0) >= 2:
         return END
     return "technical_agent"
@@ -45,6 +46,7 @@ def build_agent_graph(index, technical_model=None, max_technical_retries: int = 
     workflow.add_node("synthesis_agent", synthesis_agent)
     workflow.add_node("report_agent", report_agent)
 
+    # 모든 후속 평가는 기술 조사에서 확정한 기술 정보와 논문 근거를 입력으로 사용한다.
     workflow.add_edge(START, "technical_agent")
 
     # Fan-out: 기술 조사 결과를 세 관점이 동시에 사용한다.
