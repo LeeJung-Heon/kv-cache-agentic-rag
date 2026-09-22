@@ -2,7 +2,7 @@
 
 비용이 발생한다. 기본값은 기술 1개 × 관점 1개(Tavily 6~12회, LLM 1회)다.
     uv run python scripts/tavily_live_check.py --technology hw_01 --perspective market [--record]
-녹화 축약본: --record일 때만 tests/fixtures/tavily_responses/recorded/에 저장 (content 200자로 절단, 커밋 대상)
+녹화 축약본: --record일 때만 tests/tavily_fixtures/recorded/에 저장 (content 200자로 절단, 커밋 대상)
              같은 질의를 반복 녹화하면 레포에 중복이 쌓이므로 새 질의·새 기술을 처음 실행할 때만 쓴다.
 원본 응답·노드 결과: outputs/tavily_live/<시각>/  (Git 제외)
 팀 레포가 public이므로 제3자 웹 발췌 원문은 커밋하지 않고 축약본만 남긴다. API 키는 응답에 포함되지 않는다.
@@ -10,7 +10,6 @@
 
 import argparse
 import json
-import os
 import re
 import sys
 from datetime import datetime
@@ -19,16 +18,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from dotenv import load_dotenv  # noqa: E402
-from langchain_openai import ChatOpenAI  # noqa: E402
-
-from pipeline import RULES, error_result, initial_state, normalize_result, select_technologies  # noqa: E402
+from config.config import Settings  # noqa: E402
 from service.agent.node.market import make_market_node  # noqa: E402
 from service.agent.node.stakeholder import make_stakeholder_node  # noqa: E402
 from service.agent.tavily.client import tavily_search  # noqa: E402
-from state import AnalysisDraft  # noqa: E402
+from service.agent.tavily.evaluation import get_analyst  # noqa: E402
 
-RECORDED = ROOT / "tests" / "fixtures" / "tavily_responses" / "recorded"
+RECORDED = ROOT / "tests" / "tavily_fixtures" / "recorded"
+# pipeline.select_technologies와 같은 사람 확정 기술 목록
+TECHNOLOGIES = [
+    {"id": "sw_01", "name": "DeepSeek-V2 MLA", "approach": "SW",
+     "selection_reason": "KV 표현을 저차원 잠재 공간으로 바꾸는 구조적 접근으로, 공개 모델·논문의 성과와 모델 변경·서빙 호환성 부담을 함께 평가할 수 있다."},
+    {"id": "hw_01", "name": "CXL-PNM", "approach": "HW",
+     "selection_reason": "저장 공간 확장뿐 아니라 메모리 가까이로 연산 위치를 바꾸며, 장문맥·대규모 모델에서 성능·비용·전력 효과와 불리한 조건을 함께 비교할 수 있다."},
+]
 EXCERPT_LIMIT = 200
 
 
@@ -68,17 +71,16 @@ def main():
     parser.add_argument("--perspective", choices=list(NODES), default="market")
     parser.add_argument("--record", action="store_true", help="응답 축약본을 fixture로 저장")
     args = parser.parse_args()
-    load_dotenv(ROOT / ".env", override=True)
-    missing = [k for k in ("TAVILY_API_KEY", "OPENAI_API_KEY") if not os.getenv(k)]
+    settings = Settings()
+    missing = [name for name, value in (("TAVILY_API_KEY", settings.tavily_api_key),
+                                        ("OPENAI_API_KEY", settings.openai_api_key)) if not value]
     if missing:
         raise SystemExit("환경변수 없음: " + ", ".join(missing))
 
-    state = initial_state()
-    state.update(select_technologies(state))
-    state["technologies"] = [t for t in state["technologies"] if t["id"] == args.technology]
-    model = ChatOpenAI(model=os.getenv("OPENAI_MODEL") or "gpt-4.1-mini", temperature=0, timeout=120,
-                       max_retries=0, max_tokens=12000)
-    structured = model.with_structured_output(AnalysisDraft, method="json_schema", strict=True)
+    state = {"request": "두 기술을 다관점으로 비교하라", "target_domain": "데이터센터·클라우드 LLM 서빙",
+             "evaluation_criteria": {}, "technologies": [t for t in TECHNOLOGIES if t["id"] == args.technology],
+             "quality_feedback": [], "revision_count": 0}
+    structured = get_analyst()
     drafts: list = []
 
     class RecordingAnalyst:
@@ -92,8 +94,7 @@ def main():
     output = ROOT / "outputs" / "tavily_live" / stamp
     log: list = []
     make_node, field = NODES[args.perspective]
-    node = make_node(RecordingAnalyst(), rules=RULES, normalize_result=normalize_result, error_result=error_result,
-                     search=recording_search(stamp, log, output / "raw", args.record))
+    node = make_node(RecordingAnalyst(), search=recording_search(stamp, log, output / "raw", args.record))
     result = node(state)[field]
 
     output.mkdir(parents=True, exist_ok=True)

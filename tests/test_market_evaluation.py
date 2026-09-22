@@ -3,10 +3,10 @@ import unittest
 
 import httpx
 
-from pipeline import RULES, error_result, initial_state, normalize_result, select_technologies
 from service.agent.node.market import make_market_node
 from service.agent.tavily.evaluation import COMMON_PROMPT
-from state import AnalysisDraft
+from service.schema.state import AnalysisDraft
+from tests.fixtures import sample_technologies
 from tests.test_tavily_client import FakeSearch, http_error
 
 REUSED = {"id": "sw_p3_c1", "source_type": "paper", "title": "DeepSeek-V2", "url": "https://arxiv.org/abs/2405.04434",
@@ -17,8 +17,8 @@ CELLS = {(t, c) for t in ("sw_01", "hw_01") for c in ("시장 규모·성장성"
 
 
 def base_state(**extra):
-    state = initial_state()
-    state.update(select_technologies(state))
+    state = {"request": "두 기술을 다관점으로 비교하라", "target_domain": "데이터센터·클라우드 LLM 서빙",
+             "evaluation_criteria": {}, "technologies": sample_technologies(), "quality_feedback": [], "revision_count": 0}
     state["technical_result"] = {"status": "complete", "summary": "", "findings": [],
                                  "evidence": [REUSED, NOT_REUSED], "limitations": []}
     state.update(extra)
@@ -71,8 +71,7 @@ class FakeAnalyst:
 
 def run(analyst, search=None, state=None):
     search = search or FakeSearch({}, default="commercial_positive")
-    node = make_market_node(analyst, rules=RULES, normalize_result=normalize_result, error_result=error_result,
-                            search=search)
+    node = make_market_node(analyst, search=search)
     return node(state or base_state())["market_result"], search
 
 
@@ -389,3 +388,27 @@ class GroundingRuleTest(unittest.TestCase):
         self.assertTrue(is_academic(REUSED))
         self.assertTrue(is_academic({**REUSED, "source_type": "web", "url": "https://cs.stanford.edu/paper.pdf"}))
         self.assertFalse(is_academic({**REUSED, "source_type": "web", "url": "https://news.example.com/cxl"}))
+
+
+class TeamStructureTest(unittest.TestCase):
+    """main 병합(#5 FAISS, #6 기술 조사) 이후 구조: 새 청크 ID 형식, common 문서, pipeline 비의존."""
+
+    def test_new_chunk_id_format_is_citation(self):
+        from service.agent.tavily.evaluation import CITATION
+        for key in ("sw_deepseek_v2_p12_c3", "hw_cxl_pnm_p4_c1", "common_splitwise_p2_c1", "sw_p3_c1", "web_0a1b2c3d4e5f6789"):
+            self.assertEqual(CITATION.findall(f"주장 [{key}]"), [key], key)
+
+    def test_common_document_is_reused_for_both_technologies(self):
+        common = {**REUSED, "id": "common_splitwise_p2_c1", "url": "https://example.org/splitwise",
+                  "excerpt": "Azure production traces show cost and power trade-offs."}
+        analyst = FakeAnalyst()
+        run(analyst, state=base_state(technical_result={"evidence": [common]}))
+        self.assertTrue(all([e["url"] for e in c["reused_evidence"]] == [common["url"]] for c in analyst.contexts))
+
+    def test_nodes_do_not_import_pipeline(self):
+        import subprocess
+        import sys
+        code = ("import sys; import service.agent.node.market, service.agent.node.stakeholder; "
+                "print('pipeline' in sys.modules)")
+        out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True).stdout.strip()
+        self.assertEqual(out, "False")

@@ -1,5 +1,4 @@
 import json
-import os
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -10,7 +9,7 @@ from service.agent.tavily.client import (TavilyResponseError, is_weak, parse_res
                                          search_pair, tavily_search)
 from service.agent.tavily.query_templates import build_query_pair
 
-FIXTURES = Path(__file__).parent / "fixtures" / "tavily_responses"
+FIXTURES = Path(__file__).parent / "tavily_fixtures"
 END = "2026-09-21"
 
 
@@ -204,7 +203,7 @@ class DirectionFallbackTest(unittest.TestCase):
 
 class TavilySearchConfigTest(unittest.TestCase):
     def test_missing_api_key_raises_instead_of_being_absorbed(self):
-        with patch.dict(os.environ, {}, clear=True):
+        with patch("service.agent.tavily.client.api_key", return_value=""):
             with self.assertRaises(RuntimeError):
                 tavily_search("q", topic="news", end_date=END)
         search = FakeSearch({"pos": RuntimeError("TAVILY_API_KEY"), "neg": "empty"})
@@ -218,10 +217,11 @@ class TavilySearchConfigTest(unittest.TestCase):
             captured.update(kwargs, url=url)
             return httpx.Response(200, json={"results": []}, request=httpx.Request("POST", url))
 
-        with patch.dict(os.environ, {"TAVILY_API_KEY": "test-key"}), patch("httpx.post", fake_post):
+        with patch("service.agent.tavily.client.api_key", return_value="test-key"), patch("httpx.post", fake_post):
             self.assertEqual(tavily_search("q", topic="news", end_date=END), {"results": []})
         self.assertEqual(captured["json"]["end_date"], END)
         self.assertEqual(captured["json"]["topic"], "news")
+        self.assertEqual(captured["headers"]["Authorization"], "Bearer test-key")
         self.assertEqual(captured["json"]["max_results"], 5)
         self.assertIs(captured["json"]["include_published_date"], True)
 
@@ -229,7 +229,7 @@ class TavilySearchConfigTest(unittest.TestCase):
         def fake_post(url, **kwargs):
             return httpx.Response(200, text="<html>", request=httpx.Request("POST", url))
 
-        with patch.dict(os.environ, {"TAVILY_API_KEY": "test-key"}), patch("httpx.post", fake_post):
+        with patch("service.agent.tavily.client.api_key", return_value="test-key"), patch("httpx.post", fake_post):
             with self.assertRaises(TavilyResponseError):
                 tavily_search("q", topic="news", end_date=END)
 

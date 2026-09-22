@@ -1,7 +1,7 @@
 from service.agent.tavily.client import SearchFn, tavily_search
-from service.agent.tavily.evaluation import (PerspectiveSpec, is_academic, is_low_trust, make_evaluation_node,
+from service.agent.tavily.evaluation import (PerspectiveSpec, get_analyst, is_academic, is_low_trust, make_evaluation_node,
                                              missing_tech_terms)
-from state import DraftFinding
+from service.schema.state import DraftFinding, GraphState
 
 STAKEHOLDER_PROMPT = """이해관계자 평가: 기준은 이해관계자 집단(경쟁 기술 진영, 도입사·개발자, 투자 업계)이며
 호출마다 그중 하나(target_criterion)의 반응을 평가한다.
@@ -53,6 +53,11 @@ STAKEHOLDER_SPEC = PerspectiveSpec(perspective="stakeholder", field="stakeholder
                                    correct_finding=correct_stakeholder_finding)
 
 
-def make_stakeholder_node(analyst, *, rules: str, normalize_result, error_result, search: SearchFn = tavily_search):
-    return make_evaluation_node(STAKEHOLDER_SPEC, analyst, rules=rules, normalize_result=normalize_result,
-                                error_result=error_result, search=search)
+def make_stakeholder_node(analyst, *, search: SearchFn = tavily_search):
+    """테스트·실측 스크립트용. analyst와 search를 바꿔 끼울 수 있다."""
+    return make_evaluation_node(STAKEHOLDER_SPEC, analyst, search=search)
+
+
+def stakeholder_node(state: GraphState):
+    """그래프에 연결하는 노드. stakeholder_result만 갱신한다."""
+    return make_stakeholder_node(get_analyst())(state)

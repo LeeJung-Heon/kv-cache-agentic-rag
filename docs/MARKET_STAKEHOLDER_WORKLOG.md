@@ -130,7 +130,7 @@
 
 ### 테스트
 
-- `tests/fixtures/tavily_responses/`: Tavily 응답 형식을 본떠 **직접 작성한 합성 fixture**다. 실제 녹화 응답이 아니며
+- `tests/tavily_fixtures/`: Tavily 응답 형식을 본떠 **직접 작성한 합성 fixture**다. 실제 녹화 응답이 아니며
   6단계에서 녹화 응답으로 교체·추가한다.
 - `tests/test_tavily_client.py` 18건: 파싱·필터, 한쪽/양쪽 실패, 타임아웃, 중복 URL, 오류 메시지 비노출,
   빈약 판정, 보강 검색 여부와 상한, 실패 후 별칭 복구, API 키 누락, 요청 payload, 비JSON 응답
@@ -187,7 +187,7 @@
 ## 6단계: 실제 API 실측 (2026-09-22, CXL-PNM 시장성, gpt-4.1-mini)
 
 실행: `uv run python scripts/tavily_live_check.py --technology hw_01 --perspective market`
-(Tavily 응답 축약본은 `tests/fixtures/tavily_responses/recorded/`, 원본·LLM 출력은 `outputs/tavily_live/`)
+(Tavily 응답 축약본은 `tests/tavily_fixtures/recorded/`, 원본·LLM 출력은 `outputs/tavily_live/`)
 
 | 회차 | Tavily | 결과 | 발견한 문제 | 조치 |
 |---|---|---|---|---|
@@ -252,6 +252,25 @@
 - `claim_type=fact`인데 기준일 이후 연도나 전망 표현(`FORECAST_TERMS`)이 있으면 forecast로 교정하고 기록
 - 수집하지 않은 근거 ID로 제외될 때 해당 ID를 limitations에 명시
 - LLM 입력 근거 ID는 참조키(`E1`…)로 전달하고 응답 후 복원
+
+## main 병합 대응 (2026-09-22, #5 FAISS 검색·#6 기술 조사 머지 이후)
+
+main에서 루트 `state.py`, `rag.py`, `report.py`가 삭제되고 각 노드가 pipeline에 의존하지 않는 독립 모듈이 되었다
+(`domain_node(state)`, 기술 조사 서브그래프). 팀 컨벤션대로 rebase 대신 main을 브랜치에 merge해 해결했다.
+
+| 변경 | 내용 |
+|---|---|
+| 스키마 | `service.schema.state`만 사용. `Finding`의 확장 필드 4개는 `trl_assessment`처럼 `NotRequired` 선택 필드 |
+| pipeline 비의존 | 공통 검증(`common_problem`)·결과 조립(`build_result`)·기본 규칙(`BASE_RULES`)·`error_result`·`get_analyst`를 `evaluation.py`로 옮김 |
+| 노드 진입점 | `market_node(state)`, `stakeholder_node(state)` (도메인 노드와 같은 형태). 테스트·실측은 `make_market_node(analyst, search=...)` |
+| 설정 | LLM·Tavily 키는 `config.Settings`에서 읽음. 테스트는 `client.api_key`를 바꿔 `.env`의 실제 키가 쓰이지 않게 함 |
+| 인용 ID | 새 청크 ID `{technology}_{doc_id}_p{쪽}_c{번호}`(예: `sw_deepseek_v2_p3_c1`, `common_splitwise_p2_c1`) 인식 |
+| 재인용 | `common_` 공통 운영 문서는 두 기술 모두에 연결 (설계서 2.3: PagedAttention·Splitwise는 시장성 근거) |
+| fixture 경로 | `tests/fixtures/tavily_responses/` → `tests/tavily_fixtures/` (main의 `tests/fixtures.py` 모듈과 이름 충돌 방지) |
+
+검증: pytest 130건 통과(내 테스트 84건 포함), `check_domain.py` PASS, 실측 1회(hw_01 시장성, complete·finding 15).
+main의 기존 실패 2건(`tests/test_technical_model.py`, `test_technical_graph::test_parent_graph_stops_after_subgraph_search_failure`)은
+`pipeline.py`가 삭제된 `report` 모듈을 import해서 생기는 문제로 이 변경과 무관하다.
 
 ## 설계서 외 자체 안전장치 (구현 후 README에 "확증편향 방지 조치"로 기록)
 

@@ -6,7 +6,7 @@ from pathlib import Path
 from service.agent.tavily.client import is_weak, parse_results, search_criterion
 from service.agent.tavily.query_templates import END_DATE
 
-RECORDED = Path(__file__).parent / "fixtures" / "tavily_responses" / "recorded"
+RECORDED = Path(__file__).parent / "tavily_fixtures" / "recorded"
 
 
 def load_recorded():

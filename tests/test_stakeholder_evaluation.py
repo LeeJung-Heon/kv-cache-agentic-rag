@@ -1,6 +1,5 @@
 import unittest
 
-from pipeline import RULES, error_result, normalize_result
 from service.agent.node.stakeholder import make_stakeholder_node
 from tests.test_market_evaluation import REUSED, FakeAnalyst, base_state, cell, finding, only, web_refs
 from tests.test_tavily_client import FakeSearch
@@ -12,8 +11,7 @@ STAKEHOLDER_CELLS = {(t, c) for t in ("sw_01", "hw_01") for c in ("경쟁 기술
 
 def run(analyst, search=None, state=None):
     search = search or FakeSearch({}, default="commercial_positive")
-    node = make_stakeholder_node(analyst, rules=RULES, normalize_result=normalize_result, error_result=error_result,
-                                 search=search)
+    node = make_stakeholder_node(analyst, search=search)
     return node(state or base_state())["stakeholder_result"], search
 
 

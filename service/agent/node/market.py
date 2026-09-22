@@ -1,6 +1,7 @@
 from service.agent.tavily.client import SearchFn, tavily_search
-from service.agent.tavily.evaluation import PerspectiveSpec, is_academic, make_evaluation_node, missing_tech_terms
-from state import DraftFinding, Evidence
+from service.agent.tavily.evaluation import (PerspectiveSpec, get_analyst, is_academic, make_evaluation_node,
+                                             missing_tech_terms)
+from service.schema.state import DraftFinding, Evidence, GraphState
 
 MARKET_PROMPT = """시장성 평가: 기준은 시장 규모·성장성, 상용화·채택, 생태계이며 호출마다 그중 하나(target_criterion)를 평가한다.
 근거는 두 종류다. reused_evidence는 기술 조사 에이전트가 수집한 논문 근거를 재인용한 것이고,
@@ -49,6 +50,11 @@ MARKET_SPEC = PerspectiveSpec(perspective="market", field="market_result", label
                               low_trust_counts=False)
 
 
-def make_market_node(analyst, *, rules: str, normalize_result, error_result, search: SearchFn = tavily_search):
-    return make_evaluation_node(MARKET_SPEC, analyst, rules=rules, normalize_result=normalize_result,
-                                error_result=error_result, search=search)
+def make_market_node(analyst, *, search: SearchFn = tavily_search):
+    """테스트·실측 스크립트용. analyst와 search를 바꿔 끼울 수 있다."""
+    return make_evaluation_node(MARKET_SPEC, analyst, search=search)
+
+
+def market_node(state: GraphState):
+    """그래프에 연결하는 노드. market_result만 갱신한다."""
+    return make_market_node(get_analyst())(state)

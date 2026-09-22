@@ -11,7 +11,7 @@ from email.utils import parsedate_to_datetime
 from typing import Literal, TypedDict
 from urllib.parse import urlparse
 
-from state import Evidence
+from service.schema.state import Evidence
 
 QueryDirection = Literal["positive", "negative"]
 

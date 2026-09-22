@@ -5,17 +5,17 @@
 API 키 누락 같은 설정 오류는 판단 유보로 숨기지 않고 그대로 올린다.
 """
 
-import os
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from urllib.parse import urlparse, urlunparse
 
 import httpx
 
+from config.config import Settings
 from service.agent.tavily.evidence_schema import (QueryDirection, RetrievalRecord, is_after_cutoff,
                                                   normalize_published_date, web_evidence_id)
 from service.agent.tavily.query_templates import END_DATE, Perspective, Topic, build_query_pair, search_names
-from state import Evidence
+from service.schema.state import Evidence
 
 TAVILY_URL = "https://api.tavily.com/search"
 MAX_RESULTS = 5
@@ -32,12 +32,17 @@ class TavilyResponseError(ValueError):
     pass
 
 
+def api_key() -> str:
+    # Settings는 .env와 환경변수를 함께 읽는다. 테스트에서는 이 함수를 바꿔 실제 키 사용을 막는다.
+    return Settings().tavily_api_key
+
+
 def tavily_search(query: str, *, topic: Topic, end_date: str, depth: str = "basic",
                   max_results: int = MAX_RESULTS) -> dict:
-    api_key = os.getenv("TAVILY_API_KEY")
-    if not api_key:
+    key = api_key()
+    if not key:
         raise RuntimeError("TAVILY_API_KEY가 설정되지 않았습니다.")
-    response = httpx.post(TAVILY_URL, timeout=45, headers={"Authorization": f"Bearer {api_key}"},
+    response = httpx.post(TAVILY_URL, timeout=45, headers={"Authorization": f"Bearer {key}"},
                           json={"query": query, "topic": topic, "search_depth": depth, "max_results": max_results,
                                 "end_date": end_date, "include_raw_content": False,
                                 # topic=general에서는 이 값이 없으면 published_date가 오지 않는다.
