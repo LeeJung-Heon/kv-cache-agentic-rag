@@ -19,8 +19,8 @@
 | 1 | Finding 확장 필드 추가 | `feat/finding-extension` | 완료 (팀 공유 필요) |
 | 2 | `evidence_schema.py`, `query_templates.py` | `feat/tavily-agent` | 완료 |
 | 3 | `tavily_client.py` + 로직 테스트 | `feat/tavily-agent` | 완료 |
-| 4 | 시장성 에이전트 | `feat/tavily-agent` | 다음 작업 (technical_result 실제 스키마 확인 필요) |
-| 5 | 이해관계자 에이전트 | 미정 | 대기 |
+| 4 | 시장성 에이전트 | `feat/tavily-agent` | 완료 (technical_result는 state.AgentResult 계약 기준, 실제 출력과 대조 필요) |
+| 5 | 이해관계자 에이전트 | `feat/tavily-agent` | 다음 작업 |
 | 6 | 실제 Tavily API 통합 테스트 (1~2회) | 미정 | 대기 (API 키 필요) |
 | 7 | 팀 그래프에 노드 연결 | 미정 | 대기 (기술 조사·평가 종합 노드 완성 후) |
 
@@ -134,7 +134,44 @@
   빈약 판정, 보강 검색 여부와 상한, 실패 후 별칭 복구, API 키 누락, 요청 payload, 비JSON 응답
 - 전체 unittest 28건, `check_graph.py`, `check_domain.py` PASS
 
+## 4단계: 시장성 에이전트
+
+### 구조
+
+- `service/agent/tavily/evaluation.py`: 시장성·이해관계자 공통 흐름 (`make_evaluation_node`, `PerspectiveSpec`)
+- `service/agent/node/market.py`: 시장성 프롬프트와 전용 검증 규칙, `make_market_node(analyst, *, rules, normalize_result, error_result)`
+- 채은의 도메인 노드처럼 `pipeline`을 import하지 않고 필요한 함수를 인자로 받는다. 7단계에서 `pipeline.make_nodes`에 연결한다.
+
+### 결정
+
+| 항목 | 결정 | 이유 |
+|---|---|---|
+| 평가 기준 | `state["evaluation_criteria"]` 대신 설계서 기준 `query_templates.CRITERIA` 사용 | 레포 목업 기준과 다름. 팀 공유 5번 |
+| 재인용 후보 | `technical_result.evidence` 중 excerpt에 `REUSE_KEYWORDS`(cost, power, deployment, cloud 등)가 있는 것만 | 논문 성능 수치를 시장성 근거로 반복하지 않게 함. 규칙이 코드에 남아 재현 가능 |
+| 재인용 근거의 기술 연결 | ID 접두어(`sw_`/`hw_`)와 기술의 `approach`로 연결 | SW 논문으로 HW 시장성을 주장하지 못하게 함 |
+| LLM 입력 | `reused_evidence`와 `web_evidence`를 분리해 전달. 질의 방향(긍정/부정)은 전달하지 않음 | stance를 질의 방향이 아니라 원문 내용으로 판단하게 함 |
+| 잘못된 Finding | 해당 Finding만 제외하고 `검증 실패로 제외: ...`를 limitations에 기록 | 도메인 노드와 같은 방식. 하나 때문에 전체가 error가 되지 않음 |
+| 공통 검증 | `normalize_result`를 Finding 한 건 단위로 호출해 기술 ID·기준·근거 ID·인용 일치를 재사용 | pipeline 규칙과 어긋나지 않게 함 |
+| 시장성 전용 검증 | `claim_type`·`scope`·`stance` 필수, 상용화·채택은 `stage` 필수 | 설계서 3.4 판단 규칙을 코드로 강제 |
+| status | 기술 2 × 기준 3 = 6칸이 모두 검증된 Finding으로 채워지고 LLM도 complete면 complete, 아니면 partial | 설계서 4.4: 근거 부족은 partial |
+| error | 모든 Tavily 질의 실패(LLM 호출 안 함), LLM 호출 실패, 설정 오류 | 설계서 4.4: 모델·도구 오류는 error |
+| 요약·한계의 알 수 없는 인용 | 제거 | normalize_result가 결과 전체를 error로 만드는 것을 방지 |
+| 재작업 피드백 | `quality_feedback` 중 "시장"/"market"이 들어간 항목만 `revision_feedback`으로 전달 | 다른 관점 피드백이 섞이지 않게 함 |
+
+- 웹 인용은 Finding claim 안에서 pipeline 규칙대로 `[web_...]` ID를 쓴다. `[시장 자료, 도메인 발행 날짜]` 표기(`web_citation`)는
+  보고서 조립 단계에서 쓸 수 있도록 제공하며, 적용 여부는 보고서 담당과 맞춰야 한다.
+- 재작업 시 "검색 방향 조정"은 현재 LLM 입력에 피드백을 전달하는 데까지만 구현했다. 피드백으로 검색 질의를 바꾸는 것은 아직 없다.
+
+### 테스트
+
+- `tests/test_market_evaluation.py` 13건 (가짜 LLM·가짜 Tavily, API 호출 없음): 6칸 complete, 설계서 기준 사용,
+  재인용 필터·분리, 재인용 근거의 기술 연결, 일방적 근거 기록, 잘못된 Finding 5종 제외, 알 수 없는 인용 제거,
+  결과 0건 partial·판단 유보 6칸, 한쪽 실패 흡수, 전체 실패 error(LLM 미호출·메시지 비노출), LLM 실패 error,
+  피드백 필터, 결과 evidence가 인용한 근거만 포함
+- 전체 unittest 41건, `check_graph.py`, `check_domain.py` PASS
+
 ## 설계서 외 자체 안전장치 (구현 후 README에 "확증편향 방지 조치"로 기록)
 
-- 기준별 stance 분포 확인: positive/negative 중 한쪽만 있으면 limitations에 "일방적 근거"로 기록
-- 재작업 진입 시 quality_feedback 중 자기 관점 항목만 반영해 검색 방향 조정
+- 기준별 stance 분포 확인: positive/negative 중 한쪽만 있으면 limitations에 "일방적 근거"로 기록 (4단계 구현, `one_sided_cells`)
+- 긍정·부정 질의 쌍 검색 (2·3단계 구현)
+- 재작업 진입 시 quality_feedback 중 자기 관점 항목만 반영 (4단계는 LLM 입력 전달까지, 검색 질의 조정은 미구현)

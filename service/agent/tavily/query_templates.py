@@ -87,3 +87,14 @@ def build_query_pair(perspective: Perspective, criterion: str, technology_id: st
     template, tech = templates[criterion], names[alias_index]
     return QueryPair(template["positive"].format(tech=tech), template["negative"].format(tech=tech),
                      template["topic"])
+
+
+# technical_result.evidence 중 시장·운영 성격 근거만 재인용 후보로 고르는 키워드(소문자 부분 일치).
+# 논문 성능 수치를 시장성 근거로 반복하지 않도록 비용·운영·채택 맥락이 있는 청크만 넘긴다.
+REUSE_KEYWORDS: dict[Perspective, list[str]] = {
+    "market": ["cost", "tco", "dollar", "price", "power", "energy", "watt", "deployment", "deployed",
+               "production", "commercial", "cloud", "azure", "datacenter", "data center", "operator",
+               "adoption", "market"],
+    "stakeholder": ["vendor", "operator", "cloud provider", "developer", "open-source", "open source",
+                    "framework", "vllm", "sglang", "hugging face", "adoption", "industry", "azure"],
+}

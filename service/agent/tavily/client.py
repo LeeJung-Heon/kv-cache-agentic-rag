@@ -101,6 +101,9 @@ class PairResult:
     limitations: list[str] = field(default_factory=list)
     failed: list[QueryDirection] = field(default_factory=list)
     after_cutoff: int = 0
+    # 보강 검색을 포함한 전체 질의 수. 모든 질의가 실패했는지(도구 오류) 판정에 쓴다.
+    attempted: int = 0
+    failed_count: int = 0
 
     @property
     def scores(self) -> list[float]:
@@ -115,6 +118,8 @@ class PairResult:
                 self.records.append(record)
         self.limitations.extend(other.limitations)
         self.after_cutoff += other.after_cutoff
+        self.attempted += other.attempted
+        self.failed_count += other.failed_count
 
 
 def search_pair(query_positive: str, query_negative: str, *, topic: Topic, end_date: str = END_DATE,
@@ -141,6 +146,7 @@ def search_pair(query_positive: str, query_negative: str, *, topic: Topic, end_d
             result.records.append({"evidence_id": evidence["id"], "origin": "web", "technology_id": technology_id,
                                    "criterion": criterion, "direction": direction, "query": query,
                                    "score": score, "via_alias": via_alias})
+    result.attempted, result.failed_count = 2, len(result.failed)
     if len(result.failed) == 2:
         result.limitations = [f"{target}: 긍정·부정 질의 모두 실패 ({', '.join(result.limitations)})"]
     elif result.failed:
