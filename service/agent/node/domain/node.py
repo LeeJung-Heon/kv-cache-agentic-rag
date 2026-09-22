@@ -1,4 +1,4 @@
-from state import GraphState
+from service.schema.state import GraphState
 
 from .model import evaluate_domain
 from .retrieval import retrieve_domain

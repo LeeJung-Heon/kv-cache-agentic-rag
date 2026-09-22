@@ -1,5 +1,5 @@
 from service.retrieval.paper_index import get_paper_index
-from state import GraphState
+from service.schema.state import GraphState
 
 
 def retrieve_domain(state: GraphState):

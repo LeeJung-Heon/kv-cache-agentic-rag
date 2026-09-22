@@ -4,7 +4,8 @@ from unittest.mock import Mock, patch
 
 from langgraph.graph import START, END, StateGraph
 from service.agent.node.domain import domain_node
-from state import AnalysisDraft, GraphState
+from state import AnalysisDraft
+from service.schema.state import GraphState
 
 
 EVIDENCE_IDS = {"sw": "chunk-alpha", "hw": "chunk-beta"}
@@ -80,7 +81,8 @@ def main():
         "request": "두 기술의 도메인 적용성을 평가해 주세요.",
         "target_domain": "데이터센터·클라우드 LLM 서빙",
         "evaluation_criteria": {"domain": ["성능", "비용", "정확도", "전력", "확장성"]},
-        "technical_retry_count": 0,
+        "quality_feedback": [],
+        "revision_count": 0,
         "technologies": [
             dict(id="sw", name="DeepSeek-V2 MLA", approach="SW", selection_reason="KV 캐시 압축"),
             dict(id="hw", name="CXL-PNM", approach="HW", selection_reason="메모리 확장"),
