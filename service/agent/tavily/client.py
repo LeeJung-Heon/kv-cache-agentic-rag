@@ -104,6 +104,8 @@ class PairResult:
     # 보강 검색을 포함한 전체 질의 수. 모든 질의가 실패했는지(도구 오류) 판정에 쓴다.
     attempted: int = 0
     failed_count: int = 0
+    # 방향별 질의 결과 score(중복 제거 전). 방향별 보강 검색 여부는 질의 자체의 결과 품질로 판단한다.
+    hits: dict[str, list[float]] = field(default_factory=lambda: {"positive": [], "negative": []})
 
     @property
     def scores(self) -> list[float]:
@@ -120,16 +122,18 @@ class PairResult:
         self.after_cutoff += other.after_cutoff
         self.attempted += other.attempted
         self.failed_count += other.failed_count
+        for direction, scores in other.hits.items():
+            self.hits[direction].extend(scores)
 
 
-def search_pair(query_positive: str, query_negative: str, *, topic: Topic, end_date: str = END_DATE,
+def run_queries(queries: list[tuple[QueryDirection, str]], *, topic: Topic, end_date: str = END_DATE,
                 depth: str = "basic", technology_id: str, criterion: str, via_alias: bool = False,
                 search: SearchFn = tavily_search) -> PairResult:
     result = PairResult()
     seen: set[str] = set()
     target = f"{technology_id} / {criterion}"
     # 긍정 질의를 먼저 실행하므로, 같은 URL이 양쪽에서 잡히면 긍정 방향 기록이 유지된다.
-    for direction, query in (("positive", query_positive), ("negative", query_negative)):
+    for direction, query in queries:
         try:
             parsed = parse_results(search(query, topic=topic, end_date=end_date, depth=depth), end_date=end_date)
         except (httpx.HTTPError, TavilyResponseError) as exc:
@@ -137,6 +141,7 @@ def search_pair(query_positive: str, query_negative: str, *, topic: Topic, end_d
             result.limitations.append(f"{target}: {DIRECTION_LABELS[direction]} 근거 수집 실패 ({failure_detail(exc)})")
             continue
         result.after_cutoff += parsed.after_cutoff
+        result.hits[direction].extend(score for _, score in parsed.rows if score is not None)
         for evidence, score in parsed.rows:
             key = canonical_url(evidence["url"])
             if key in seen:
@@ -146,12 +151,16 @@ def search_pair(query_positive: str, query_negative: str, *, topic: Topic, end_d
             result.records.append({"evidence_id": evidence["id"], "origin": "web", "technology_id": technology_id,
                                    "criterion": criterion, "direction": direction, "query": query,
                                    "score": score, "via_alias": via_alias})
-    result.attempted, result.failed_count = 2, len(result.failed)
-    if len(result.failed) == 2:
+    result.attempted, result.failed_count = len(queries), len(result.failed)
+    if len(queries) == 2 and len(result.failed) == 2:
         result.limitations = [f"{target}: 긍정·부정 질의 모두 실패 ({', '.join(result.limitations)})"]
-    elif result.failed:
+    elif len(queries) == 2 and result.failed:
         result.limitations.append(f"{target}: 긍정/부정 근거 중 한쪽 수집 실패로 한쪽 방향 근거만 사용")
     return result
+
+
+def search_pair(query_positive: str, query_negative: str, **kwargs) -> PairResult:
+    return run_queries([("positive", query_positive), ("negative", query_negative)], **kwargs)
 
 
 def is_weak(scores: list[float], *, top_k: int = WEAK_TOP_K, threshold: float = WEAK_SCORE_THRESHOLD) -> bool:
@@ -163,17 +172,27 @@ def is_weak(scores: list[float], *, top_k: int = WEAK_TOP_K, threshold: float = 
 
 def search_criterion(perspective: Perspective, criterion: str, technology_id: str, *, end_date: str = END_DATE,
                      depth: str = "basic", max_fallbacks: int = 1, search: SearchFn = tavily_search) -> PairResult:
-    """1차 검색이 빈약할 때만 별칭으로 보강 검색한다. max_fallbacks는 추가 검색 쌍의 최대 횟수다."""
+    """1차 검색이 빈약할 때만 별칭으로 보강 검색한다. max_fallbacks는 추가 검색 쌍의 최대 횟수다.
+
+    양방향 보강 뒤에도 한쪽 방향만 빈약하면 그 방향만 다음 별칭으로 한 번 더 검색한다(칸당 최대 +1회).
+    2026-09-22 실측에서 시장 규모·성장성의 부정 질의 score가 낮아 반대 방향 근거가 없었기 때문이다.
+    """
+    names = search_names(technology_id)
+    common = dict(end_date=end_date, depth=depth, technology_id=technology_id, criterion=criterion, search=search)
     pair = build_query_pair(perspective, criterion, technology_id)
-    result = search_pair(pair.positive, pair.negative, topic=pair.topic, end_date=end_date, depth=depth,
-                         technology_id=technology_id, criterion=criterion, search=search)
-    aliases = range(1, min(len(search_names(technology_id)), max_fallbacks + 1))
-    for alias_index in aliases:
-        if not is_weak(result.scores):
-            break
-        pair = build_query_pair(perspective, criterion, technology_id, alias_index)
-        result.merge(search_pair(pair.positive, pair.negative, topic=pair.topic, end_date=end_date, depth=depth,
-                                 technology_id=technology_id, criterion=criterion, via_alias=True, search=search))
+    result = search_pair(pair.positive, pair.negative, topic=pair.topic, **common)
+    next_alias = 1
+    while next_alias < min(len(names), max_fallbacks + 1) and is_weak(result.scores):
+        pair = build_query_pair(perspective, criterion, technology_id, next_alias)
+        result.merge(search_pair(pair.positive, pair.negative, topic=pair.topic, via_alias=True, **common))
+        next_alias += 1
+    if next_alias < len(names):
+        for direction, other in (("positive", "negative"), ("negative", "positive")):
+            if is_weak(result.hits[direction]) and not is_weak(result.hits[other]):
+                pair = build_query_pair(perspective, criterion, technology_id, next_alias)
+                query = pair.positive if direction == "positive" else pair.negative
+                result.merge(run_queries([(direction, query)], topic=pair.topic, via_alias=True, **common))
+                break
     # 판단 유보는 질의 실패 여부가 아니라 보강 검색까지 마친 뒤 근거가 없을 때 기록한다.
     if not result.evidence:
         result.limitations.append(f"{technology_id} / {criterion}: 웹 근거 없음, 판단 유보")

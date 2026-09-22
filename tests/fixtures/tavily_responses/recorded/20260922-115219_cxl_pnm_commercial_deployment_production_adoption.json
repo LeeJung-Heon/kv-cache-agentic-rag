@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "CXL-PNM commercial deployment production adoption",
+    "topic": "news",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.usenix.org/system/files/osdi26-kim-donghwan.pdf",
+        "title": "[PDF] Cocoon: A System Architecture for Differentially Private Training with ...",
+        "score": 0.24504478,
+        "published_date": "Sun, 20 Sep 2026 02:00:00 GMT",
+        "content": "Sang-Soo Park, KyungSoo Kim, Jinin So, Jin Jung, Jonggeon Lee, Kyoungwan Woo, Nayeon Kim, Younghyun Lee, Hyungyo Kim, Yongsuk Kwon, Jin-hyun Kim, Jieun Lee, YeonGon Cho, Yongmin Tai, Jeonghyeon Cho, H"
+      },
+      {
+        "url": "https://www.smarttec.dev/news",
+        "title": "AI infrastructure news | SmartTec by Z1Power",
+        "score": 0.028568588,
+        "published_date": "Tue, 15 Sep 2026 19:00:00 GMT",
+        "content": "Stop asking for permission and start offering solutions\n27. Data Center Dynamics · · data centers\n\n    ### Sponsored: From pilot to production: Direct liquid cooling deployment risks in AI data center"
+      },
+      {
+        "url": "https://www.facebook.com/MarvellTechnology/posts/ai-inference-is-changing-what-it-takes-to-scalejoin-dave-lazovsky-executive-vice/1672611288201479",
+        "title": "AI inference is changing what it takes to scale. Join Dave Lazovsky ...",
+        "score": 0.016787134,
+        "published_date": "Fri, 11 Sep 2026 17:00:00 GMT",
+        "content": "'/%3E%3Cpath d='M16.0001 7.9996c0 4.418-3.5815 7.9996-7.9995 7.9996S.001 12.4176.001 7.9996 3.5825 0 8.0006 0C12.4186 0 16 3.5815 16 7.9996Z' fill='url(%23paint1_radial_15251_63610)'/%3E%3Cpath d='M16"
+      },
+      {
+        "url": "https://www.businesswire.com/news/home/20260825275952/en/XCENA-Details-MX1-Architecture-Integrating-Memory-Expansion-and-Near-Memory-Computing-at-Hot-Chips-2026",
+        "title": "XCENA Details MX1 Architecture Integrating Memory Expansion ...",
+        "score": 0.01640464,
+        "published_date": "Tue, 25 Aug 2026 00:00:00 GMT",
+        "content": "Distribution is unaffected. To send a release while the site is down, call your local Business Wire\nbureau and our team will process it for you:\n\n## Internetseite vorübergehend nicht verfügbar\n\nDie vo"
+      },
+      {
+        "url": "https://www.facebook.com/pulse2news/posts/astera-labs-expands-leo-smart-memory-controllers-to-accelerate-agentic-ai-infere/1782932647167090",
+        "title": "Astera Labs expands Leo smart memory controllers for agentic AI",
+        "score": 0.012723961,
+        "published_date": "Tue, 15 Sep 2026 16:00:00 GMT",
+        "content": "The post Astera Labs Expands Leo Smart Memory Controllers To Accelerate Agentic AI Inference And Improve Data Center Memory Utilization appeared first on Pulse 2.0.\n\nImage 1: Astera Labs Expands Leo S"
+      }
+    ]
+  }
+}

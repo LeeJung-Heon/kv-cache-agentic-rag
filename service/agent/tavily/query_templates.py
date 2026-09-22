@@ -114,3 +114,10 @@ REUSE_KEYWORDS: dict[Perspective, list[str]] = {
 # 2026-09-22 실측에서 LLM이 USENIX 논문 PDF를 근거로 stage=production을 붙였다.
 ACADEMIC_DOMAINS = ["arxiv.org", "usenix.org", "acm.org", "ieee.org", "openreview.net", "semanticscholar.org",
                     "researchgate.net", "springer.com", "sciencedirect.com", "nature.com", "mlsys.org", "neurips.cc"]
+
+# 저신뢰 출처(소셜미디어·사용자 게시 플랫폼·개인 블로그). 하위 도메인도 포함한다(예: xxx.substack.com).
+# 시장성에서는 이 출처만 인용한 finding을 칸 충족에 세지 않고, 이해관계자에서는 개인 의견 근거로만 쓴다.
+# 2026-09-22 실측에서 facebook.com, linkedin.com, 개인 블로그가 시장성 근거로 쓰였다.
+LOW_TRUST_DOMAINS = ["facebook.com", "linkedin.com", "x.com", "twitter.com", "reddit.com", "youtube.com",
+                     "instagram.com", "threads.net", "quora.com", "medium.com", "substack.com", "blogspot.com",
+                     "wordpress.com", "tistory.com", "velog.io", "brunch.co.kr", "blog.naver.com"]

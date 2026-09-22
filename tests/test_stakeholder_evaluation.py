@@ -55,6 +55,17 @@ class StakeholderEvaluationTest(unittest.TestCase):
         self.assertEqual(len(result["findings"]), 1)
         self.assertFalse(any("scope direct→adjacent" in item for item in result["limitations"]))
 
+    def test_low_trust_counts_but_fact_becomes_opinion(self):
+        def make(context):
+            ref = next(e["id"] for e in context["web_evidence"] if "linkedin.com" in e["url"])
+            return [finding(*cell(context), [ref], claim="개발자 경험담", stance="positive")]
+        result, _ = run(FakeAnalyst(make), search=FakeSearch({}, default="lowtrust"))
+        self.assertIn("6칸 중 6칸", result["summary"])  # 이해관계자에서는 개인 의견 근거로 인정
+        self.assertEqual({f["claim_type"] for f in result["findings"]}, {"opinion"})
+        self.assertTrue(any("claim_type fact→opinion (소셜미디어·개인 블로그 출처만 인용)" in item
+                            for item in result["limitations"]))
+        self.assertTrue(result["summary"].startswith("이해관계자 평가:"))
+
     def test_revision_feedback_is_filtered(self):
         analyst = FakeAnalyst()
         run(analyst, state=base_state(quality_feedback=["이해관계자: 투자 업계 근거 부족", "시장성: 규모 정의 누락"]))

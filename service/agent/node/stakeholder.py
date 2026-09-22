@@ -1,5 +1,5 @@
 from service.agent.tavily.client import SearchFn, tavily_search
-from service.agent.tavily.evaluation import PerspectiveSpec, make_evaluation_node
+from service.agent.tavily.evaluation import PerspectiveSpec, is_low_trust, make_evaluation_node
 from state import DraftFinding
 
 STAKEHOLDER_PROMPT = """이해관계자 평가: 기준은 이해관계자 집단(경쟁 기술 진영, 도입사·개발자, 투자 업계)이며
@@ -27,14 +27,19 @@ def check_stakeholder_finding(finding: DraftFinding, cited) -> str | None:
     return None
 
 
-def clear_scope(finding: DraftFinding, cited) -> list[str]:
+def correct_stakeholder_finding(finding: DraftFinding, cited) -> list[str]:
     # scope는 시장성 전용이다. 값이 와도 주장은 유지하고 필드만 비운다.
     finding.scope = None
+    # 소셜미디어·개인 블로그는 개인 의견 근거로만 쓴다(설계서 3.4 "공식 사례와 개인 의견 구분").
+    if finding.claim_type == "fact" and cited and all(is_low_trust(e) for e in cited):
+        finding.claim_type = "opinion"
+        return ["claim_type fact→opinion (소셜미디어·개인 블로그 출처만 인용)"]
     return []
 
 
-STAKEHOLDER_SPEC = PerspectiveSpec(perspective="stakeholder", field="stakeholder_result", prompt=STAKEHOLDER_PROMPT,
-                                   check_finding=check_stakeholder_finding, correct_finding=clear_scope)
+STAKEHOLDER_SPEC = PerspectiveSpec(perspective="stakeholder", field="stakeholder_result", label="이해관계자",
+                                   prompt=STAKEHOLDER_PROMPT, check_finding=check_stakeholder_finding,
+                                   correct_finding=correct_stakeholder_finding)
 
 
 def make_stakeholder_node(analyst, *, rules: str, normalize_result, error_result, search: SearchFn = tavily_search):

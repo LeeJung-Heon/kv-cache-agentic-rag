@@ -209,10 +209,18 @@ class MarketEvaluationTest(unittest.TestCase):
         cited = {key for f in result["findings"] for key in f["evidence_ids"]}
         self.assertEqual({e["id"] for e in result["evidence"]}, cited)
 
-    def test_summary_joins_cell_summaries(self):
+    def test_summary_is_built_from_verified_results(self):
+        # LLM 요약(인용 없는 수치가 들어갔던)은 쓰지 않고 검증된 결과의 현황만 요약한다.
         result, _ = run(FakeAnalyst())
-        self.assertIn("sw_01 시장 규모·성장성 요약", result["summary"])
-        self.assertIn("hw_01 생태계 요약", result["summary"])
+        self.assertNotIn("sw_01 시장 규모·성장성 요약", result["summary"])  # FakeAnalyst가 보낸 LLM 요약
+        self.assertTrue(result["summary"].startswith("시장성 평가: 기술 2개 × 기준 3개 = 6칸 중 6칸"))
+        self.assertIn("finding 12건(사실 12, 의견 0, 전망 0)", result["summary"])
+
+    def test_summary_lists_missing_cells(self):
+        result, _ = run(FakeAnalyst(only("hw_01", "생태계", lambda c: [
+            finding("hw_01", "생태계", web_refs(c)[:1], stance="mixed")])))
+        self.assertIn("6칸 중 1칸", result["summary"])
+        self.assertIn("근거 미확보 칸: hw_01 / 상용화·채택, hw_01 / 시장 규모·성장성", result["summary"])
 
 
 class LabelAndCitationRuleTest(unittest.TestCase):
@@ -293,6 +301,34 @@ class LabelAndCitationRuleTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LowTrustSourceTest(unittest.TestCase):
+    """2026-09-22 실측에서 facebook.com, linkedin.com, 개인 블로그가 시장성 근거로 쓰였다."""
+
+    def make_citing(self, *fragments):
+        def make(context):
+            refs = [ref_by_url(context, fragment) for fragment in fragments]
+            return [finding(*cell(context), refs, claim="주장", stance="mixed")]
+        return make
+
+    def test_market_low_trust_only_is_kept_but_not_counted(self):
+        result, _ = run(FakeAnalyst(self.make_citing("linkedin.com")), search=FakeSearch({}, default="lowtrust"))
+        self.assertEqual(len(result["findings"]), 6)
+        self.assertEqual(result["status"], "partial")
+        self.assertIn("6칸 중 0칸", result["summary"])
+        self.assertTrue(any(item.startswith("저신뢰 출처만 인용: hw_01 / 생태계") and "linkedin.com" in item
+                            for item in result["limitations"]))
+
+    def test_substack_subdomain_is_low_trust(self):
+        result, _ = run(FakeAnalyst(self.make_citing("substack.com")), search=FakeSearch({}, default="lowtrust"))
+        self.assertIn("6칸 중 0칸", result["summary"])
+
+    def test_low_trust_with_reputable_source_counts(self):
+        result, _ = run(FakeAnalyst(self.make_citing("linkedin.com", "investor.example-semi.com")),
+                        search=FakeSearch({}, default="lowtrust"))
+        self.assertIn("6칸 중 6칸", result["summary"])
+        self.assertFalse(any(item.startswith("저신뢰 출처만 인용") for item in result["limitations"]))
 
 
 class GroundingRuleTest(unittest.TestCase):

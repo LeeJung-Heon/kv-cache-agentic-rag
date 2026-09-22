@@ -49,8 +49,9 @@ def correct_market_finding(finding: DraftFinding, cited: list[Evidence]) -> list
     return []
 
 
-MARKET_SPEC = PerspectiveSpec(perspective="market", field="market_result", prompt=MARKET_PROMPT,
-                              check_finding=check_market_finding, correct_finding=correct_market_finding)
+MARKET_SPEC = PerspectiveSpec(perspective="market", field="market_result", label="시장성", prompt=MARKET_PROMPT,
+                              check_finding=check_market_finding, correct_finding=correct_market_finding,
+                              low_trust_counts=False)
 
 
 def make_market_node(analyst, *, rules: str, normalize_result, error_result, search: SearchFn = tavily_search):

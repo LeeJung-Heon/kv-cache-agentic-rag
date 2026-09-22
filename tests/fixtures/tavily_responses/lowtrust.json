@@ -1,0 +1,11 @@
+{
+  "query": "lowtrust",
+  "results": [
+    {"url": "https://www.linkedin.com/posts/engineer-cxl-pnm", "title": "My take on CXL processing-near-memory",
+     "content": "In my experience CXL processing-near-memory is production ready for inference.", "score": 0.8, "published_date": "2026-06-01"},
+    {"url": "https://someone.substack.com/p/cxl-pnm", "title": "CXL PNM newsletter",
+     "content": "The CXL processing-near-memory market will explode.", "score": 0.78, "published_date": "2026-05-01"},
+    {"url": "https://investor.example-semi.com/news/cxl-pnm", "title": "Vendor announces CXL processing-near-memory module",
+     "content": "The vendor announced sampling of a CXL processing-near-memory module.", "score": 0.76, "published_date": "2026-04-01"}
+  ]
+}

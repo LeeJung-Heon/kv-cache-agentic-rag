@@ -37,12 +37,15 @@ class RecordedReplayTest(unittest.TestCase):
 
     def test_primary_name_swap_reduces_fallback(self):
         # 실측: "CXL-PNM" 1차 검색은 3개 기준 모두 빈약해 12회 호출.
-        # "CXL processing-near-memory"를 1차로 바꾸면 상용화·채택만 보강 검색해 8회로 줄어든다.
+        # "CXL processing-near-memory"를 1차로 바꾸면 상용화·채택만 양방향 보강 검색하고,
+        # 시장 규모·성장성은 부정 방향만 빈약해 부정 질의 1회만 보강해 9회가 된다.
         search = ReplaySearch()
         results = {c: search_criterion("market", c, "hw_01", search=search)
                    for c in ("시장 규모·성장성", "상용화·채택", "생태계")}
-        self.assertEqual(len(search.calls), 8)
-        self.assertFalse(any(r["via_alias"] for r in results["시장 규모·성장성"].records))
+        self.assertEqual(len(search.calls), 9)
+        size = results["시장 규모·성장성"]
+        self.assertFalse(any(r["via_alias"] for r in size.records if r["direction"] == "positive"))
+        self.assertIn("CXL-PNM market uncertainty slowdown limited demand", search.calls)
         self.assertTrue(any(r["via_alias"] for r in results["상용화·채택"].records))
         self.assertTrue(all(result.evidence for result in results.values()))
 

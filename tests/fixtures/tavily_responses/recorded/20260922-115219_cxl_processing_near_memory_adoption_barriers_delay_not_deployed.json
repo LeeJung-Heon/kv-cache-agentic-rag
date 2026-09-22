@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "CXL processing-near-memory adoption barriers delay not deployed",
+    "topic": "news",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.usenix.org/system/files/osdi26-kim-donghwan.pdf",
+        "title": "[PDF] Cocoon: A System Architecture for Differentially Private Training with ...",
+        "score": 0.3340466,
+        "published_date": "Sun, 20 Sep 2026 02:00:00 GMT",
+        "content": "Near/in-memory processing. Near-memory processing (NMP) runs memory-intensive workloads closer to mem-ory. Prior works explored running compute inside the CXL controller (e.g., for LLM inference [35,7"
+      },
+      {
+        "url": "https://www.mordorintelligence.com/industry-reports/cxl-memory-controller-ic-market",
+        "title": "CXL Memory Controller IC Market Size, Share & 2031 Growth ...",
+        "score": 0.3209814,
+        "published_date": "Tue, 28 Jul 2026 00:00:00 GMT",
+        "content": "The CXL memory controller IC market still faces a real commercialization constraint because qualification must happen across CPUs, memory modules, controller silicon, and software layers rather than w"
+      },
+      {
+        "url": "https://www.nextplatform.com/store/2026/09/16/how-to-smash-the-memory-wall-plaguing-high-performance-systems/5296866",
+        "title": "How To Smash The Memory Wall Plaguing High Performance Systems",
+        "score": 0.20107524,
+        "published_date": "Wed, 16 Sep 2026 13:37:11 GMT",
+        "content": "The request is terminated on the spot, right at the silicon boundary. This mechanism instantly recaptures roughly 250 nanoseconds of parasitic tail-latency and saves significant wattage, ensuring that"
+      },
+      {
+        "url": "https://arxiv.org/html/2608.11668",
+        "title": "HBF Sucks? A Full-Stack Characterization of High- ...",
+        "score": 0.13381115,
+        "published_date": "Tue, 15 Sep 2026 02:16:05 GMT",
+        "content": "These conditions are device-agnostic. f, \\rho, and sustained bandwidth characterize any package-local far tier (CXL-attached flash, other stacked NAND, or near-data flash), not only HBF. The rest of t"
+      },
+      {
+        "url": "https://www.ersaelectronics.com/blog/sandisk-sk-hynix-standardize-hbf",
+        "title": "Sandisk & SK hynix Standardize HBF: A New Memory Tier ...",
+        "score": 0.117420465,
+        "published_date": "Mon, 24 Aug 2026 00:00:00 GMT",
+        "content": "The fifth challenge is competition from other technologies. CXL-attached memory, pooled DRAM, larger HBM stacks, advanced SSDs, computational storage, near-memory processing, compression, quantization"
+      }
+    ]
+  }
+}

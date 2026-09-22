@@ -17,13 +17,14 @@ pipeline을 import하지 않도록 rules·normalize_result·error_result는 인�
 
 import json
 import re
+from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field as dataclass_field
 
 from service.agent.tavily.client import SearchFn, search_criterion, tavily_search
 from service.agent.tavily.evidence_schema import source_domain
-from service.agent.tavily.query_templates import (ACADEMIC_DOMAINS, CRITERIA, END_DATE, FORECAST_TERMS, REUSE_KEYWORDS,
-                                                  TECH_ALIASES, Perspective)
+from service.agent.tavily.query_templates import (ACADEMIC_DOMAINS, CRITERIA, END_DATE, FORECAST_TERMS,
+                                                  LOW_TRUST_DOMAINS, REUSE_KEYWORDS, TECH_ALIASES, Perspective)
 from state import AnalysisDraft, DraftFinding, Evidence, GraphState, Technology
 
 # pipeline.citation_ids와 같은 인용 ID 패턴
@@ -50,7 +51,7 @@ claim 본문에 [참조키]로 인용하면 그 참조키는 evidence_ids에 있
 claim 본문에 claim_type·scope·stage·stance 같은 필드 값을 적지 않는다.
 기준일 이후 연도의 수치나 전망·예상 표현은 claim_type=forecast다.
 근거가 이 기준을 뒷받침하지 않으면 findings를 비우고 limitations에 이유를 적는다.
-summary는 이 칸의 findings를 한 문장으로 요약하며 수치나 findings에 없는 사실을 넣지 않는다.
+summary는 빈 문자열로 둔다. 요약은 프로그램이 검증된 findings로 만든다.
 """
 
 
@@ -58,12 +59,15 @@ summary는 이 칸의 findings를 한 문장으로 요약하며 수치나 findin
 class PerspectiveSpec:
     perspective: Perspective
     field: str  # market_result / stakeholder_result
+    label: str  # 요약에 쓰는 관점 이름
     prompt: str
     # 관점 고유 규칙. 인자는 finding과 인용 근거 목록이다. 문제가 있으면 사유 문자열, 없으면 None을 반환한다.
     check_finding: Callable[[DraftFinding, list[Evidence]], str | None]
     # 관점 고유 라벨 교정. finding을 고치고 교정 내용을 반환한다. 인자는 finding과 인용 근거 목록이다.
     correct_finding: Callable[[DraftFinding, list[Evidence]], list[str]] = dataclass_field(
         default=lambda finding, cited: [])
+    # False면 저신뢰 출처만 인용한 finding을 칸 충족에 세지 않는다(시장성).
+    low_trust_counts: bool = True
 
 
 def reusable_evidence(state: GraphState, perspective: Perspective) -> list[Evidence]:
@@ -92,11 +96,19 @@ def restore_refs(text: str, refs: dict[str, str]) -> str:
     return REF.sub(lambda m: f"[{refs[m[1]]}]" if m[1] in refs else "", text)
 
 
+def domain_in(evidence: Evidence, domains: list[str]) -> bool:
+    domain = source_domain(evidence["url"])
+    return any(domain == d or domain.endswith("." + d) for d in domains)
+
+
+def is_low_trust(evidence: Evidence) -> bool:
+    return evidence["source_type"] == "web" and domain_in(evidence, LOW_TRUST_DOMAINS)
+
+
 def is_academic(evidence: Evidence) -> bool:
     if evidence["source_type"] == "paper":
         return True
-    domain = source_domain(evidence["url"])
-    return domain.endswith(".edu") or any(domain == d or domain.endswith("." + d) for d in ACADEMIC_DOMAINS)
+    return source_domain(evidence["url"]).endswith(".edu") or domain_in(evidence, ACADEMIC_DOMAINS)
 
 
 def correct_academic_stage(finding: DraftFinding, cited: list[Evidence]) -> list[str]:
@@ -118,6 +130,33 @@ def one_sided_cells(findings: list[DraftFinding]) -> list[str]:
             only = STANCE_LABELS[directional.pop()]
             messages.append(f"일방적 근거: {technology_id} / {criterion}에서 {only} 방향 근거만 확인됨, 반대 방향 근거 미확보")
     return messages
+
+
+def build_summary(label: str, cells: set, covered: set, valid: list[DraftFinding], one_sided: list[str],
+                  corrected: list[str], low_trust_only: list[DraftFinding]) -> str:
+    """검증된 결과의 현황만 요약한다. 사실 주장·수치를 넣지 않아 인용 없는 내용이 보고서에 들어가지 않게 한다.
+
+    2026-09-22 실측에서 LLM 요약에 인용 없는 시장 수치와 "상용화 단계 진입" 같은 과장이 들어갔다.
+    """
+    technologies = sorted({tid for tid, _ in cells})
+    parts = [f"{label} 평가: 기술 {len(technologies)}개 × 기준 {len(cells) // max(len(technologies), 1)}개 = "
+             f"{len(cells)}칸 중 {len(cells & covered)}칸에서 검증된 근거를 확보했다."]
+    missing = sorted(cells - covered)
+    if missing:
+        parts.append("근거 미확보 칸: " + ", ".join(f"{tid} / {criterion}" for tid, criterion in missing) + ".")
+    types = Counter(f.claim_type for f in valid)
+    parts.append(f"finding {len(valid)}건(사실 {types['fact']}, 의견 {types['opinion']}, 전망 {types['forecast']}).")
+    scopes = Counter(f.scope for f in valid if f.scope)
+    if scopes:
+        parts.append(f"직접 시장 근거 {scopes['direct']}건, 연관 시장 근거 {scopes['adjacent']}건.")
+    if one_sided:
+        parts.append(f"한쪽 방향 근거만 있는 칸 {len(one_sided)}개.")
+    if corrected:
+        parts.append(f"라벨 교정 {len(corrected)}건.")
+    if low_trust_only:
+        parts.append(f"저신뢰 출처만 인용한 finding {len(low_trust_only)}건.")
+    parts.append("세부 주장과 출처는 findings, 확인되지 않은 사항은 limitations를 따른다.")
+    return " ".join(parts)
 
 
 def cell_context(state: GraphState, technology: Technology, criterion: str, reused: list[Evidence],
@@ -218,15 +257,22 @@ def make_evaluation_node(spec: PerspectiveSpec, analyst, *, rules: str, normaliz
                     corrected.extend(f"라벨 교정: {target}: {note}" for note in notes)
                     valid.append(finding)
 
-            covered = {(tid, f.criterion) for f in valid for tid in f.technology_ids}
+            low_trust_only = [f for f in valid if all(is_low_trust(sources[key]) for key in f.evidence_ids)]
+            counted = valid if spec.low_trust_counts else [f for f in valid if f not in low_trust_only]
+            low_trust_notes = [] if spec.low_trust_counts else [
+                f"저신뢰 출처만 인용: {', '.join(f.technology_ids)} / {f.criterion} finding은 유지하되 칸 충족에서 제외 "
+                f"({', '.join(sorted({source_domain(sources[k]['url']) for k in f.evidence_ids}))})"
+                for f in low_trust_only]
+            covered = {(tid, f.criterion) for f in counted for tid in f.technology_ids}
             cells = {(t["id"], c) for t in technologies for c in criteria}
             all_complete = len(drafts) == len(cells) and all(d.status == "complete" for _, d in drafts)
             status = "complete" if cells <= covered and all_complete else "partial"
             known = set(sources)
+            one_sided = one_sided_cells(valid)
             limitations = [strip_unknown_citations(item, known) for item in llm_limitations]
             limitations = list(dict.fromkeys(search_limitations + llm_failures + limitations + dropped + corrected
-                                             + one_sided_cells(valid)))
-            summary = " ".join(s for s in (strip_unknown_citations(d.summary, known) for _, d in drafts) if s)
+                                             + low_trust_notes + one_sided))
+            summary = build_summary(spec.label, cells, covered, valid, one_sided, corrected, low_trust_only)
             final = AnalysisDraft(status=status, summary=summary, findings=valid, limitations=limitations,
                                   next_queries=[])
             result, _ = normalize_result(final, sources, state, criteria)

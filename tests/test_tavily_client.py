@@ -155,6 +155,53 @@ class WeakAndFallbackTest(unittest.TestCase):
         self.assertFalse(any("판단 유보" in item for item in result.limitations))
 
 
+class DirectionFallbackTest(unittest.TestCase):
+    """한쪽 방향만 빈약하면 그 방향만 다음 별칭으로 1회 더 검색한다."""
+
+    def pair(self, alias_index=0):
+        return build_query_pair("market", "시장 규모·성장성", "hw_01", alias_index)
+
+    def test_weak_negative_gets_one_extra_negative_query(self):
+        p0, p1 = self.pair(), self.pair(1)
+        search = FakeSearch({p0.positive: "commercial_positive", p0.negative: "weak", p1.negative: "commercial_negative"})
+        result = search_criterion("market", "시장 규모·성장성", "hw_01", search=search)
+        self.assertEqual([q for q, _ in search.calls], [p0.positive, p0.negative, p1.negative])
+        extra = [r for r in result.records if r["query"] == p1.negative]
+        self.assertTrue(extra and all(r["direction"] == "negative" and r["via_alias"] for r in extra))
+
+    def test_weak_positive_gets_one_extra_positive_query(self):
+        p0, p1 = self.pair(), self.pair(1)
+        search = FakeSearch({p0.positive: "weak", p0.negative: "commercial_positive", p1.positive: "commercial_negative"})
+        search_criterion("market", "시장 규모·성장성", "hw_01", search=search)
+        self.assertEqual([q for q, _ in search.calls][-1], p1.positive)
+        self.assertEqual(len(search.calls), 3)
+
+    def test_both_strong_needs_no_extra_query(self):
+        p0 = self.pair()
+        search = FakeSearch({p0.positive: "commercial_positive", p0.negative: "commercial_negative"})
+        search_criterion("market", "시장 규모·성장성", "hw_01", search=search)
+        self.assertEqual(len(search.calls), 2)
+
+    def test_same_pages_in_both_directions_are_not_weak(self):
+        # 중복 제거로 부정 방향 기록이 0건이어도, 질의 자체의 결과 score가 충분하면 보강하지 않는다.
+        search = FakeSearch({}, default="commercial_positive")
+        result = search_criterion("market", "시장 규모·성장성", "hw_01", search=search)
+        self.assertEqual(len(search.calls), 2)
+        self.assertEqual({r["direction"] for r in result.records}, {"positive"})
+
+    def test_both_weak_uses_pair_fallback_only(self):
+        search = FakeSearch({}, default="weak")
+        search_criterion("market", "시장 규모·성장성", "hw_01", search=search, max_fallbacks=1)
+        self.assertEqual(len(search.calls), 4)
+
+    def test_direction_fallback_uses_next_unused_alias(self):
+        p0, p1, p2 = self.pair(), self.pair(1), self.pair(2)
+        search = FakeSearch({p0.positive: "weak", p0.negative: "empty", p1.positive: "commercial_positive",
+                             p1.negative: "empty", p2.negative: "commercial_negative"})
+        search_criterion("market", "시장 규모·성장성", "hw_01", search=search, max_fallbacks=1)
+        self.assertEqual([q for q, _ in search.calls], [p0.positive, p0.negative, p1.positive, p1.negative, p2.negative])
+
+
 class TavilySearchConfigTest(unittest.TestCase):
     def test_missing_api_key_raises_instead_of_being_absorbed(self):
         with patch.dict(os.environ, {}, clear=True):
