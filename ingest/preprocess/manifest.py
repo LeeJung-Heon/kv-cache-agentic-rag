@@ -23,6 +23,8 @@ DOCUMENTS = [
             "DeepSeek-V2: A Strong, Economical, and Efficient "
             "Mixture-of-Experts Language Model"
         ),
+        "url": "https://arxiv.org/abs/2405.04434",
+        "published_at": "2024-05-07",
         "allowed": True,
     },
     {
@@ -34,6 +36,8 @@ DOCUMENTS = [
             "Towards Economical Inference: Enabling DeepSeek’s "
             "Multi-Head Latent Attention in Any Transformer-based LLMs"
         ),
+        "url": "https://aclanthology.org/2025.acl-long.1597/",
+        "published_at": "2025-07-27",
         "allowed": True,
     },
     {
@@ -45,6 +49,8 @@ DOCUMENTS = [
             "Scalable Processing-Near-Memory for 1M-Token LLM Inference: "
             "CXL-Enabled KV-Cache Management Beyond GPU Limits"
         ),
+        "url": "https://arxiv.org/abs/2511.00321",
+        "published_at": "2025-10-31",
         "allowed": True,
     },
     {
@@ -53,6 +59,8 @@ DOCUMENTS = [
         "technology": "CXL-PNM",
         "role": "domain",
         "title": "Pond: CXL-Based Memory Pooling Systems for Cloud Platforms",
+        "url": "https://doi.org/10.1145/3575693.3578835",
+        "published_at": "2023-03-25",
         "allowed": True,
     },
     {
@@ -64,6 +72,8 @@ DOCUMENTS = [
             "Efficient Memory Management for Large Language "
             "Model Serving with PagedAttention"
         ),
+        "url": "https://arxiv.org/abs/2309.06180",
+        "published_at": "2023-09-12",
         "allowed": True,
     },
     {
@@ -75,6 +85,8 @@ DOCUMENTS = [
             "Splitwise: Efficient Generative LLM Inference "
             "Using Phase Splitting"
         ),
+        "url": "https://arxiv.org/abs/2311.18677",
+        "published_at": "2023-11-30",
         "allowed": True,
     },
 ]

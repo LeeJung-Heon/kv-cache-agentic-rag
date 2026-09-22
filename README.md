@@ -44,7 +44,9 @@ uv run pipeline.py --env-file /path/to/your/.env
 |---|---|
 | `state.py` | Notion 설계의 GraphState, Technology, Evidence, Finding, AgentResult |
 | `pipeline.py` | 기술 선정, 역할별 분석, 재검색·병렬 합류, 보고서, CLI |
-| `ingest/embedding/` | 전처리 문서 로딩, 청킹, BGE-M3 임베딩, FAISS 저장 |
+| `database/chunks.jsonl` | 전처리 완료 청크, 한 줄이 하나의 임베딩 단위 |
+| `database/manifest.json` | 문서별 허용 여부, 원본 페이지, URL, 공개일 |
+| `ingest/embedding/` | JSONL 청크 정규화, BGE-M3 임베딩, FAISS 저장 |
 | `service/retrieval/paper_index.py` | 공유 FAISS 인덱스 로딩, 질의 임베딩, 기술별 cosine 검색 |
 | `artifacts/faiss/` | 공유할 인덱스와 JSON 메타데이터 (Git 제외) |
 | `pipeline.py` | 기술 선정, 역할별 분석, 병렬 합류, 보고서, CLI |
@@ -92,14 +94,15 @@ uv run pipeline.py --env-file /path/to/your/.env
 
 ## RAG와 출처
 
-- [입력 형식과 임베딩 실행 안내](docs/EMBEDDING_PIPELINE.md)에 따라 전처리 문서를 등록하고 인덱스를 생성합니다. 실제 전처리 문서가 아직 없으므로 입력 예시는 계약 설명용입니다.
+- [입력 형식과 임베딩 실행 안내](docs/EMBEDDING_PIPELINE.md)에 따라 `database/chunks.jsonl`을 그대로 임베딩해 인덱스를 생성합니다.
 - [임베딩 모델 선정 설계](EMBEDDING_MODEL_SELECTION.md)에 따른 `BAAI/bge-m3` dense 임베딩입니다. 차원은 모델에서 확인하고 `EMBEDDING_DIMENSION`을 지정하면 일치 여부를 검사합니다.
-- 청킹 초기값은 제목 포함 최대 400토큰, overlap 0입니다. 문서 수령 후 설정을 확정합니다. 페이지와 소절 경계를 보존하고 비교 모델의 토크나이저에서도 한도를 확인합니다.
+- 청크 크기와 overlap은 전처리 단계에서 확정합니다. 임베딩 단계는 청크 경계를 변경하거나 overlap을 다시 적용하지 않습니다.
 - 전처리 문서에 연결된 원본 쪽수 합계 200페이지를 검사합니다. 쪽수와 허용 여부는 전달받은 등록 정보에 근거하므로 원본 대조가 필요합니다.
 - 문서와 질의에 동일한 모델 revision 및 L2 정규화를 적용하며 E5 instruction은 사용하지 않습니다.
 - FAISS `IndexFlatIP`로 cosine 검색합니다. SW 또는 HW 문서와 공통 문서의 후보를 합쳐 최종 상위 5개를 반환합니다. BM25는 포함하지 않습니다.
 - 공유 임베딩 모델의 추론 호출은 잠금으로 직렬화하여 MPS 동시 호출 충돌을 방지합니다. 평가 노드와 웹 검색은 병렬로 실행됩니다.
 - 생성 결과는 `artifacts/faiss/`에 저장합니다. `.faiss`, `chunks.json`, `manifest.json`을 함께 공유합니다. 기존 E5의 `.cache/*.npy`는 재사용하지 않습니다.
+- `needs_review=true` 청크는 기본 검색에서 제외하며, 원본 확인 뒤 `INCLUDE_REVIEW_CHUNKS=true`로 포함할 수 있습니다. 제외된 청크와 사유는 `chunks.json`과 인덱스 manifest에 보존합니다.
 - 검색 시 문서를 다시 임베딩하지 않습니다. 모델과 입력 및 청킹 조건이 같은 재생성 요청은 기존 인덱스를 재사용합니다.
 - PDF 근거에는 페이지·청크 ID·논문 URL·원문 발췌, 웹 근거에는 제목·URL·발췌·제공되는 경우 발행일을 보존합니다. 미확인 날짜나 웹 페이지 번호는 null입니다.
 - 보고서 인용 ID로 REFERENCE를 생성합니다. Finding의 기술 ID와 근거 ID는 실제 목록에 있어야 합니다. 알 수 없는 ID는 오류로 처리합니다. 최종 사용 근거는 report_evidence_ids에 기록합니다. 이는 인용 문장의 사실성 검증을 대신하지 않습니다.
