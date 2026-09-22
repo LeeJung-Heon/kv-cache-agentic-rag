@@ -14,6 +14,8 @@ from langgraph.graph import END, START, StateGraph
 
 from rag import ROOT, PAPERS, PaperIndex, get_paper_index
 from report import write_report
+from service.agent.graph.technical import build_technical_research_graph
+from service.agent.node.domain import make_domain_node
 from service.agent.node.domain import domain_node
 from state import AgentResult, AnalysisDraft, Evidence, GraphState
 
@@ -27,7 +29,6 @@ CRITERIA = {
     "synthesis": ["일치점", "상충점", "적용 조건", "불확실성"],
 }
 ROLES = {
-    "technical_result": "기술 조사: 논문 근거로 원리·성능·한계 및 공개정보 기반 TRL 추정과 불확실성을 분석한다.",
     "market_result": "시장 평가: 실제 채택·상용화, 수요, 생태계와 도입 장벽을 웹 근거로 평가한다. 논문 성능을 반복하지 않는다.",
     "stakeholder_result": "이해관계자 평가: 개발사·경쟁사·클라우드 사업자·개발자·도입 기업·사용자·미디어 관점을 분석한다. 관측 반응과 예상 이해관계를 구별한다.",
 }
@@ -174,6 +175,10 @@ def result_markdown(result: AgentResult) -> str:
         label = "근거 기반 추론" if finding["is_inference"] else "원문 보고"
         citations = " ".join(f"[{key}]" for key in finding["evidence_ids"])
         lines.append(f"- {label} ({', '.join(finding['technology_ids'])}): {finding['claim']} {citations}")
+        trl = finding.get("trl_assessment")
+        if trl:
+            level = trl["level_or_range"] or "TRL 추정 불가"
+            lines.append(f"  - {level} (기준일 {trl['as_of']}, 신뢰도 {trl['confidence']}, {trl['basis']})")
     if result["limitations"]:
         lines.extend(["", "### 한계", *[f"- {item}" for item in result["limitations"]]])
     return "\n".join(lines)
@@ -211,23 +216,15 @@ def build_graph(nodes: dict, max_technical_retries: int = 2):
         graph.add_node(name, node)
 
     def route_technical(state):
+        # 재검색은 기술 조사 서브그래프 안에서 끝나므로 부모는 결과 status만 보고 분기한다.
         if state["technical_result"]["status"] == "error":
             return END
-        if state["technical_result"]["status"] == "partial" and state["technical_retry_count"] < max_technical_retries:
-            return "retry_technical"
         return ["market_evaluation", "stakeholder_evaluation", "domain_evaluation"]
 
-    def retry_technical(state):
-        queries = state.get("technical_queries") or [
-            "Find evidence and experimental conditions for " + item for item in state.get("technical_missing_items", [])]
-        return {"technical_retry_count": state["technical_retry_count"] + 1, "technical_queries": queries}
-
-    graph.add_node("retry_technical", retry_technical)
     graph.add_edge(START, "technology_selection")
     graph.add_edge("technology_selection", "technical_research")
     graph.add_conditional_edges("technical_research", route_technical,
-                                [END, "retry_technical", "market_evaluation", "stakeholder_evaluation", "domain_evaluation"])
-    graph.add_edge("retry_technical", "technical_research")
+                                [END, "market_evaluation", "stakeholder_evaluation", "domain_evaluation"])
     graph.add_edge(["market_evaluation", "stakeholder_evaluation", "domain_evaluation"], "synthesis")
     graph.add_conditional_edges("synthesis", lambda state: END if state["synthesis_result"]["status"] == "error" else "report",
                                 [END, "report"])
@@ -272,36 +269,18 @@ def make_nodes(index: PaperIndex, model: ChatOpenAI, max_technical_retries: int 
                 criteria = state["evaluation_criteria"][role]
                 previous = state.get("technical_result")
                 sources = {e["id"]: e for e in (previous or {}).get("evidence", [])}
-                queries = state.get("technical_queries", []) if field == "technical_result" else []
+                # 기술 조사와 도메인 평가는 전용 노드로 옮겨졌으므로 여기서는 시장·이해관계자의 웹 검색만 수행한다.
                 for technology in state["technologies"]:
-                    side = technology["approach"].lower()
-                    if field == "technical_result":
-                        focus = " ".join(queries) if queries else " ".join(criteria)
-                        query = f"{technology['name']} {state['target_domain']} {focus} experimental conditions limitations"
-                        for row in index.search(query, side):
-                            sources[row["id"]] = {"id": row["id"], "source_type": "paper", "title": row["title"],
-                                                  "url": row["url"], "page": row["page"], "published_at": None,
-                                                  "excerpt": row["text"]}
-                    else:
-                        focus = "adoption deployment ecosystem costs limitations" if field == "market_result" else "developer operator reactions criticism barriers"
-                        for evidence in search_web(f"{technology['name']} {focus}"):
-                            sources[evidence["id"]] = evidence
+                    focus = "adoption deployment ecosystem costs limitations" if field == "market_result" else "developer operator reactions criticism barriers"
+                    for evidence in search_web(f"{technology['name']} {focus}"):
+                        sources[evidence["id"]] = evidence
                 context = {"request": state["request"], "target_domain": state["target_domain"],
                            "technologies": state["technologies"], "evaluation_criteria": criteria,
-                           "evidence": list(sources.values()), "technical_result": previous,
-                           "missing_items": state.get("technical_missing_items", []) if field == "technical_result" else []}
-                draft = analyst.invoke([("system", RULES + ROLES[field] +
-                                         " 기술 재검색 시 기존 충족 항목을 유지하여 전체 기술 조사 결과를 반환한다. "
-                                         "next_queries에는 부족한 항목을 찾는 구체적 수정 질의만 최대 4개 작성한다."),
+                           "evidence": list(sources.values()), "technical_result": previous}
+                draft = analyst.invoke([("system", RULES + ROLES[field] + " next_queries는 빈 목록이다."),
                                         ("human", json.dumps(context, ensure_ascii=False))])
-                result, missing = normalize_result(draft, sources, state, criteria)
-                update = {field: result}
-                if field == "technical_result":
-                    if result["status"] == "partial" and state["technical_retry_count"] >= max_technical_retries:
-                        result["limitations"].append(f"기술 재검색 한도({max_technical_retries}회)에 도달하여 남은 항목을 확인하지 못함")
-                    update.update(technical_missing_items=missing or (result["limitations"] if result["status"] == "partial" else []),
-                                  technical_queries=[q.strip()[:500] for q in draft.next_queries[:4] if q.strip()] if result["status"] == "partial" else [])
-                return update
+                result, _ = normalize_result(draft, sources, state, criteria)
+                return {field: result}
             except Exception as exc:
                 return {field: error_result(field, exc)}
         return run
@@ -333,7 +312,8 @@ def make_nodes(index: PaperIndex, model: ChatOpenAI, max_technical_retries: int 
         body = assemble_report(result.content, state)
         return {"report_markdown": body, "report_evidence_ids": sorted(citation_ids(body.split("\n# REFERENCE")[0]))}
 
-    return {"technology_selection": select_technologies, "technical_research": analysis_node("technical_result"),
+    return {"technology_selection": select_technologies,
+            "technical_research": build_technical_research_graph(index, max_retries=max_technical_retries, rules=RULES),
             "market_evaluation": analysis_node("market_result"), "stakeholder_evaluation": analysis_node("stakeholder_result"),
             "domain_evaluation": domain_node,
             "synthesis": synthesis, "report": report}

@@ -41,7 +41,11 @@ uv run pipeline.py --env-file /path/to/your/.env
 | 파일 | 역할 |
 |---|---|
 | `state.py` | Notion 설계의 GraphState, Technology, Evidence, Finding, AgentResult |
-| `pipeline.py` | 기술 선정, 역할별 분석, 재검색·병렬 합류, 보고서, CLI |
+| `pipeline.py` | 기술 선정, 역할별 분석, 병렬 합류, 보고서, CLI |
+| `service/agent/node/technical/` | 기술 조사 노드 묶음: `schema.py`(서브그래프 State·초안 스키마), `retrieval.py`(논문 검색 도구·근거 수집), `model.py`(전용 모델 생성·설정·호출), `prompts.py`(역할·TRL 판정표), `core.py`(순수 검증 규칙), `node.py` |
+| `service/agent/graph/technical.py` | 기술 조사 서브그래프 `build_technical_research_graph(index, model=None, max_retries=2, rules=)` |
+| `check_technical.py` | 기술 조사 서브그래프만 Mock 인덱스·모델로 점검 |
+| `tests/` | API·모델 없이 도는 pytest (`uv run pytest -q`) |
 | `rag.py` | PDF 로딩, E5 토큰 청킹, 임베딩 캐시, cosine 검색 |
 | `report.py` | Markdown 저장 및 한국어 PDF 생성 |
 | `check_graph.py` | API 없이 재검색·합류·오류·근거 참조 경로 검사 |
@@ -53,8 +57,7 @@ uv run pipeline.py --env-file /path/to/your/.env
 | 노드 | 주요 읽기 필드 | 갱신 필드 |
 |---|---|---|
 | 기술 선정 | 사람의 선정 문서와 공통 입력 | `technologies` |
-| 기술 조사 | 공통 입력, technologies, 이전 조사·수정 질의 | `technical_result`, `technical_queries`, `technical_missing_items` |
-| 재검색 준비 | 부족 항목, 수정 질의, 횟수 | `technical_retry_count`, `technical_queries` |
+| 기술 조사 (서브그래프) | 공통 입력, technologies | `technical_result`, `technical_retry_count`, `technical_queries`, `technical_missing_items` |
 | 시장 평가 | 공통 입력, technologies, technical_result | `market_result` |
 | 이해관계자 평가 | 공통 입력, technologies, technical_result | `stakeholder_result` |
 | 도메인 평가 | 공통 입력, technologies, technical_result | `domain_result` |
@@ -69,7 +72,9 @@ uv run pipeline.py --env-file /path/to/your/.env
 
 - `complete`: SW/HW 각각의 지정 평가 항목에 근거가 연결됨. 의미적 정확성이 자동 검증됐다는 뜻은 아닙니다.
 - `partial`: 항목 누락 또는 모델이 판단한 근거 부족. 기술 조사의 필수 항목은 각 기술의 원리·성능·한계·TRL입니다.
-- 기술 조사만 `partial`일 때 수정 질의로 재검색합니다. `technical_retry_count`는 **추가 조사 횟수**이며 기본 2회, `--max-technical-retries 0`으로 비활성화할 수 있습니다. 설정 범위는 0~5입니다.
+- 기술 조사만 `partial`일 때 서브그래프 안에서 수정 질의로 재검색합니다. 재검색은 미충족 항목이 있는 기술의 논문만 다시 검색하며 질의는 최대 4개·500자입니다. `technical_retry_count`는 **추가 조사 횟수**이며 기본 2회, `--max-technical-retries 0`으로 비활성화할 수 있습니다. 설정 범위는 0~5입니다.
+- 기술 조사의 근거 ID·기준 검증에 실패하면 실패 사유와 사용 가능한 ID를 피드백으로 넣어 한 번만 다시 생성하고, 두 번째도 실패하면 `error`로 끝냅니다. 논문 검색 자체가 실패하면 확보한 근거를 보존한 `error`를 반환합니다.
+- 기술 조사의 TRL Finding은 선택 필드 `trl_assessment`(`level_or_range` 1~9 또는 범위, `as_of`=2026-09-21, `confidence`, `unverified_conditions`, `basis`="공개 정보 기반 추정")를 가지며, 판단 불가는 `level_or_range=null`과 한계 항목으로 남깁니다. 기술 조사 모델은 `service/agent/node/technical/model.py`의 `TECHNICAL_MODEL` 상수로 정하고 키·엔드포인트는 `config.settings`를 따릅니다.
 - 재검색 후에도 부족하면 `partial`을 유지하고 `technical_missing_items`와 `limitations`에 남겨 병렬 평가로 진행합니다. 기술 조사 결과가 갱신될 때 기존 충족 항목도 포함하도록 요청합니다.
 - 시장·이해관계자·도메인의 `partial`은 그대로 종합합니다. 상위 평가의 부족한 근거와 한계를 종합·보고서에서도 유지합니다.
 - API·구조화 응답·근거 ID 오류는 해당 결과를 `error`로 기록합니다. 기술 조사 오류는 즉시 그래프를 끝냅니다. 병렬 평가 오류는 합류 후 종합을 `error`로 기록하고 보고서를 생성하지 않습니다. 오류에는 자동 재시도를 하지 않습니다.
@@ -104,6 +109,8 @@ PDF에는 한국어 TTF가 필요합니다. macOS의 Arial Unicode 또는 Linux�
 ```sh
 uv run pipeline.py --index-only  # API 없이 실제 PDF 임베딩 및 검색, 최초 모델 다운로드 가능
 uv run check_graph.py           # 변경한 제어 흐름과 근거 연결만 확인
+uv run check_technical.py       # 기술 조사 서브그래프만 Mock으로 점검
+uv run pytest -q                # 기술 조사 규칙·재검색·오류 처리 (외부 API 없음)
 ```
 
 개별 수정마다 전체 테스트나 모델 비교 평가를 실행할 필요는 없습니다. 생성된 보고서의 수치·인용 의미·공개정보 기반 TRL은 제출 전에 사람이 검토해야 합니다.
