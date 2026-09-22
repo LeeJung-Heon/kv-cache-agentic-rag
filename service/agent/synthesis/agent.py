@@ -22,7 +22,7 @@ class SynthesisOutput(BaseModel):
     limitations: list[str]
     quality_feedback: list[str]
 
-
+##평가 agent
 def synthesis_agent(state: GraphState) -> dict:
     model = get_chat_model().with_structured_output(SynthesisOutput)
     ## 평가 항목
