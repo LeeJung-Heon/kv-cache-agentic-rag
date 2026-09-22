@@ -1,0 +1,24 @@
+[
+  {
+    "doc_id": "deepseek_v2",
+    "path": "sw/deepseek_v2.md",
+    "title": "DeepSeek-V2",
+    "technology": "sw",
+    "url": "https://arxiv.org/abs/2405.04434",
+    "published_at": null,
+    "version": null,
+    "original_pages": 52,
+    "allowed": false
+  },
+  {
+    "doc_id": "cxl_pnm",
+    "path": "hw/cxl_pnm.json",
+    "title": "CXL-PNM",
+    "technology": "hw",
+    "url": "https://arxiv.org/abs/2511.00321",
+    "published_at": null,
+    "version": null,
+    "original_pages": 13,
+    "allowed": false
+  }
+]
