@@ -4,8 +4,7 @@ from unittest.mock import Mock, patch
 
 from langgraph.graph import START, END, StateGraph
 from service.agent.node.domain import domain_node
-from state import AnalysisDraft
-from service.schema.state import GraphState
+from service.schema.state import AnalysisDraft, GraphState
 
 
 EVIDENCE_IDS = {"sw": "chunk-alpha", "hw": "chunk-beta"}
