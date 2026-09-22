@@ -78,7 +78,7 @@ Retrieval Metrics는 초기 문서 2편·123청크와 한국어 질문 40개(답
 
 ## Architecture
 
-아래는 목표 통합 흐름입니다. 각 에이전트는 개별 모듈로 구현되어 있으며, **전체 그래프 조립과 실행 진입점은 현재 정리 중**입니다.
+전체 흐름은 `service/agent/graph/agent.py`의 LangGraph 하나로 연결되며, `run_agent.py`로 실행합니다.
 
 ```mermaid
 flowchart TD
@@ -95,7 +95,7 @@ flowchart TD
     Report --> Output["Markdown · PDF · State JSON"]
 ```
 
-- 기술 재검색 한도는 기본 2회이며 서브그래프에 구현되어 있습니다. 전체 재작업 한도는 설계상 1회이며, 그래프 조립 시 적용합니다.
+- 기술 재검색 한도는 기본 2회이며 서브그래프에 구현되어 있습니다. 평가 종합의 품질 피드백이 있으면 기술 조사부터 한 번 재작업하며, 두 번째 종합에서도 피드백이 남으면 보고서 생성 전에 종료합니다.
 - 근거 부족은 `partial`과 한계로 남기고 진행합니다. 모델·도구 오류는 `error`로 기록하고 자동 무한 반복 없이 중단합니다.
 - 품질 점검이 사실 정확성을 보증하는 것은 아닙니다.
 
@@ -119,8 +119,8 @@ flowchart TD
 │   └── schema/                  # 공통 State와 결과 형식
 ├── tests/                       # 회귀 테스트와 검색 응답 fixture
 ├── scripts/                     # 실제 API 점검 스크립트
-├── outputs/                     # 평가 결과 저장 (Git 제외)
-├── pipeline.py                  # 전체 그래프 실행 진입점 (정리 중)
+├── result/                      # 실행 결과 (state.json, report.md, report.pdf)
+├── run_agent.py                 # 전체 그래프 실행 진입점
 └── README.md
 ```
 
@@ -143,7 +143,13 @@ FAISS 인덱스(`artifacts/faiss/`)는 저장소에 포함되어 있어 별도 �
 uv run -m ingest.embedding.build_index
 ```
 
-전체 파이프라인 실행 진입점(`pipeline.py`)은 모듈 구조 변경 후 연결을 정리하고 있습니다. 정리 전까지는 모듈별로 확인합니다.
+전체 그래프를 실행하면 `result/`에 `state.json`, `report.md`, `report.pdf`를 저장합니다. OpenAI·Tavily API 비용이 발생합니다.
+
+```bash
+uv run run_agent.py --max-technical-retries 2
+```
+
+모듈별 확인은 다음과 같습니다.
 
 ```bash
 uv run pytest -q                                                              # 회귀 테스트 (외부 API 없음)
