@@ -20,7 +20,9 @@ def retrieve_domain(index, state: GraphState):
             for row in index.search(query, side):
                 sources[row["id"]] = {
                     "id": row["id"], "source_type": "paper", "title": row["title"],
-                    "url": row["url"], "page": row["page"], "published_at": None,
+                    "url": row["url"], "page": row["page"],
+                    # 인덱스 생성 시 보존한 공개일을 버리지 않고 Evidence까지 전달한다.
+                    "published_at": row.get("published_at"),
                     "excerpt": row["text"],
                 }
                 evidence_ids.append(row["id"])
