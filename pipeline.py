@@ -14,7 +14,7 @@ from langgraph.graph import END, START, StateGraph
 
 from config.config import ROOT
 from report import write_report
-from service.agent.node.domain import make_domain_node
+from service.agent.node.domain import domain_node
 from service.retrieval.paper_index import SEARCH_SIDES, PaperIndex, get_paper_index
 from state import AgentResult, AnalysisDraft, Evidence, GraphState
 
@@ -336,8 +336,7 @@ def make_nodes(index: PaperIndex, model: ChatOpenAI, max_technical_retries: int 
 
     return {"technology_selection": select_technologies, "technical_research": analysis_node("technical_result"),
             "market_evaluation": analysis_node("market_result"), "stakeholder_evaluation": analysis_node("stakeholder_result"),
-            "domain_evaluation": make_domain_node(index, analyst, rules=RULES,
-                                                  normalize_result=normalize_result, error_result=error_result),
+            "domain_evaluation": domain_node,
             "synthesis": synthesis, "report": report}
 
 

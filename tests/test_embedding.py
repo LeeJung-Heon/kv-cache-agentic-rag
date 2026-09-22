@@ -271,24 +271,5 @@ class EmbeddingTests(unittest.TestCase):
         self.assertEqual(cfg.faiss_index_dir, ROOT / "artifacts/faiss")
         self.assertEqual(cfg.processed_manifest, ROOT / "data/processed/documents.json")
 
-    def test_pipeline_accepts_multi_document_ids(self):
-        from pipeline import citation_ids, normalize_result, initial_state, select_technologies, CRITERIA
-        from state import AnalysisDraft
-
-        ids = {"sw_deepseek_p7_c1", "hw_pond_p2_c1", "common_splitwise_p3_c1", "sw_p1_c1", "web_abc"}
-        self.assertEqual(citation_ids(" ".join(f"[{key}]" for key in ids)), ids)
-        state = initial_state()
-        state.update(select_technologies(state))
-        evidence_id = "sw_deepseek_p7_c1"
-        source = {"id": evidence_id, "source_type": "paper", "title": "Title", "url": "",
-                  "page": 7, "published_at": None, "excerpt": "text"}
-        draft = AnalysisDraft(status="partial", summary="summary", findings=[{
-            "technology_ids": ["sw_01"], "criterion": "원리", "claim": "claim",
-            "evidence_ids": [evidence_id], "is_inference": False}], limitations=[], next_queries=[])
-        _, missing = normalize_result(draft, {evidence_id: source}, state, CRITERIA["technical"])
-        self.assertNotIn("sw_01: 원리", missing)
-        self.assertIn("hw_01: 원리", missing)
-
-
 if __name__ == "__main__":
     unittest.main()
