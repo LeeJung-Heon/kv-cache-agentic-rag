@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "CXL processing-near-memory criticism drawbacks versus competing approaches",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://arxiv.org/html/2508.15980v1",
+        "title": "CXLAimPod: CXL Memory is all you need in AI era - arXiv",
+        "score": 0.5501488,
+        "published_date": "Thu, 21 Aug 2025 00:00:00 GMT",
+        "content": "The need for software-level scheduling in CXL memory systems parallels TCP’s bidirectional flow control, where intelligent request reordering maximizes bandwidth utilization. However, unlike network p"
+      },
+      {
+        "url": "https://sing.stanford.edu/site/assets/publications/cxl-hotnets23.pdf",
+        "title": "[PDF] A Case Against CXL Memory Pooling - SING: Stanford",
+        "score": 0.4882108,
+        "published_date": "Fri, 28 Aug 2026 06:04:43 GMT",
+        "content": "are close to DRAM speed . There-fore, achieving good performance involves rewriting software to explicitly manage CXL memory, copying blocks into lo-cal DRAM; this explicit, conditional, and pervasive"
+      },
+      {
+        "url": "https://www.usenix.org/system/files/osdi24-zhong-yuhong.pdf",
+        "title": "[PDF] Managing Memory Tiers with CXL in Virtualized Environments",
+        "score": 0.4556594,
+        "published_date": "Wed, 10 Jul 2024 00:00:00 GMT",
+        "content": "Hardware-based memory tiering could place data at cacheline granularity, mitigating these drawbacks. However, hardware is oblivious to application-level performance.\nWe propose combining hardware-mana"
+      },
+      {
+        "url": "https://eureka.patsnap.com/report-cxl-memory-vs-rdma-throughput-analysis-for-scalable-datacenters",
+        "title": "CXL Memory vs RDMA: Throughput Analysis for Scalable Datacenters",
+        "score": 0.42090955,
+        "published_date": "Fri, 05 Jun 2026 00:00:00 GMT",
+        "content": "Strengths: High memory density, cost-effective scaling, proven memory manufacturing expertise. Weaknesses: Limited software ecosystem, dependency on third-party CXL controllers, less optimized for com"
+      },
+      {
+        "url": "https://introl.com/blog/cxl-4-0-infrastructure-planning-guide-memory-pooling-2025",
+        "title": "CXL 4.0 Infrastructure Planning Guide | Introl Blog",
+        "score": 0.40570828,
+        "published_date": "Sun, 29 Mar 2026 00:00:00 GMT",
+        "content": "### Intel GPU Systems\n\nIntel Data Center GPU Max (Ponte Vecchio) supports CXL for memory expansion on systems with Sapphire Rapids or later CPUs.41\n\n## Risks and Considerations\n\n### Standards Fragment"
+      }
+    ]
+  }
+}

@@ -1,8 +1,5 @@
-import re
-
 from service.agent.tavily.client import SearchFn, tavily_search
-from service.agent.tavily.evaluation import PerspectiveSpec, is_academic, make_evaluation_node
-from service.agent.tavily.query_templates import TECH_TERMS
+from service.agent.tavily.evaluation import PerspectiveSpec, is_academic, make_evaluation_node, missing_tech_terms
 from state import DraftFinding, Evidence
 
 MARKET_PROMPT = """시장성 평가: 기준은 시장 규모·성장성, 상용화·채택, 생태계이며 호출마다 그중 하나(target_criterion)를 평가한다.
@@ -40,9 +37,7 @@ def correct_market_finding(finding: DraftFinding, cited: list[Evidence]) -> list
     # 설계서 3.4: 직접 시장과 연관 시장을 분리한다. 기술 고유어가 없는 근거로는 직접 시장을 주장할 수 없다.
     if finding.scope != "direct":
         return []
-    text = " ".join(f"{e['title']} {e['excerpt']}" for e in cited).lower()
-    missing = [tid for tid in finding.technology_ids
-               if not any(re.search(term, text) for term in TECH_TERMS.get(tid, []))]
+    missing = missing_tech_terms(finding, cited)
     if missing:
         finding.scope = "adjacent"
         return [f"scope direct→adjacent (인용 근거에 {', '.join(missing)} 고유어 없음)"]

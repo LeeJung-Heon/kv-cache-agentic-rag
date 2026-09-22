@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "CXL-PNM criticism drawbacks versus competing approaches",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.linkedin.com/posts/jungwook-choi-5854996b_scalable-processing-near-memory-for-1m-token-activity-7391589002497155073-0iI7",
+        "title": "Boosting LLM inference with CXL-PNM: A scalable solution for data ...",
+        "score": 0.3650723,
+        "published_date": "Tue, 04 Nov 2025 00:00:00 GMT",
+        "content": "pipelines or ensemble approaches. The critical insight: reasoning control, not model selection, represents the next optimization frontier for production LLM systems where accuracy requirements must ba"
+      },
+      {
+        "url": "https://introl.com/blog/cxl-4-0-infrastructure-planning-guide-memory-pooling-2025",
+        "title": "CXL 4.0 Infrastructure Planning Guide | Introl Blog",
+        "score": 0.3550819,
+        "published_date": "Sun, 29 Mar 2026 00:00:00 GMT",
+        "content": "CXL runs on PCIe SerDes: lower error rate, lower latency, but lower bandwidth than NVLink/UALink's Ethernet-style SerDes.17 NVLink 5 delivers 1.8 TB/s per GPU—far exceeding CXL 4.0's 512 GB/s per x16 "
+      },
+      {
+        "url": "https://arxiv.org/html/2409.00088v1",
+        "title": "On-Device Language Models: A Comprehensive Review",
+        "score": 0.3020106,
+        "published_date": "Mon, 26 Aug 2024 00:00:00 GMT",
+        "content": "AXDIMM (Ke et al., 2021) and CXL-PNM: These PNM solutions place computational logic near the memory core, enhancing memory bandwidth and capacity. CXL-PNM integrates computational logic into the CXL m"
+      },
+      {
+        "url": "https://www.rambus.com/wp-content/uploads/2025/07/ScalingDRAMTechnology-ISCA2025_Tutorial.pdf?_gl=1%2A19an8z%2A_up%2AMQ..%2A_ga%2AODExNTE3MDA3LjE3NTQ5NDE0MDg.%2A_ga_ZTVV17HN07%2AczE3NTQ5NDE0MDckbzEkZzAkdDE3NTQ5NDE0MDckajYwJGwwJGgw",
+        "title": "[PDF] Scaling DRAM Technology to Meet Future Demands - Rambus",
+        "score": 0.28422868,
+        "published_date": "Sun, 22 Jun 2025 00:00:00 GMT",
+        "content": "// CXL.io: Execute PNM offload_start() // Get result PNM_read_mem(res, offset) [ Example Embedding Python code ] [ CXL PNM Runtime Execution Flow ] User Program CXL DRAM DAX Driver Code (task), Input "
+      },
+      {
+        "url": "https://dl.acm.org/doi/10.1145/3821219",
+        "title": "AdaptiveKV: Accelerating KV Cache Offloading with a Bandwidth ...",
+        "score": 0.20769678,
+        "published_date": "Fri, 07 Aug 2026 00:00:00 GMT",
+        "content": "Google Scholar\n\n   [a [...] ] and near-memory computation](\n   [b [...] real hardware platform. The CXL-PNM study](\n   [c [...] ] and CXL-PNM]( [...] (3) CXL memory expansion and pooling. Prior work h"
+      }
+    ]
+  }
+}

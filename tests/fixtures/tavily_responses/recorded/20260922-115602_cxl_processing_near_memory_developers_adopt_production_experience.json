@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "CXL processing-near-memory developers adopt production experience",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://www.strategicmarketresearch.com/market-report/compute-express-link-component-market",
+        "title": "Compute Express Link (CXL) Component Market Size ($12.3 Billion ...",
+        "score": 0.5637388,
+        "published_date": "Mon, 06 Oct 2025 00:00:00 GMT",
+        "content": "Over the past two years, the CXL component market has shifted from consortium-led standardization to tangible, deployable products. In 2023, several major CPU vendors began shipping processors with fu"
+      },
+      {
+        "url": "https://www.asteralabs.com/resources/blog/breaking-through-the-memory-wall-how-cxl-transforms-rag-and-kv-cache-performance",
+        "title": "How CXL Transforms RAG and KV Cache Performance",
+        "score": 0.531672,
+        "published_date": "Thu, 20 Nov 2025 19:51:34 GMT",
+        "content": "The collaboration between Astera Labs and Microsoft, along with the broader CXL ecosystem development on display at Supercomputing 2025, demonstrates that CXL is advancing rapidly toward addressing pr"
+      },
+      {
+        "url": "https://introl.com/blog/cxl-4-0-infrastructure-planning-guide-memory-pooling-2025",
+        "title": "CXL 4.0 Infrastructure Planning Guide | Introl Blog",
+        "score": 0.49846253,
+        "published_date": "Sun, 29 Mar 2026 00:00:00 GMT",
+        "content": "CXL 4.0 enables memory pooling at unprecedented scale, allowing AI inference workloads to access 100+ terabytes of shared memory with cache coherency across multiple racks. The specification's bundled"
+      },
+      {
+        "url": "https://arxiv.org/html/2508.15980v1",
+        "title": "CXLAimPod: CXL Memory is all you need in AI era - arXiv",
+        "score": 0.4497074,
+        "published_date": "Thu, 21 Aug 2025 00:00:00 GMT",
+        "content": "The policy engine is implemented as a set of loadable eBPF programs that can be dynamically switched at runtime. Each policy is compiled as a separate BPF object file containing the scheduling logic. "
+      },
+      {
+        "url": "https://lenovopress.lenovo.com/lp2146-introduction-to-cxl-20-memory",
+        "title": "Introduction To CXL 2.0 Memory - Lenovo Press",
+        "score": 0.41734326,
+        "published_date": "Mon, 24 Feb 2025 00:00:00 GMT",
+        "content": "CXL is a once-in-a-decade technology that will transform data center architectures. It is supported by a variety of industry players including system OEMs, platform and module makers, software develop"
+      }
+    ]
+  }
+}

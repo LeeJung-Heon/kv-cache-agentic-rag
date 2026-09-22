@@ -24,7 +24,8 @@ from dataclasses import dataclass, field as dataclass_field
 from service.agent.tavily.client import SearchFn, search_criterion, tavily_search
 from service.agent.tavily.evidence_schema import source_domain
 from service.agent.tavily.query_templates import (ACADEMIC_DOMAINS, CRITERIA, END_DATE, FORECAST_TERMS,
-                                                  LOW_TRUST_DOMAINS, REUSE_KEYWORDS, TECH_ALIASES, Perspective)
+                                                  LOW_TRUST_DOMAINS, REUSE_KEYWORDS, TECH_ALIASES, TECH_TERMS,
+                                                  Perspective)
 from state import AnalysisDraft, DraftFinding, Evidence, GraphState, Technology
 
 # pipeline.citation_ids와 같은 인용 ID 패턴
@@ -111,6 +112,12 @@ def is_academic(evidence: Evidence) -> bool:
     return source_domain(evidence["url"]).endswith(".edu") or domain_in(evidence, ACADEMIC_DOMAINS)
 
 
+def missing_tech_terms(finding: DraftFinding, cited: list[Evidence]) -> list[str]:
+    """인용 근거의 제목·발췌에 기술 고유어가 없는 기술 ID. 고유어가 없으면 상위 기술(CXL 전체 등)에 대한 근거다."""
+    text = " ".join(f"{e['title']} {e['excerpt']}" for e in cited).lower()
+    return [tid for tid in finding.technology_ids if not any(re.search(term, text) for term in TECH_TERMS.get(tid, []))]
+
+
 def correct_academic_stage(finding: DraftFinding, cited: list[Evidence]) -> list[str]:
     if finding.stage is not None and cited and all(is_academic(e) for e in cited):
         previous, finding.stage = finding.stage, None
@@ -148,7 +155,7 @@ def build_summary(label: str, cells: set, covered: set, valid: list[DraftFinding
     parts.append(f"finding {len(valid)}건(사실 {types['fact']}, 의견 {types['opinion']}, 전망 {types['forecast']}).")
     scopes = Counter(f.scope for f in valid if f.scope)
     if scopes:
-        parts.append(f"직접 시장 근거 {scopes['direct']}건, 연관 시장 근거 {scopes['adjacent']}건.")
+        parts.append(f"대상 기술 직접 근거 {scopes['direct']}건, 연관 기술·시장 근거 {scopes['adjacent']}건.")
     if one_sided:
         parts.append(f"한쪽 방향 근거만 있는 칸 {len(one_sided)}개.")
     if corrected:

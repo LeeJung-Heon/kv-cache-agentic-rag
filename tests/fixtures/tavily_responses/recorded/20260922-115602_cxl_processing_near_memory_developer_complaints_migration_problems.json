@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "CXL processing-near-memory developer complaints migration problems",
+    "topic": "general",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://arxiv.org/html/2405.14209v3",
+        "title": "Exploring and Evaluating Real-world CXL: Use Cases and System ...",
+        "score": 0.43065065,
+        "published_date": "Sun, 16 Feb 2025 00:00:00 GMT",
+        "content": "We find that the dynamic page migration in memory tiering are not integrated well with the static page interleaving, because of invalidness of NUMA hint faults. Depending on temporal and spatial distr"
+      },
+      {
+        "url": "https://www.usenix.org/system/files/osdi24-zhong-yuhong.pdf",
+        "title": "[PDF] Managing Memory Tiers with CXL in Virtualized Environments",
+        "score": 0.27782843,
+        "published_date": "Wed, 10 Jul 2024 00:00:00 GMT",
+        "content": "This initial migration is performed by taking (or giving) dedi-cated pages to (or from) other existing VMs, each of which contributes (or receives) the same number of dedicated pages.\nAssigning dedica"
+      },
+      {
+        "url": "https://introl.com/blog/cxl-4-0-infrastructure-planning-guide-memory-pooling-2025",
+        "title": "CXL 4.0 Infrastructure Planning Guide | Introl Blog",
+        "score": 0.24225084,
+        "published_date": "Sun, 29 Mar 2026 00:00:00 GMT",
+        "content": "## The Memory Wall Problem\n\nLarge language models hit a fundamental constraint: GPU memory capacity. Modern AI inference workloads routinely exceed 80-120 GB per GPU, and the key-value (KV) cache grow"
+      },
+      {
+        "url": "https://www.linkedin.com/posts/laurie-kirk_outside-of-the-datacenter-world-no-one-realizes-activity-7413329701861154816-QVwe",
+        "title": "Outside of the datacenter world, no one realizes CXL exists. Trust me, you’re gonna hear it more often. It’s just barely starting to leak in the prosumer space. The short version is: CXL = memory… | Laurie Kirk | 16 comments",
+        "score": 0.23301668,
+        "published_date": "Sat, 03 Jan 2026 00:00:00 GMT",
+        "content": "Like Reply  1 Reaction\n\nHunter Cobbs   2h \n\n Report this comment\n\nHmmm. I bet if you shift your programming topology to a heap-based memory pool management. You can start addressing those security con"
+      },
+      {
+        "url": "https://semiengineering.com/cxl-picks-up-steam-in-data-centers",
+        "title": "CXL Picks Up Steam In Data Centers",
+        "score": 0.22681828,
+        "published_date": "Thu, 26 Jan 2023 08:02:21 GMT",
+        "content": "to a broad range of workloads. For systems that are already highly provisioned (i.e, 8GB/vCPU), the extra CXL-attached memory now can make them suitable for applications needing massive memory footpri"
+      }
+    ]
+  }
+}

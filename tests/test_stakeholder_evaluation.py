@@ -34,7 +34,7 @@ class StakeholderEvaluationTest(unittest.TestCase):
         sw_context = next(c for c in analyst.contexts if cell(c)[0] == "sw_01")
         self.assertEqual([e["url"] for e in sw_context["reused_evidence"]], [FRAMEWORK["url"]])
 
-    def test_stance_required_and_scope_cleared(self):
+    def test_stance_required_and_scope_assigned_by_evidence(self):
         def make(context):
             refs, (tid, criterion) = web_refs(context)[:1], cell(context)
             if (tid, criterion) == ("sw_01", "도입사·개발자"):
@@ -44,7 +44,8 @@ class StakeholderEvaluationTest(unittest.TestCase):
             return []
         result, _ = run(FakeAnalyst(make))
         self.assertEqual(len(result["findings"]), 1)
-        self.assertIsNone(result["findings"][0]["scope"])
+        # sw_01 칸에 MLA 고유어가 없는 근거를 인용했으므로 LLM의 direct와 무관하게 adjacent다.
+        self.assertEqual(result["findings"][0]["scope"], "adjacent")
         self.assertTrue(any("stance 누락" in item for item in result["limitations"]))
         self.assertEqual(result["status"], "partial")
 
@@ -65,6 +66,23 @@ class StakeholderEvaluationTest(unittest.TestCase):
         self.assertTrue(any("claim_type fact→opinion (소셜미디어·개인 블로그 출처만 인용)" in item
                             for item in result["limitations"]))
         self.assertTrue(result["summary"].startswith("이해관계자 평가:"))
+
+    def test_scope_direct_when_technology_term_present(self):
+        def make(context):
+            ref = next(e["id"] for e in context["web_evidence"] if "cxl-pnm-sample" in e["url"])
+            return [finding("hw_01", "투자 업계", [ref], scope=None, stance="positive")]
+        result, _ = run(FakeAnalyst(only("hw_01", "투자 업계", make)))
+        self.assertEqual(result["findings"][0]["scope"], "direct")
+
+    def test_academic_only_excluded_for_adopters_and_investors(self):
+        def make(context):
+            ref = next(e["id"] for e in context["web_evidence"] if "arxiv.org" in e["url"])
+            return [finding(*cell(context), [ref], stance="positive")]
+        result, _ = run(FakeAnalyst(make), search=FakeSearch({}, default="academic"))
+        kept = {(f["technology_ids"][0], f["claim"]) for f in result["findings"]}
+        self.assertEqual(len(kept), 2)  # 경쟁 기술 진영(sw_01, hw_01)만 남는다
+        for criterion in ("도입사·개발자", "투자 업계"):
+            self.assertTrue(any(f"학술 자료만으로 {criterion} 반응 판단 불가" in item for item in result["limitations"]))
 
     def test_revision_feedback_is_filtered(self):
         analyst = FakeAnalyst()

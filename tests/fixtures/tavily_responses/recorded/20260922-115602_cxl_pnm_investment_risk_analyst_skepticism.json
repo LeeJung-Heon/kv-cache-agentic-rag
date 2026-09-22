@@ -1,0 +1,47 @@
+{
+  "request": {
+    "query": "CXL-PNM investment risk analyst skepticism",
+    "topic": "news",
+    "end_date": "2026-09-21",
+    "depth": "basic"
+  },
+  "response": {
+    "results": [
+      {
+        "url": "https://en.wowtale.net/2026/09/19/235181/",
+        "title": "[Korean Startup Weekly News #136] Enterprise AI Takes Command - Wowtale",
+        "score": 0.17250647,
+        "published_date": "Sat, 19 Sep 2026 06:08:17 GMT",
+        "content": "# [Korean Startup Weekly News #136] Enterprise AI Takes Command. Enhans' USD 39M Series C validates agentic AI as an infrastructure layer for global enterprise, while Panmnesia and Meta's Nature-publi"
+      },
+      {
+        "url": "https://insurancenewsnet.com/oarticle/election-2026-california-insurance-commissioners-race-fix-the-private-market-or-provide-public-coverage",
+        "title": "Election 2026: California insurance commissioner’s race — Fix the private market or provide public coverage? - InsuranceNewsNet",
+        "score": 0.060779896,
+        "published_date": "Sun, 20 Sep 2026 13:49:18 GMT",
+        "content": "# Election 2026: California insurance commissioner’s race — Fix the private market or provide public coverage? The two Democrats running for California insurance commissioner offer voters a stark choi"
+      },
+      {
+        "url": "https://finance.yahoo.com/technology/ai/articles/ai-chip-sell-off-overblown-120855997.html",
+        "title": "AI chip sell-off overblown: Zero GPU slowdown after Anthropic essay, analyst says - finance.yahoo.com",
+        "score": 0.04229698,
+        "published_date": "Tue, 15 Sep 2026 12:08:55 GMT",
+        "content": "Investing.com -- The AI semiconductor sell-off triggered by Anthropic CEO Dario Amodei's essay on slowing AI capability development is a misreading of his actual message, with zero supply-chain eviden"
+      },
+      {
+        "url": "https://pitchbook.com/news/reports/q3-2026-anthropic-what-to-look-for-in-the-s-1",
+        "title": "Q3 2026 Anthropic: What to Look For in the S-1 - PitchBook",
+        "score": 0.040121272,
+        "published_date": "Wed, 16 Sep 2026 20:33:06 GMT",
+        "content": "# Anthropic: What to Look For in the S-1. ### Anthropic’s growth supports a premium valuation, but the current evidence supports roughly $1.4 trillion to $1.6 trillion rather than $2 trillion. Anthrop"
+      },
+      {
+        "url": "https://www.bloomberg.com/news/features/2026-09-20/ai-boom-is-making-diversifying-investments-tough-for-wall-street",
+        "title": "AI Risk Is Everywhere and It's Making Billion Dollar Funds Nervous - Bloomberg.com",
+        "score": 0.034491852,
+        "published_date": "Sun, 20 Sep 2026 21:00:01 GMT",
+        "content": "# AI Risk Is Everywhere and It's Making Billion Dollar Funds Nervous. Pensions and sovereign wealth funds with many billions to invest are finding the diversification they once relied on is an illusio"
+      }
+    ]
+  }
+}
